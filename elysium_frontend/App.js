@@ -16,6 +16,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>{message}</Text>
+      <Text>Eat Me!</Text>
     </View>
   );
 }
