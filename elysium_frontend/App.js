@@ -16,6 +16,8 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>{message}</Text>
+      <Text>Trivial is Working!</Text>
+      <Text>Backend message is not :(</Text>
     </View>
   );
 }
