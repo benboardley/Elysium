@@ -7,6 +7,7 @@ export default function App() {
   useEffect(() => {
     axios.get('http://localhost:8000/api/hello/')
     .then(response => {
+      console.log(response.data.message)
       setMessage(response.data.message);
     }).catch(error => {
       console.log(error);
