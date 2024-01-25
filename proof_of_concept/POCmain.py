@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-
+from POCsong import POCsong
+from POCplaylist import POClist
 from POCspotify import POCspotify
 from POCapplmus import POCapplmus
 
@@ -14,8 +15,16 @@ def setup_env():
 def spot_auth():
     spotify = POCspotify()
     spotify.request_auth()
-    if spotify.sp:
-        spotify.top_ten_tracks()
+    while not spotify.sp:
+        exit_bool = input(
+            "Authentication failed. Would you like to try again?\n"
+            "(y/n) "
+            )
+        if 'y' in exit_bool:
+            spotify.request_auth()
+        else:
+            break
+    return spotify
 
 
 ### Authorization of Apple Music ###
@@ -25,41 +34,65 @@ def applmus_auth():
 
 ### Request transfer service type ###
 def transfer_service():
-    streaming_service = input(
+    selection = input(
         "\nInput either 0 or 1 to transfer\n"
         "(0) Spotify -> Apple Music\n"
         "(1) Apple Music -> Spotify\n"
         "Selection: "
     )
-    return streaming_service
+    return selection
 
 
 ### Request transfer type ###
 def transfer_type():
-    trans_type = input(
+    selection = input(
         "Input either 0 or 1 for type to transfer\n"
         "(0) Song\n"
         "(1) Playlist\n"
         "Selection: "
     )
-    return trans_type
+    return selection
 
 
 if __name__ == '__main__':
     ### Set Up Environment variables ###
     setup_env()
+    spotify, applmus = None
+    song_sel, playlist_sel = None
+    transfer_to, transfer_from, transfer_sel = None
 
     ### Authorization of Spotify ###
-    spot_auth()
+    spotify = spot_auth()
+    if not spotify.sp:
+        ValueError("Authentication Failed. Aborting Proccess.")
+        exit(0)
 
     ### Authorization of Apple Music ###
+    """
+    applmus = applmus_auth()
+    if not applmus.sp:
+        ValueError("Authentication Failed. Aborting Proccess.")
+        exit(0)
+    """
 
     ### Request transfer service type ###
-    streaming_service = transfer_service()
+    if transfer_service():
+        """transfer_from = applmus"""
+        transfer_to = spotify
+    else:
+        transfer_from = spotify
+        """transfer_to = applmus"""
     
     ### Request transfer type ###
-    trans_type = transfer_type()
-    
+    if transfer_type():
+        ### User selected song ###
+        # Populate song selection
+        transfer_from.top_ten_tracks()
+    else:
+        ### User selected playlist ###
+        #create a variable that holds what playlist to select
+        transfer_from.top_ten_tracks()
+
     ### Populate select choices ###
 
     ### Request user choice ###
@@ -71,3 +104,4 @@ if __name__ == '__main__':
         # (list of current user playlists)
     
     ### Transfer data to user specifications ### 
+
