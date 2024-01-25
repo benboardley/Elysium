@@ -109,7 +109,7 @@ class POCspotify:
         if 'track' in track:
             track = track['track']
         track_uri = track['uri']
-        print(track) # TODO: artist features
+        #print(track)
         audio_features = self.sp.audio_features(track_uri)[0]
         #print(audio_features)
         return POCsong(track, audio_features, origin = 'spotify')
