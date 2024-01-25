@@ -26,6 +26,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt  # Adjust based on your project setup
 
+    - name: Configure Environment Variables
+      run: echo "${{ secrets.KEYS_ENV_CONTENTS }}" > keys.env
+      
     - name: Run Tests
       run: |
         python -m unittest testing.test_POCsong  # Adjust the test command based on your project setup
