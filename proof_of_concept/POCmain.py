@@ -16,6 +16,7 @@ def spot_auth():
     spotify.request_auth()
     if spotify.sp:
         spotify.top_ten_tracks()
+        spotify.get_playlists()
 
 
 ### Authorization of Apple Music ###

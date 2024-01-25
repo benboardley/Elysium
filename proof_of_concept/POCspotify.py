@@ -38,6 +38,7 @@ class POCspotify:
         print("Your top tracks:")
         for track in top_tracks['items']:
             print(f"- {track['name']} by {track['artists'][0]['name']}")
+        #print(track)
 
         results = self.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
         track_uri = results['tracks']['items'][0]['uri']
@@ -50,14 +51,28 @@ class POCspotify:
         print(f"Energy: {audio_features['energy']}")
         print(f"Danceability: {audio_features['danceability']}")
         print(f"Duration: {audio_features['duration_ms']} milliseconds")
-    def get_playlists(self):
-        pass
     
+    def get_playlists(self):
+        playlists = self.sp.current_user_playlists()
+        for playlist in playlists['items']:
+            print(f"Playlist Name: {playlist['name']}, Playlist ID: {playlist['id']}")
+        playlist_id = input("Enter a playlist ID to view the songs in this playlist-> ")
+        for playlist in playlists['items']:
+            #print(playlist_id, ' ', playlist['id'])
+            if playlist_id == playlist['id']:
+                tracks = self.sp.playlist_tracks(playlist_id)
+                for track in tracks['items']:
+                    print(f"Track Name: {track['track']['name']}, Artist: {track['track']['artists'][0]['name']}")
+                self.convert_song_metadata(track)
+
     def add_songs(self):
         pass
 
     def add_playlist(self):
         pass
 
-    def convert_song_metadata(self):
-        pass
+    def convert_song_metadata(self, track):
+        #print(track)
+        track_uri = track['track']['uri']
+        audio_features = self.sp.audio_features(track_uri)[0]
+        #print(audio_features)
