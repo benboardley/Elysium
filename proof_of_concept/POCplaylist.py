@@ -1,7 +1,8 @@
 from POCsong import POCsong
 class POCplaylist:
     ### POCspotify class variables ###
-    def __init__(self):
+    def __init__(self, tracks):
         self.name = None
-        self.songs = []
-        
+        self.playlist_id = None
+        self.songs = tracks
+
