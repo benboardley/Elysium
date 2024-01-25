@@ -67,34 +67,25 @@ class POCspotify:
 
     
     def get_playlists(self):
+        # return: a list of playlist objects
+        playlist_list = []
         playlists = self.sp.current_user_playlists()
-        while True:
-            for i, playlist in enumerate(playlists['items']):
-                print(f"({i}) - Playlist Name: {playlist['name']}")
-            view_songs = input(
-                "Would you like to view the songs in a playlist before making your selection?\n"
-                "(y/n) "
-                )
-            if 'n' in view_songs:
-                break
-            list_num = input("Enter a playlist number to view the songs in this playlist-> ")
-            playlist_id = playlists['items'][int(list_num)]['id']
-            tracks = self.sp.playlist_tracks(playlist_id)
-            for track in tracks['items']:
-                print(f"Track Name: {track['track']['name']}, Artist: {track['track']['artists'][0]['name']}")
-            self.convert_song_metadata(track)
-            input("\nPress enter to return.")
-            if os.name == 'nt':
-                os.system('cls')
-            else:
-                os.system('clear')
-        num_playlists = len(playlists['items'])-1
-        playlist_num = input(
-            "Which playlist would you like to select?\n"
-            f'Selection (0-{num_playlists}): '
-                             )
-        playlist_sel = playlists['items'][int(playlist_num)]
-        return playlist_sel
+        for playlist in playlists['items']:
+            track_list = []
+            playlist_id = playlist['id']
+            for track in self.sp.playlist_tracks(playlist_id):
+                track_list.append(self.create_song_obj(track))
+            playlist_list.append(self.create_playlist_obj(track_list))
+        return playlist_list
+
+
+    def get_songs(self, playlist_id):
+        song_list = []
+        tracks = self.sp.playlist_tracks(playlist_id)
+        for track in tracks['items']:
+            song_list.append(track)
+        #self.convert_song_metadata(track)
+        return song_list
 
 
     def add_songs(self):
@@ -113,3 +104,7 @@ class POCspotify:
         audio_features = self.sp.audio_features(track_uri)[0]
         #print(audio_features)
         return POCsong(track, audio_features, origin = 'spotify')
+    
+
+    def create_playlist_obj(self, track_list):
+        return POCplaylist(track_list, origin = 'spotify')
