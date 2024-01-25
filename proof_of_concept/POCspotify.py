@@ -50,3 +50,14 @@ class POCspotify:
         print(f"Energy: {audio_features['energy']}")
         print(f"Danceability: {audio_features['danceability']}")
         print(f"Duration: {audio_features['duration_ms']} milliseconds")
+    def get_playlists(self):
+        pass
+    
+    def add_songs(self):
+        pass
+
+    def add_playlist(self):
+        pass
+
+    def convert_song_metadata(self):
+        pass
