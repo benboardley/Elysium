@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+#.env keys file
+*.env
+
 # Expo
 .expo/
 dist/
@@ -34,6 +37,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+#Elysium venv
+Elysium
 
 #cache
 __pycache__

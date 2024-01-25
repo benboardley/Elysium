@@ -1,9 +1,10 @@
 import spotipy
+import os
 from spotipy.oauth2 import SpotifyOAuth
 
 #Spotify Credentials
-client_id = 
-client_secret =
+client_id = os.environ["client_id"]
+client_secret = os.environ["client_secret"]
 redirect_uri = 'http://localhost:3000/callback'
 
 scope = 'user-library-read user-top-read'
