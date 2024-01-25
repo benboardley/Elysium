@@ -1,9 +1,12 @@
 name: Run Tests
 
 on:
-  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
-      - dev  # Change this to the branch you want to trigger the workflow on
+      - main  # Change this to the branch you want to trigger the workflow on
 
 jobs:
   test:
