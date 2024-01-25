@@ -2,7 +2,9 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from proof_of_concept.POCsong import POCsong
+from POCsong import POCsong
+from POCplaylist import POCplaylist
+
 class POCspotify:
     ### POCspotify class variables ###
 
@@ -73,9 +75,10 @@ class POCspotify:
         for playlist in playlists['items']:
             track_list = []
             playlist_id = playlist['id']
-            for track in self.sp.playlist_tracks(playlist_id):
+            tracks = self.sp.playlist_tracks(playlist_id)
+            for track in tracks['items']:
                 track_list.append(self.create_song_obj(track))
-            playlist_list.append(self.create_playlist_obj(track_list))
+            playlist_list.append(self.create_playlist_obj(playlist['name'], playlist_id, track_list))
         return playlist_list
 
 
@@ -106,5 +109,5 @@ class POCspotify:
         return POCsong(track, audio_features, origin = 'spotify')
     
 
-    def create_playlist_obj(self, track_list):
-        return POCplaylist(track_list, origin = 'spotify')
+    def create_playlist_obj(self, name, id, track_list):
+        return POCplaylist(name, id, track_list, origin = 'spotify')
