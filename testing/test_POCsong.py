@@ -30,9 +30,15 @@ class TestMyModule(unittest.TestCase):
         result = self.spotify.create_song_obj(track)
         self.assertEqual(result.name, 'Mona Lisa (feat. Kendrick Lamar)')
     def test_song_artist(self):
-        pass
+        results = self.spotify.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
+        track = results['tracks']['items'][0]
+        result = self.spotify.create_song_obj(track)
+        self.assertEqual(result.artist, 'Lil Wayne')
     def test_song_feature_artists(self):
-        pass
+        results = self.spotify.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
+        track = results['tracks']['items'][0]
+        result = self.spotify.create_song_obj(track)
+        self.assertEqual(result.artist_features, ['Kendrick Lamar'])
     def test_song_audio_features(self):
         pass
     def test_song_uri(self):
