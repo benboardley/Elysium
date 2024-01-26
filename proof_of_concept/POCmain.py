@@ -54,6 +54,43 @@ def transfer_type():
     return int(selection)
 
 
+### Select Playlist for Transfer ###
+def playlist_select(transfer_from, transfer_to):
+    playlist_list = transfer_from.get_playlists()
+    while True:
+        for i, playlist in enumerate(playlist_list):
+            print(f"({i}) - Playlist Name: {playlist.name}")
+        view_songs = input(
+            "Would you like to view the songs in a playlist before making your selection?\n"
+            "(y/n) "
+            )
+        if 'n' in view_songs:
+            break
+        list_num = input("Enter a playlist number to view the songs in this playlist-> ")
+        playlist_id = playlist_list[int(list_num)].playlist_id
+        song_list = transfer_from.get_songs(playlist_id)
+        for song in song_list:
+            print(f"Track Name: {song.name}, Artist: {song.artist}")
+        input("\nPress enter to return.")
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
+    num_playlists = len(playlist_list)-1
+    playlist_num = input(
+        "Which playlist would you like to select?\n"
+        f'Selection (0-{num_playlists}): '
+                            )
+    playlist_sel = playlist_list[int(playlist_num)]
+    return playlist_sel
+
+
+### Song Transfer ###
+def song_transfer(transfer_from, transfer_to):
+    pass
+
+
+
 if __name__ == '__main__':
     ### Set Up Environment variables ###
     setup_env()
@@ -95,8 +132,7 @@ if __name__ == '__main__':
     if transfer_type():
         ### User selected playlist ###
         #create a variable that holds what playlist to select
-        playlist_sel = transfer_from.get_playlists()
-        print(playlist_sel)
+        playlist_sel = playlist_select(transfer_from, transfer_to)
     else:
         ### User selected song ###
         # Populate song selection
