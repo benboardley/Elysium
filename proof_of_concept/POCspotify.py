@@ -2,14 +2,20 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from POCsong import POCsong
-from POCplaylist import POCplaylist
-
+from proof_of_concept.POCsong import POCsong
 class POCspotify:
     ### POCspotify class variables ###
 
     def __init__(self):
-        load_dotenv(dotenv_path='../keys.env', verbose=True)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct the path to the .env file
+        dotenv_path = os.path.join(script_dir, '../keys.env')
+
+        # Load the .env file
+        load_dotenv(dotenv_path=dotenv_path, verbose=True)
+
+        #set important information
         self.client_id = os.environ["client_id"]
         self.client_secret = os.environ["client_secret"]
         self.redirect_uri = 'http://localhost:3000/callback'
@@ -91,7 +97,9 @@ class POCspotify:
 
     def create_song_obj(self, track):
         #print(track)
-        track_uri = track['track']['uri']
+        if 'track' in track:
+            track = track['track']
+        track_uri = track['uri']
         print(track) # TODO: artist features
         audio_features = self.sp.audio_features(track_uri)[0]
         #print(audio_features)
