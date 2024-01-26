@@ -67,7 +67,7 @@ class POCspotify:
         song_sel = top_tracks['items'][int(song_num)]
         return song_sel
 
-    
+    ### This needs to be changed to create song and playlist objects elsewhere ###
     def get_playlists(self):
         # return: a list of playlist objects
         playlist_list = []
@@ -80,15 +80,6 @@ class POCspotify:
                 track_list.append(self.create_song_obj(track))
             playlist_list.append(self.create_playlist_obj(playlist['name'], playlist_id, track_list))
         return playlist_list
-
-
-    def get_songs(self, playlist_id):
-        song_list = []
-        tracks = self.sp.playlist_tracks(playlist_id)
-        for track in tracks['items']:
-            song_list.append(track)
-        #self.convert_song_metadata(track)
-        return song_list
 
 
     def add_songs(self):

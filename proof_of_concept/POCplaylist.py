@@ -4,5 +4,5 @@ class POCplaylist:
     def __init__(self, name, id, tracks, origin=None):
         self.name = name
         self.playlist_id = id
-        self.songs = tracks
+        self.track_list = tracks
 
