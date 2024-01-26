@@ -3,6 +3,12 @@
 # dependencies
 node_modules/
 
+#.env keys file
+*.env
+
+# spotipy cache
+.cache
+
 # Expo
 .expo/
 dist/
@@ -34,6 +40,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+#Elysium venv
+Elysium
 
 #cache
 __pycache__
