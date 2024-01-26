@@ -24,21 +24,16 @@ class TestMyModule(unittest.TestCase):
         access_token = token_info['access_token']
         sp = Spotify(auth=access_token)
         self.spotify.sp = sp
+        self.track = None
     def test_song_name(self):
         results = self.spotify.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
         track = results['tracks']['items'][0]
-        result = self.spotify.create_song_obj(track)
-        self.assertEqual(result.name, 'Mona Lisa (feat. Kendrick Lamar)')
+        self.track = self.spotify.create_song_obj(track)
+        self.assertEqual(self.track.name, 'Mona Lisa (feat. Kendrick Lamar)')
     def test_song_artist(self):
-        results = self.spotify.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
-        track = results['tracks']['items'][0]
-        result = self.spotify.create_song_obj(track)
-        self.assertEqual(result.artist, 'Lil Wayne')
+        self.assertEqual(self.track.artist, 'Lil Wayne')
     def test_song_feature_artists(self):
-        results = self.spotify.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
-        track = results['tracks']['items'][0]
-        result = self.spotify.create_song_obj(track)
-        self.assertEqual(result.artist_features, ['Kendrick Lamar'])
+        self.assertEqual(self.track.artist_features, ['Kendrick Lamar'])
     def test_song_audio_features(self):
         pass
     def test_song_uri(self):
