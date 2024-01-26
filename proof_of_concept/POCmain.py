@@ -54,6 +54,11 @@ def transfer_type():
     return int(selection)
 
 
+def get_all_songs(playlist_obj):
+    for track in playlist_obj.track_list:
+        print(f"Track Name: {track.name}, Artist: {track.artist}")
+
+
 ### Select Playlist for Transfer ###
 def playlist_select(transfer_from, transfer_to):
     playlist_list = transfer_from.get_playlists()
@@ -67,10 +72,8 @@ def playlist_select(transfer_from, transfer_to):
         if 'n' in view_songs:
             break
         list_num = input("Enter a playlist number to view the songs in this playlist-> ")
-        playlist_id = playlist_list[int(list_num)].playlist_id
-        song_list = transfer_from.get_songs(playlist_id)
-        for song in song_list:
-            print(f"Track Name: {song.name}, Artist: {song.artist}")
+        playlist_sel = playlist_list[int(list_num)]
+        get_all_songs(playlist_sel)
         input("\nPress enter to return.")
         if os.name == 'nt':
             os.system('cls')
