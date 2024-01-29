@@ -2,8 +2,8 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from POCsong import POCsong
-from POCplaylist import POCplaylist
+from proof_of_concept.POCsong import POCsong
+from proof_of_concept.POCplaylist import POCplaylist
 
 class POCspotify:
     ### POCspotify class variables ###
@@ -31,8 +31,8 @@ class POCspotify:
         auth_url = sp_oauth.get_authorize_url()
         print(f"Please go to {auth_url}")
         redirected_url = input("Paste the redirected URL here: ")
-        #token_info = sp_oauth.get_access_token(redirected_url)
-        token_info = sp_oauth.get_cached_token()
+        token_info = sp_oauth.get_access_token(redirected_url)
+        #token_info = sp_oauth.get_cached_token()
         access_token = token_info['access_token']
         self.sp = spotipy.Spotify(auth=access_token)
 

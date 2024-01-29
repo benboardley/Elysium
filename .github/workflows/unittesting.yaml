@@ -1,7 +1,10 @@
 name: Run Tests
 
 on:
-  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
       - dev  # Change this to the branch you want to trigger the workflow on
 
@@ -16,13 +19,16 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.10  # Change this to your Python version
+        python-version: 3.8  # Change this to your Python version
 
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt  # Adjust based on your project setup
 
+    - name: Configure Environment Variables
+      run: echo "${{ secrets.KEYS_ENV_CONTENTS }}" > keys.env
+      
     - name: Run Tests
       run: |
-        python -m unittest  # Adjust the test command based on your project setup
+        python -m unittest testing.test_POCsong  # Adjust the test command based on your project setup
