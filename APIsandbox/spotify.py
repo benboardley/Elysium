@@ -1,7 +1,14 @@
 import spotipy
 import os
 from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Construct the path to the .env file
+dotenv_path = os.path.join(script_dir, '../keys.env')
+
+# Load the .env file
+load_dotenv(dotenv_path=dotenv_path, verbose=True)
 #Spotify Credentials
 client_id = os.environ["client_id"]
 client_secret = os.environ["client_secret"]
