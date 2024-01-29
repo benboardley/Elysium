@@ -53,10 +53,11 @@ def transfer_type():
     )
     return int(selection)
 
-
+"""
 def get_all_songs(playlist_obj):
     for track in playlist_obj.track_list:
         print(f"Track Name: {track.name}, Artist: {track.artist}")
+"""
 
 
 ### Select Playlist for Transfer ###
@@ -64,7 +65,7 @@ def playlist_select(transfer_from, transfer_to):
     playlist_list = transfer_from.get_playlists()
     while True:
         for i, playlist in enumerate(playlist_list):
-            print(f"({i}) - Playlist Name: {playlist.name}")
+            print(f"({i}) - Playlist Name: {playlist[0]}")
         view_songs = input(
             "Would you like to view the songs in a playlist before making your selection?\n"
             "(y/n) "
@@ -72,8 +73,10 @@ def playlist_select(transfer_from, transfer_to):
         if 'n' in view_songs:
             break
         list_num = input("Enter a playlist number to view the songs in this playlist-> ")
-        playlist_sel = playlist_list[int(list_num)]
-        get_all_songs(playlist_sel)
+        playlist_id = playlist_list[int(list_num)][1]
+        track_dict = transfer_from.get_songs_from_playlist(playlist_id)
+        for track, artist in track_dict.items():
+            print(f"Track Name: {track}, Artist: {artist}")
         input("\nPress enter to return.")
         if os.name == 'nt':
             os.system('cls')
@@ -85,13 +88,24 @@ def playlist_select(transfer_from, transfer_to):
         f'Selection (0-{num_playlists}): '
                             )
     playlist_sel = playlist_list[int(playlist_num)]
-    return playlist_sel
+    playlist_obj = transfer_from.create_playlist_obj(playlist_sel[0], playlist_sel[1])
+    return playlist_obj
+
+
+def song_select(transfer_from, transfer_to):
+    track_list = transfer_from.top_ten_tracks()
+    print("Your top tracks:")
+    for i, track in enumerate(track_list):
+        print(f"({i}) - {track['name']} by {track['artists'][0]['name']}")
+    song_num = input("Select a song by choosing a number 0-9: ")
+    song_sel = track_list[int(song_num)]
+    song = transfer_from.create_song_obj(song_sel)
+    return song
 
 
 ### Song Transfer ###
 def song_transfer(transfer_from, transfer_to):
     pass
-
 
 
 if __name__ == '__main__':
@@ -134,20 +148,22 @@ if __name__ == '__main__':
     transfer_to = spotify
     if transfer_type():
         ### User selected playlist ###
-        #create a variable that holds what playlist to select
-        playlist_sel = playlist_select(transfer_from, transfer_to)
+        # variable created that holds playlist object
+        playlist_obj = playlist_select(transfer_from, transfer_to)
     else:
         ### User selected song ###
         # Populate song selection
-        song_sel = transfer_from.top_ten_tracks()
+        song_sel = song_select(transfer_from, transfer_to)
+        song_name = song_sel.name
+        song_artist = song_sel.artist
+        print(f'Selected song: {song_name} by {song_artist}')
         transfer_sel = input(
             "Would you like to transfer this song to a playlist as well as your library?\n"
             "(y/n) "
         )
         if 'y' in transfer_sel:
-            transfer_to.get_playlists()
-        print(song_sel)
-
+            playlist_obj = playlist_select(transfer_from, transfer_to)
+        print('Still need to write to spotify')
 
     ### Transfer data to user specifications ### 
 
