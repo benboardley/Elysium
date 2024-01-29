@@ -2,8 +2,8 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from POCsong import POCsong
-from POCplaylist import POCplaylist
+from proof_of_concept.POCsong import POCsong
+from proof_of_concept.POCplaylist import POCplaylist
 
 class POCspotify:
     ### POCspotify class variables ###
