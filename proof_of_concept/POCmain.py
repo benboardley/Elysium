@@ -61,7 +61,7 @@ def get_all_songs(playlist_obj):
 
 
 ### Select Playlist for Transfer ###
-def playlist_select(transfer_from, transfer_to):
+def playlist_select(transfer_from):
     playlist_list = transfer_from.get_playlists()
     while True:
         for i, playlist in enumerate(playlist_list):
@@ -92,7 +92,7 @@ def playlist_select(transfer_from, transfer_to):
     return playlist_obj
 
 
-def song_select(transfer_from, transfer_to):
+def song_select(transfer_from):
     track_list = transfer_from.top_ten_tracks()
     print("Your top tracks:")
     for i, track in enumerate(track_list):
@@ -136,7 +136,12 @@ if __name__ == '__main__':
     else:
         transfer_from = spotify
         """transfer_to = applmus"""
-    
+
+    ### CONDITIONAL ON APPLE MUSIC ###
+    transfer_from = spotify
+    transfer_to = spotify
+    ##################################
+
     ### Request transfer type | Populate select choices | Request user choice ###
         # Done through populus of returned object from other files
         # and displayed to the user of choice 0-9 along with selection
@@ -144,16 +149,14 @@ if __name__ == '__main__':
         #
         # If song is chosen, request location of which to transfer
         # (list of current user playlists)
-    transfer_from = spotify
-    transfer_to = spotify
     if transfer_type():
         ### User selected playlist ###
         # variable created that holds playlist object
-        playlist_obj = playlist_select(transfer_from, transfer_to)
+        playlist_obj = playlist_select(transfer_from)
     else:
         ### User selected song ###
         # Populate song selection
-        song_sel = song_select(transfer_from, transfer_to)
+        song_sel = song_select(transfer_from)
         song_name = song_sel.name
         song_artist = song_sel.artist
         print(f'Selected song: {song_name} by {song_artist}')
@@ -162,7 +165,7 @@ if __name__ == '__main__':
             "(y/n) "
         )
         if 'y' in transfer_sel:
-            playlist_obj = playlist_select(transfer_from, transfer_to)
+            playlist_obj = playlist_select(transfer_from)
         print('Still need to write to spotify')
 
     ### Transfer data to user specifications ### 
