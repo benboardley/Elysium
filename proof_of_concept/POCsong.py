@@ -1,4 +1,5 @@
 class POCsong:
+
     ### POCspotify class variables ###
     def __init__(self, track, audio_features, origin=None):
         self.name = track['name']

@@ -2,8 +2,8 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from POCsong import POCsong
-from POCplaylist import POCplaylist
+from proof_of_concept.POCsong import POCsong
+from proof_of_concept.POCplaylist import POCplaylist
 
 class POCspotify:
     ### POCspotify class variables ###
@@ -31,8 +31,8 @@ class POCspotify:
         auth_url = sp_oauth.get_authorize_url()
         print(f"Please go to {auth_url}")
         redirected_url = input("Paste the redirected URL here: ")
-        #token_info = sp_oauth.get_access_token(redirected_url)
-        token_info = sp_oauth.get_cached_token()
+        token_info = sp_oauth.get_access_token(redirected_url)
+        #token_info = sp_oauth.get_cached_token()
         access_token = token_info['access_token']
         self.sp = spotipy.Spotify(auth=access_token)
 
@@ -58,16 +58,31 @@ class POCspotify:
         print(f"Duration: {audio_features['duration_ms']} milliseconds")
     """
     def top_ten_tracks(self):
+        track_list = []
         top_tracks = self.sp.current_user_top_tracks(limit=10)
-
-        print("Your top tracks:")
-        for i, track in enumerate(top_tracks['items']):
-            print(f"({i}) - {track['name']} by {track['artists'][0]['name']}")
-        song_num = input("Select a song by choosing a number 0-9: ")
-        song_sel = top_tracks['items'][int(song_num)]
-        return song_sel
+        for track in top_tracks['items']:
+            track_list.append(track)
+        return track_list
 
     ### This needs to be changed to create song and playlist objects elsewhere ###
+    def get_playlists(self):
+        # return: a list of playlist objects
+        playlist_list = []
+        playlists = self.sp.current_user_playlists()
+        for playlist in playlists['items']:
+            playlist_list.append([playlist['name'], playlist['id']])
+        return playlist_list
+    
+
+    def get_songs_from_playlist(self, playlist_id):
+        track_dict = {}
+        tracks = self.sp.playlist_tracks(playlist_id)
+        for track in tracks['items']:
+            track_dict[track['track']['name']] = track['track']['artists'][0]['name']
+        return track_dict
+
+
+    """
     def get_playlists(self):
         # return: a list of playlist objects
         playlist_list = []
@@ -80,7 +95,7 @@ class POCspotify:
                 track_list.append(self.create_song_obj(track))
             playlist_list.append(self.create_playlist_obj(playlist['name'], playlist_id, track_list))
         return playlist_list
-
+    """
 
     def add_songs(self):
         pass
@@ -100,5 +115,10 @@ class POCspotify:
         return POCsong(track, audio_features, origin = 'spotify')
     
 
-    def create_playlist_obj(self, name, id, track_list):
-        return POCplaylist(name, id, track_list, origin = 'spotify')
+    def create_playlist_obj(self, name, playlist_id):
+        track_list = []
+        tracks = self.sp.playlist_tracks(playlist_id)
+        for track in tracks['items']:
+            track_list.append(self.create_song_obj(track))
+        return POCplaylist(name, playlist_id, track_list, origin = 'spotify')
+    
