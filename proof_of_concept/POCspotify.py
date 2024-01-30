@@ -102,7 +102,7 @@ class POCspotify:
         for song in song_list:
             song_uris.append(song['track']['uri'])
         if location:
-            self.sp.playlist_add_items(song_uris)
+            self.sp.playlist_add_items(location, song_uris)
         self.sp.current_user_saved_tracks_add(song_uris)
 
 
