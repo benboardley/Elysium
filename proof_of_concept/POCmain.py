@@ -153,6 +153,8 @@ if __name__ == '__main__':
         ### User selected playlist ###
         # variable created that holds playlist object
         playlist_obj = playlist_select(transfer_from)
+        playlist_obj.name = "Test Elysium"
+        transfer_from.add_playlist(playlist_obj)
     else:
         ### User selected song ###
         # Populate song selection
