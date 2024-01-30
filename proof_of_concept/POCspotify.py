@@ -2,8 +2,8 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from proof_of_concept.POCsong import POCsong
-from proof_of_concept.POCplaylist import POCplaylist
+from POCsong import POCsong
+from POCplaylist import POCplaylist
 
 class POCspotify:
     ### POCspotify class variables ###
@@ -97,8 +97,13 @@ class POCspotify:
         return playlist_list
     """
 
-    def add_songs(self):
-        pass
+    def add_songs(self, song_list, location):
+        song_uris = []
+        for song in song_list:
+            song_uris.append(song['track']['uri'])
+        if location:
+            self.sp.playlist_add_items(location, song_uris)
+        self.sp.current_user_saved_tracks_add(song_uris)
 
 
     def add_playlist(self, playlist):
