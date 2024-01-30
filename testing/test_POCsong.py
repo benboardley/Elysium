@@ -24,11 +24,10 @@ class TestMyModule(unittest.TestCase):
         access_token = token_info['access_token']
         sp = Spotify(auth=access_token)
         self.spotify.sp = sp
-        self.track = None
-    def test_song_name(self):
         results = self.spotify.sp.search(q='artist:Lil Wayne track:Mona Lisa', type='track')
         track = results['tracks']['items'][0]
         self.track = self.spotify.create_song_obj(track)
+    def test_song_name(self):
         self.assertEqual(self.track.name, 'Mona Lisa (feat. Kendrick Lamar)')
     def test_song_artist(self):
         self.assertEqual(self.track.artist, 'Lil Wayne')

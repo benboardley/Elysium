@@ -106,8 +106,17 @@ class POCspotify:
         self.sp.current_user_saved_tracks_add(song_uris)
 
 
-    def add_playlist(self):
-        pass
+    def add_playlist(self, playlist):
+        playlist_name = playlist.name
+        playlist_description = 'Elysium Generated' # ????????
+        user_id = self.sp.current_user()['id']  # Get the current user's ID
+
+        playlist = self.sp.user_playlist_create(user=user_id, name=playlist_name, public=False, description=playlist_description)
+
+        # Add songs to the playlist
+        tracks = playlist.tracks
+        #sp.user_playlist_add_tracks(user=user_id, playlist_id=playlist['id'], tracks=track_uris)
+        self.add_songs(tracks,playlist.playlist_id)
 
     def create_song_obj(self, track):
         #print(track)
