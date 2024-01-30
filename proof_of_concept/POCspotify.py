@@ -21,7 +21,7 @@ class POCspotify:
         self.client_id = os.environ["client_id"]
         self.client_secret = os.environ["client_secret"]
         self.redirect_uri = 'http://localhost:3000/callback'
-        self.scope = 'user-library-read user-top-read' # Take as argument l8r
+        self.scope = 'user-library-read user-top-read playlist-modify-private playlist-modify-public' # Take as argument l8r
         self.sp = None
 
 
