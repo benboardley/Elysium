@@ -1,0 +1,69 @@
+openapi: 3.0.0
+info:
+  title: Elysium API
+  version: 1.0.0
+paths:
+  /authenticate:
+    post:
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user
+                  example: john_doe
+                password:
+                  type: string
+                  format: password
+                  description: The user's password
+                  example: secure_password
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        '401':
+          description: Unauthorized - Invalid credentials
+
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The desired username for registration
+                  example: new_user
+                password:
+                  type: string
+                  format: password
+                  description: The password for the new user
+                  example: secure_password
+                email:
+                  type: string
+                  format: email
+                  description: The email address of the new user
+                  example: new_user@example.com
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              example:
+                message: "User registered successfully"
+        '400':
+          description: Bad Request - Invalid request payload
+        '409':
+          description: Conflict - User with the given username or email already exists
