@@ -89,6 +89,7 @@ def playlist_select(transfer_from):
                             )
     playlist_sel = playlist_list[int(playlist_num)]
     playlist_obj = transfer_from.create_playlist_obj(playlist_sel[0], playlist_sel[1])
+    print([track.name for track in playlist_obj.track_list])
     return playlist_obj
 
 
@@ -171,7 +172,6 @@ if __name__ == '__main__':
             transfer_to.add_songs([song_obj], playlist_obj.playlist_id)
         else:
             transfer_to.add_songs([song_obj], None)
-        print('Still need to write to spotify')
 
     ### Transfer data to user specifications ### 
 

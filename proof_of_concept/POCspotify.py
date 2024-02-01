@@ -21,7 +21,7 @@ class POCspotify:
         self.client_id = os.environ["client_id"]
         self.client_secret = os.environ["client_secret"]
         self.redirect_uri = 'http://localhost:3000/callback'
-        self.scope = 'user-library-read user-top-read playlist-modify-private playlist-modify-public' # Take as argument l8r
+        self.scope = 'user-library-read user-top-read playlist-modify-private playlist-modify-public user-library-modify'
         self.sp = None
 
 
@@ -100,7 +100,7 @@ class POCspotify:
     def add_songs(self, song_list, location):
         song_uris = []
         for song in song_list:
-            song_uris.append(song['track']['uri'])
+            song_uris.append(song.uri)
         if location:
             self.sp.playlist_add_items(location, song_uris)
         self.sp.current_user_saved_tracks_add(song_uris)
@@ -114,7 +114,7 @@ class POCspotify:
         playlist = self.sp.user_playlist_create(user=user_id, name=playlist_name, public=False, description=playlist_description)
 
         # Add songs to the playlist
-        tracks = playlist.tracks
+        tracks = playlist.track_list
         #sp.user_playlist_add_tracks(user=user_id, playlist_id=playlist['id'], tracks=track_uris)
         self.add_songs(tracks,playlist.playlist_id)
 
