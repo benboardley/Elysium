@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from proof_of_concept.POCsong import POCsong
-#from POCplaylist import POClist
+from proof_of_concept.POCplaylist import POClist
 from proof_of_concept.POCspotify import POCspotify
 from proof_of_concept.POCapplmus import POCapplmus
 
@@ -89,6 +89,7 @@ def playlist_select(transfer_from):
                             )
     playlist_sel = playlist_list[int(playlist_num)]
     playlist_obj = transfer_from.create_playlist_obj(playlist_sel[0], playlist_sel[1])
+    print([track.name for track in playlist_obj.track_list])
     return playlist_obj
 
 
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     ### Set Up Environment variables ###
     setup_env()
     spotify = applmus = None
-    song_sel = playlist_sel = None
+    song_obj = playlist_obj = None
     transfer_to = transfer_from = transfer_sel = None
 
     ### Authorization of Spotify ###
@@ -153,12 +154,14 @@ if __name__ == '__main__':
         ### User selected playlist ###
         # variable created that holds playlist object
         playlist_obj = playlist_select(transfer_from)
+        playlist_obj.name = "Test Elysium"
+        transfer_from.add_playlist(playlist_obj)
     else:
         ### User selected song ###
         # Populate song selection
-        song_sel = song_select(transfer_from)
-        song_name = song_sel.name
-        song_artist = song_sel.artist
+        song_obj = song_select(transfer_from)
+        song_name = song_obj.name
+        song_artist = song_obj.artist
         print(f'Selected song: {song_name} by {song_artist}')
         transfer_sel = input(
             "Would you like to transfer this song to a playlist as well as your library?\n"
@@ -166,7 +169,9 @@ if __name__ == '__main__':
         )
         if 'y' in transfer_sel:
             playlist_obj = playlist_select(transfer_from)
-        print('Still need to write to spotify')
+            transfer_to.add_songs([song_obj], playlist_obj.playlist_id)
+        else:
+            transfer_to.add_songs([song_obj], None)
 
     ### Transfer data to user specifications ### 
 

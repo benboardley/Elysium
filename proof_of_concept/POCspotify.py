@@ -21,7 +21,7 @@ class POCspotify:
         self.client_id = os.environ["client_id"]
         self.client_secret = os.environ["client_secret"]
         self.redirect_uri = 'http://localhost:3000/callback'
-        self.scope = 'user-library-read user-top-read' # Take as argument l8r
+        self.scope = 'user-library-read user-top-read playlist-modify-private playlist-modify-public user-library-modify'
         self.sp = None
 
 
@@ -31,8 +31,8 @@ class POCspotify:
         auth_url = sp_oauth.get_authorize_url()
         print(f"Please go to {auth_url}")
         redirected_url = input("Paste the redirected URL here: ")
-        token_info = sp_oauth.get_access_token(redirected_url)
-        #token_info = sp_oauth.get_cached_token()
+        #token_info = sp_oauth.get_access_token(redirected_url)
+        token_info = sp_oauth.get_cached_token()
         access_token = token_info['access_token']
         self.sp = spotipy.Spotify(auth=access_token)
 
@@ -78,6 +78,7 @@ class POCspotify:
         track_dict = {}
         tracks = self.sp.playlist_tracks(playlist_id)
         for track in tracks['items']:
+            print(track['track']['name'])
             track_dict[track['track']['name']] = track['track']['artists'][0]['name']
         return track_dict
 
@@ -97,12 +98,27 @@ class POCspotify:
         return playlist_list
     """
 
-    def add_songs(self):
-        pass
+    def add_songs(self, song_list, location):
+        song_uris = []
+        for song in song_list:
+            song_uris.append(song.uri)
+        if location:
+            self.sp.playlist_add_items(location, song_uris)
+        self.sp.current_user_saved_tracks_add(song_uris)
 
 
-    def add_playlist(self):
-        pass
+    def add_playlist(self, playlist):
+        playlist_name = playlist.name
+        playlist_description = 'Elysium Generated' # ????????
+        user_id = self.sp.current_user()['id']  # Get the current user's ID
+
+        new_playlist = self.sp.user_playlist_create(user=user_id, name=playlist_name, public=False, description=playlist_description)
+
+        playlist_id = new_playlist['id']
+        # Add songs to the playlist
+        tracks = playlist.track_list
+        #sp.user_playlist_add_tracks(user=user_id, playlist_id=playlist['id'], tracks=track_uris)
+        self.add_songs(tracks,playlist.playlist_id)
 
     def create_song_obj(self, track):
         #print(track)
