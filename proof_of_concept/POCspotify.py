@@ -26,15 +26,19 @@ class POCspotify:
 
 
     def request_auth(self):
-        sp_oauth = SpotifyOAuth(
-            self.client_id, self.client_secret, self.redirect_uri, scope=self.scope)
-        auth_url = sp_oauth.get_authorize_url()
-        print(f"Please go to {auth_url}")
-        redirected_url = input("Paste the redirected URL here: ")
-        #token_info = sp_oauth.get_access_token(redirected_url)
-        token_info = sp_oauth.get_cached_token()
-        access_token = token_info['access_token']
-        self.sp = spotipy.Spotify(auth=access_token)
+        try:
+            sp_oauth = SpotifyOAuth(
+                self.client_id, self.client_secret, self.redirect_uri, scope=self.scope)
+            auth_url = sp_oauth.get_authorize_url()
+            print(f"Please go to {auth_url}")
+            redirected_url = input("Paste the redirected URL here: ")
+            #token_info = sp_oauth.get_access_token(redirected_url)
+            token_info = sp_oauth.get_cached_token()
+            access_token = token_info['access_token']
+            self.sp = spotipy.Spotify(auth=access_token)
+            return True
+        except:
+            return False
 
     """
     def top_ten_tracks(self):
@@ -59,27 +63,36 @@ class POCspotify:
     """
     def top_ten_tracks(self):
         track_list = []
-        top_tracks = self.sp.current_user_top_tracks(limit=10)
-        for track in top_tracks['items']:
-            track_list.append(track)
+        try:
+            top_tracks = self.sp.current_user_top_tracks(limit=10)
+            for track in top_tracks['items']:
+                track_list.append(track)
+        except:
+            pass
         return track_list
 
     ### This needs to be changed to create song and playlist objects elsewhere ###
     def get_playlists(self):
         # return: a list of playlist objects
         playlist_list = []
-        playlists = self.sp.current_user_playlists()
-        for playlist in playlists['items']:
-            playlist_list.append([playlist['name'], playlist['id']])
+        try:
+            playlists = self.sp.current_user_playlists()
+            for playlist in playlists['items']:
+                playlist_list.append([playlist['name'], playlist['id']])
+        except:
+            pass
         return playlist_list
     
 
     def get_songs_from_playlist(self, playlist_id):
         track_dict = {}
-        tracks = self.sp.playlist_tracks(playlist_id)
-        for track in tracks['items']:
-            print(track['track']['name'])
-            track_dict[track['track']['name']] = track['track']['artists'][0]['name']
+        try:
+            tracks = self.sp.playlist_items(playlist_id, additional_types=('track',))
+            for track in tracks['items']:
+                #print(track['track']['name'])
+                track_dict[track['track']['name']] = track['track']['artists'][0]['name']
+        except:
+            pass
         return track_dict
 
 
@@ -100,41 +113,56 @@ class POCspotify:
 
     def add_songs(self, song_list, location):
         song_uris = []
-        for song in song_list:
-            song_uris.append(song.uri)
-        if location:
-            self.sp.playlist_add_items(location, song_uris)
-        self.sp.current_user_saved_tracks_add(song_uris)
+        try:
+            for song in song_list:
+                song_uris.append(song.uri)
+            if location:
+                self.sp.playlist_add_items(location, song_uris)
+            self.sp.current_user_saved_tracks_add(song_uris)
+            return True
+        except:
+            return False
 
 
     def add_playlist(self, playlist):
-        playlist_name = playlist.name
-        playlist_description = 'Elysium Generated' # ????????
-        user_id = self.sp.current_user()['id']  # Get the current user's ID
+        try:
+            playlist_name = playlist.name
+            playlist_description = 'Elysium Generated' # ????????
+            user_id = self.sp.current_user()['id']  # Get the current user's ID
 
-        new_playlist = self.sp.user_playlist_create(user=user_id, name=playlist_name, public=False, description=playlist_description)
+            new_playlist = self.sp.user_playlist_create(user=user_id, name=playlist_name, public=False, description=playlist_description)
 
-        playlist_id = new_playlist['id']
-        # Add songs to the playlist
-        tracks = playlist.track_list
-        #sp.user_playlist_add_tracks(user=user_id, playlist_id=playlist['id'], tracks=track_uris)
-        self.add_songs(tracks,playlist.playlist_id)
+            playlist.playlist_id = new_playlist['id']
+            # Add songs to the playlist
+            tracks = playlist.track_list
+            #sp.user_playlist_add_tracks(user=user_id, playlist_id=playlist['id'], tracks=track_uris)
+            if self.add_songs(tracks,playlist.playlist_id):
+                return True
+        except:
+            pass
+        return False
 
     def create_song_obj(self, track):
         #print(track)
-        if 'track' in track:
-            track = track['track']
-        track_uri = track['uri']
-        #print(track)
-        audio_features = self.sp.audio_features(track_uri)[0]
-        #print(audio_features)
-        return POCsong(track, audio_features, origin = 'spotify')
+        try:
+            if 'track' in track:
+                track = track['track']
+            track_uri = track['uri']
+            #print(track)
+            audio_features = self.sp.audio_features(track_uri)[0]
+            #print(audio_features)
+            return POCsong(track, audio_features, origin = 'spotify')
+        except:
+            return None
     
 
     def create_playlist_obj(self, name, playlist_id):
-        track_list = []
-        tracks = self.sp.playlist_tracks(playlist_id)
-        for track in tracks['items']:
-            track_list.append(self.create_song_obj(track))
-        return POCplaylist(name, playlist_id, track_list, origin = 'spotify')
+        try:
+            track_list = []
+            tracks = self.sp.playlist_tracks(playlist_id)
+            for track in tracks['items']:
+                track_list.append(self.create_song_obj(track))
+            return POCplaylist(name, playlist_id, track_list, origin = 'spotify')
+        except:
+            return None
     
