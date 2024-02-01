@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv
-from POCsong import POCsong
-#from POCplaylist import POClist
-from POCspotify import POCspotify
-from POCapplmus import POCapplmus
+from proof_of_concept.POCsong import POCsong
+from proof_of_concept.POCplaylist import POClist
+from proof_of_concept.POCspotify import POCspotify
+from proof_of_concept.POCapplmus import POCapplmus
 
 ### Set Up Environment variables ###
 def setup_env():
