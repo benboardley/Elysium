@@ -7,7 +7,6 @@ from proof_of_concept.POCplaylist import POCplaylist
 
 class POCspotify:
     ### POCspotify class variables ###
-
     def __init__(self):
         script_dir = os.path.dirname(os.path.abspath(__file__))
 
