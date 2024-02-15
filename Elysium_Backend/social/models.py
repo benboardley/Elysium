@@ -1,5 +1,7 @@
 from django.db import models
 from user.models import Profile
+from model_utils.managers import InheritanceManager
+from music.models import Album, Song, Artist, Playlist
 # Create your models here.
 
 class Post(models.Model):
@@ -9,9 +11,8 @@ class Post(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     caption = models.TextField()
+    objects = InheritanceManager()
 
-    
-'''
 class SongPost(Post):
     # Fields specific to song posts
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
@@ -23,4 +24,3 @@ class AlbumPost(Post):
 class PlaylistPost(Post):
     # Fields specific to playlist posts
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
-'''

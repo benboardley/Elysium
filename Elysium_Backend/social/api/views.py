@@ -113,3 +113,19 @@ class PublicFeed(APIView):
 
         return Response(serialized_feed.data, status=status.HTTP_200_OK)
 
+'''
+serializer_mapping = {
+    Post: PostSerializer,
+    SongPost: SongPostSerializer,
+    AlbumPost: AlbumPostSerializer,
+}
+
+all_posts = Post.objects.all()
+
+serialized_data = []
+for post in all_posts:
+    model_class = post.__class__
+    serializer_class = serializer_mapping.get(model_class, PostSerializer)
+    serializer = serializer_class(post)
+    serialized_data.append(serializer.data)
+'''
