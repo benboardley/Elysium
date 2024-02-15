@@ -3,13 +3,14 @@ from django.http import JsonResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import get_object_or_404
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
-from .serializers import UserSerializer
-from .models import *
+from .serializers import UserSerializer, ProfileSerializer
+from ..models import *
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -32,7 +33,7 @@ class UserRegistrationView(generics.CreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserLoginView(ObtainAuthToken):
+class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
         user = authenticate(username=request.data['username'], password=request.data['password'])
         if user:
@@ -41,21 +42,38 @@ class UserLoginView(ObtainAuthToken):
         else:
             return Response({'error': 'Invalid credentials'}, status=401)
         
-class TestLogin(APIView):
+class ProfileView(APIView):
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
+
+    def get(self, request,id):
+        profile = get_object_or_404(Profile,id=id)
+        print(profile.post_set.first())
+        serializer = ProfileSerializer(profile, context={'request': request})
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def put(self, request, id):
+        profile = get_object_or_404(Profile, id=id)
+        profile_serializer = ProfileSerializer(profile, data=request.data)
+
+        if profile_serializer.is_valid():
+            profile = profile_serializer.save()
+            return Response({"message":"update successful"}, status=status.HTTP_202_ACCEPTED)
+        return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, id):
+        profile = get_object_or_404(Profile, id=id)
+        profile.delete()
+        return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
+
+        
+class Follow(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         # Your endpoint logic here
         user = self.request.user
-        user_permissions = user.get_all_permissions()
-
-        response_data = {
-            'message': 'Welcome to Elysium',
-            'user_id': user.id,
-            'username': user.username,
-            'user_permissions': list(user_permissions),
-            # Add other user details as needed
-        }
-
+        profile = user.profile.first()
+        following = user.profile.follow.all()
+        response_data = Profile(following, many=True)
         return Response(response_data, status=status.HTTP_200_OK)

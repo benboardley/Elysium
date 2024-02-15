@@ -12,14 +12,16 @@ class CustomUser(AbstractUser):
     pass
 
 class Profile(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    id_user = models.IntegerField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="profile")
+    #id_user = models.IntegerField()
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)
     #profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     spotify_access_token = models.CharField(max_length=50, blank=True)
     apple_access_token = models.CharField(max_length=50, blank=True)
-    following = models.ManyToManyField(
+    creation_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    follow = models.ManyToManyField(
         "self",
         related_name="followers",
         symmetrical=False,
