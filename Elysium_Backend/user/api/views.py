@@ -9,6 +9,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
+#from rest_auth.views import LoginView
 from .serializers import UserSerializer, ProfileSerializer
 from ..models import *
 
@@ -33,14 +34,53 @@ class UserRegistrationView(generics.CreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+'''
 class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
+        provider = request.data.get('provider')  # You may add a 'provider' field in the request data
+        if provider:
+            # Handle OAuth authentication
+            return self.handle_oauth_login(request, provider)
+        else:
+            # Handle custom authentication
+            return self.handle_custom_login(request)
+
+    def handle_custom_login(self, request):
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user:
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=401)
+
+    def handle_oauth_login(self, request, provider):
+        # Implement OAuth authentication logic for the specified provider
+        # You can use a library like `allauth` for this purpose
+        # Example: Google OAuth2
+        if provider == 'google':
+            adapter = GoogleOAuth2Adapter()
+            client = OAuthClient(adapter, allauth_settings.SOCIALACCOUNT_QUERY_EMAIL)
+            state = SocialAccount.generate_nonce()
+            login_url = adapter.get_authorize_url(
+                state,
+                redirect_uri=adapter.get_callback_url(request, app=adapter.provider_id),
+            )
+            return JsonResponse({'login_url': login_url, 'state': state})
+        else:
+            return Response({'error': 'Invalid OAuth provider'}, status=400)
+'''
+class UserLoginView(APIView):
+    
+    def post(self, request, *args, **kwargs):
+        print(request.data)
         user = authenticate(username=request.data['username'], password=request.data['password'])
         if user:
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
         else:
-            return Response({'error': 'Invalid credentials'}, status=401)
+            return Response({'error': 'Invalid credentials'}, status=401)      
+
         
 class ProfileView(APIView):
     #authentication_classes = [TokenAuthentication]
@@ -66,7 +106,7 @@ class ProfileView(APIView):
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
 
         
-class Follow(APIView):
+class Following(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -74,6 +114,17 @@ class Follow(APIView):
         # Your endpoint logic here
         user = self.request.user
         profile = user.profile.first()
-        following = user.profile.follow.all()
-        response_data = Profile(following, many=True)
-        return Response(response_data, status=status.HTTP_200_OK)
+        following = profile.follow.all()
+        response_data = ProfileSerializer(following, many=True)
+        return Response(response_data.data, status=status.HTTP_200_OK)
+    
+class Follow(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id, *args, **kwargs):
+        # Your endpoint logic here
+        user = self.request.user
+        profile = user.profile.follow.get(id=id)
+        response_data = ProfileSerializer(following, many=True)
+        return Response(response_data.data, status=status.HTTP_200_OK)

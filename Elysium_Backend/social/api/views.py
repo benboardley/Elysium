@@ -74,11 +74,42 @@ class FollowFeed(APIView):
         user = request.user
         profile = user.profile.first()
 
-        following=profile.followers.all()
-        feed=[]
+        following = profile.follow.all()
+        feed = []
+
         for prof in following:
             feed.extend(prof.post_set.all())
 
-        feed.sort
-        serialized_feed=[]
+        # Sort the feed based on timestamp
+        sorted_feed = sorted(feed, key=lambda post: post.creation_time, reverse=True)
+
+        serialized_feed = PostSerializer(sorted_feed, many=True)
+        # Now you can proceed with the serialized_feed using sorted_feed
+        # ...
+
+        return Response(serialized_feed.data, status=status.HTTP_200_OK)
+    
+class PublicFeed(APIView):
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        #profile = user.profile.first()
+
+        users = Profile.objects.exclude(user=user)
+        feed = []
+
+        for prof in users:
+            feed.extend(prof.post_set.all())
+
+        # Sort the feed based on timestamp
+        sorted_feed = sorted(feed, key=lambda post: post.creation_time, reverse=True)
+
+        serialized_feed = PostSerializer(sorted_feed, many=True)
+        # Now you can proceed with the serialized_feed using sorted_feed
+        # ...
+
+        return Response(serialized_feed.data, status=status.HTTP_200_OK)
 
