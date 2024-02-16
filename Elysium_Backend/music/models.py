@@ -1,5 +1,5 @@
 from django.db import models
-from ..user.models import Profile
+from user.models import Profile
 # Create your models here.
 
 
@@ -19,7 +19,7 @@ class Album(models.Model):
     thumb_nail = models.URLField(max_length=255, blank=True, null=True)
 
 class Song(models.Model):
-    album = models.ForeignKey(Album, null=True, blank=True)
+    album = models.ForeignKey(Album, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     artist = models.CharField(max_length=255)
     artist_features = models.JSONField(default=list)

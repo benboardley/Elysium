@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'user.apps.UserConfig',
     'social',
+    'music',
     'corsheaders'
 ]
 
@@ -56,7 +57,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8081",  # Replace with your client's origin
+    "http://localhost:8080",  # Replace with your client's origin
 ]
 
 CORS_ALLOW_METHODS = [

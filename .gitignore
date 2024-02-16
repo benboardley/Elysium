@@ -44,5 +44,9 @@ yarn-error.*
 #Elysium venv
 Elysium
 
+
+#package lock
+package-lock.json
+
 #cache
 __pycache__

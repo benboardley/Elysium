@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     # Your custom fields here
-    # Should already containt:
+    # Should already contain:
     # username
     # email
     # password
@@ -11,7 +11,13 @@ class CustomUser(AbstractUser):
     # is_active, is_staff, is_superuser
     spotify_access_token = models.CharField(max_length=50, blank=True)
     apple_access_token = models.CharField(max_length=50, blank=True)
-    pass
+
+    # Make username and email unique
+    username = models.CharField(max_length=30, unique=True)
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.username
 
 class Profile(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="profile")

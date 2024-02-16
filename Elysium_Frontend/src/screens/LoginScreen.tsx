@@ -7,27 +7,53 @@ import Button from '../components/Button';
 import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
-import { emailValidator, passwordValidator } from '../core/utils';
+import { nameValidator, passwordValidator } from '../core/utils';
 import { Navigation } from '../types';
-
+import { Platform } from 'react-native';
+import axios from 'axios';
 type Props = {
   navigation: Navigation;
 };
 
 const LoginScreen = ({ navigation }: Props) => {
-  const [email, setEmail] = useState({ value: '', error: '' });
+  const [username, setusername] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
 
   const _onLoginPressed = () => {
-    const emailError = emailValidator(email.value);
+    const usernameError = nameValidator(username.value);
     const passwordError = passwordValidator(password.value);
 
-    if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError });
+    if (usernameError || passwordError) {
+      setusername({ ...username, error: usernameError });
       setPassword({ ...password, error: passwordError });
       return;
     }
-
+    let endpoint = '';
+    if (Platform.OS === 'web') {
+      // Logic for web platform
+      endpoint = 'http://localhost:8000/user/login/';
+    } else if (Platform.OS === 'ios') {
+      // Logic for iOS platform
+      endpoint = 'http://localhost:8000/user/login/';
+    } else if (Platform.OS === 'android') {
+      // Logic for Android platform
+      endpoint = 'http://10.0.0.2:8000/user/login/';
+    } else {
+      // Fallback for other platforms
+      endpoint = 'http://10.0.0.2:8000/user/login/';
+    }
+    axios.post(endpoint, {
+      username: username.value,
+      password: password.value
+    })
+    .then(response => {
+      console.log('API Response:', response.data);
+      navigation.navigate('Dashboard');
+    })
+    .catch(error => {
+      console.error('API Error:', error);
+      // Handle error or show a relevant message to the user
+    });
     navigation.navigate('Dashboard');
   };
 
@@ -40,16 +66,13 @@ const LoginScreen = ({ navigation }: Props) => {
       <Header>Welcome back.</Header>
 
       <TextInput
-        label="Email"
+        label="username"
         returnKeyType="next"
-        value={email.value}
-        onChangeText={text => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
+        value={username.value}
+        onChangeText={text => setusername({ value: text, error: '' })}
+        error={!!username.error}
+        errorText={username.error}
         autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
       />
 
       <TextInput
@@ -70,7 +93,7 @@ const LoginScreen = ({ navigation }: Props) => {
         </TouchableOpacity>
       </View>
 
-      <Button mode="outlined" onPress={_onLoginPressed}>
+      <Button mode="contained" onPress={_onLoginPressed}>
         Login
       </Button>
 

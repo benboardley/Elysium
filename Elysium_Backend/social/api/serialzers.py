@@ -5,6 +5,7 @@ from ..models import Post
 
 class PostSerializer(serializers.ModelSerializer):
     profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
+    creation_time = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Post
         fields = '__all__'

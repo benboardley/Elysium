@@ -11,6 +11,7 @@ class Post(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     caption = models.TextField()
+    title = models.TextField(blank=True)
     objects = InheritanceManager()
 
 class SongPost(Post):

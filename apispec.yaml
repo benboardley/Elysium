@@ -1,69 +1,287 @@
 openapi: 3.0.0
 info:
-  title: Elysium API
+  title: Your API Title
   version: 1.0.0
 paths:
-  /authenticate:
-    post:
-      summary: Authenticate a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  description: The username of the user
-                  example: john_doe
-                password:
-                  type: string
-                  format: password
-                  description: The user's password
-                  example: secure_password
+  /social/posts/:
+    get:
+      summary: Retrieve all posts
+      operationId: getPosts
       responses:
         '200':
-          description: Successful authentication
+          description: A list of posts
           content:
             application/json:
-              example:
-                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        '401':
-          description: Unauthorized - Invalid credentials
-
-  /register:
+              example: |
+                [
+                  {
+                    "id": 1,
+                    "title": "Post 1",
+                    "content": "Content of Post 1",
+                    "creation_time": "2022-02-15T12:34:56Z"
+                  },
+                  {
+                    "id": 2,
+                    "title": "Post 2",
+                    "content": "Content of Post 2",
+                    "creation_time": "2022-02-15T12:45:00Z"
+                  }
+                ]
     post:
-      summary: Register a new user
+      summary: Create a new post
+      operationId: createPost
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  description: The desired username for registration
-                  example: new_user
-                password:
-                  type: string
-                  format: password
-                  description: The password for the new user
-                  example: secure_password
-                email:
-                  type: string
-                  format: email
-                  description: The email address of the new user
-                  example: new_user@example.com
+            example: |
+              {
+                "title": "New Post",
+                "content": "Content of the new post"
+              }
+      responses:
+        '201':
+          description: The created post
+          content:
+            application/json:
+              example: |
+                {
+                  "id": 3,
+                  "title": "New Post",
+                  "content": "Content of the new post",
+                  "creation_time": "2022-02-15T13:00:00Z"
+                }
+  /social/posts/{id}:
+    get:
+      summary: Retrieve a single post by ID
+      operationId: getPostById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the post
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The requested post
+          content:
+            application/json:
+              example: |
+                {
+                  "id": 1,
+                  "title": "Post 1",
+                  "content": "Content of Post 1",
+                  "creation_time": "2022-02-15T12:34:56Z"
+                }
+    put:
+      summary: Update a post by ID
+      operationId: updatePostById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the post
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: |
+              {
+                "title": "Updated Post",
+                "content": "Updated content of the post"
+              }
+      responses:
+        '202':
+          description: The post has been updated successfully
+        '400':
+          description: Invalid request data
+  /social/posts/feed/:
+    get:
+      summary: Retrieve the follow feed
+      operationId: getFollowFeed
+      responses:
+        '200':
+          description: A list of posts in the follow feed
+          content:
+            application/json:
+              example: |
+                [
+                  {
+                    "id": 1,
+                    "title": "Post in Follow Feed",
+                    "content": "Content of Post in Follow Feed",
+                    "creation_time": "2022-02-15T13:30:00Z"
+                  },
+                  {
+                    "id": 2,
+                    "title": "Another Post in Follow Feed",
+                    "content": "Content of Another Post in Follow Feed",
+                    "creation_time": "2022-02-15T14:00:00Z"
+                  }
+                ]
+  /social/posts/public/:
+    get:
+      summary: Retrieve the public feed
+      operationId: getPublicFeed
+      responses:
+        '200':
+          description: A list of public posts
+          content:
+            application/json:
+              example: |
+                [
+                  {
+                    "id": 1,
+                    "title": "Public Post 1",
+                    "content": "Content of Public Post 1",
+                    "creation_time": "2022-02-15T14:30:00Z"
+                  },
+                  {
+                    "id": 2,
+                    "title": "Public Post 2",
+                    "content": "Content of Public Post 2",
+                    "creation_time": "2022-02-15T15:00:00Z"
+                  }
+                ]
+  /user/register/:
+    post:
+      summary: Register a new user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: |
+              {
+                "username": "newuser",
+                "email": "newuser@example.com",
+                "password": "password123",
+                "first_name": "John",
+                "last_name": "Doe"
+              }
       responses:
         '201':
           description: User registered successfully
           content:
             application/json:
-              example:
-                message: "User registered successfully"
+              example: |
+                {
+                  "message": "User registered successfully",
+                  "user_id": 4,
+                  "username": "newuser"
+                }
         '400':
-          description: Bad Request - Invalid request payload
-        '409':
-          description: Conflict - User with the given username or email already exists
+          description: Invalid request data
+  /user/login/:
+    post:
+      summary: User login
+      operationId: userLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: |
+              {
+                "username": "existinguser",
+                "password": "password123"
+              }
+      responses:
+        '200':
+          description: User login successful
+          content:
+            application/json:
+              example: |
+                {
+                  "token": "xyz123"
+                }
+        '401':
+          description: Invalid credentials
+  /user/follow/:
+    get:
+      summary: Retrieve users being followed
+      operationId: getFollowing
+      responses:
+        '200':
+          description: A list of users being followed
+          content:
+            application/json:
+              example: |
+                [
+                  {
+                    "id": 2,
+                    "username": "user2",
+                    "email": "user2@example.com"
+                  },
+                  {
+                    "id": 3,
+                    "username": "user3",
+                    "email": "user3@example.com"
+                  }
+                ]
+  /user/profile/{id}:
+    get:
+      summary: Retrieve user profile by ID
+      operationId: getUserProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user profile
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The requested user profile
+          content:
+            application/json:
+              example: |
+                {
+                  "id": 1,
+                  "user": {
+                    "id": 1,
+                    "username": "existinguser",
+                    "email": "existinguser@example.com"
+                  },
+                  "bio": "User bio",
+                  "location": "User location"
+                }
+    put:
+      summary: Update user profile by ID
+      operationId: updateUserProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user profile
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: |
+              {
+                "bio": "Updated user bio",
+                "location": "Updated user location"
+              }
+      responses:
+        '202':
+          description: User profile has been updated successfully
+        '400':
+          description: Invalid request data
+    delete:
+      summary: Delete user profile by ID
+      operationId: deleteUserProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user profile
+          schema:
+            type: integer
+      responses:
+        '202':
+          description: User profile has been deleted successfully
