@@ -31,4 +31,4 @@ jobs:
       
     - name: Run Tests
       run: |
-        python -m unittest testing.test_POCsong  # Adjust the test command based on your project setup
+        python -m unittest testing.test_POCsong testing.test_POCspotify # Adjust the test command based on your project setup
