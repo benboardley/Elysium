@@ -14,7 +14,7 @@ from ..models import Post
 # Create your views here.
 
 class Posts(APIView):
-    authentication_classes = [TokenAuthentication]
+    #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self,request):

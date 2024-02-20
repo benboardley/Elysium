@@ -9,9 +9,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.views import TokenObtainPairView
 #from rest_auth.views import LoginView
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer
 from ..models import *
+from datetime import datetime
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -33,7 +35,9 @@ class UserRegistrationView(generics.CreateAPIView):
             # If the data is not valid, return a response with errors
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+class MyTokenObtainPairView(TokenObtainPairView):
+    print(datetime.today())
+    serializer_class = MyTokenObtainPairSerializer
 '''
 class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
