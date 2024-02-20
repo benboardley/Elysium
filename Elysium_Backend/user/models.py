@@ -20,7 +20,7 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Profile(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="profile")
     #id_user = models.IntegerField()
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)

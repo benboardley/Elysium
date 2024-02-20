@@ -19,6 +19,7 @@ interface PathRouteProps {
     children: ReactNode;
   }
 
+
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, ...rest }) => {
     const authContext = useContext(AuthContext);
   

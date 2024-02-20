@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
+import { AuthProvider } from './context/AuthContext';
+import { NavigationContainerRef } from '@react-navigation/native';
 import {
   HomeScreen,
   LoginScreen,
@@ -10,47 +12,50 @@ import {
   Dashboard,
 } from './screens';
 
-const Stack = createNativeStackNavigator();
-/*
-const App = () => {
-  const [count, setCount] = useState(0);
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hello from {'\n'}React Native Web!</Text>
-      <TouchableOpacity
-        onPress={() => setCount(count + 1)}
-        style={styles.button}>
-        <Text>Click me!</Text>
-      </TouchableOpacity>
-
-      <Text>You clicked {count} times!</Text>
-      <Text>Hello Mr</Text>
-    </View>
-  );
+type RootStackParamList = {
+  HomeScreen: undefined;
+  LoginScreen: { errorMessage?: string };
+  RegisterScreen: { errorMessage?: string };
+  ForgotPasswordScreen: undefined;
+  Dashboard: undefined;
 };
-*/
-
-
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
+  const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
+
+  // Wrapper component to include AuthProvider for each screen
+  const AuthProviderWrapper = (Component: React.ComponentType<any>) => (props: any) => (
+    <AuthProvider navigation={navigationRef.current}>
+      <Component {...props} />
+    </AuthProvider>
+  );
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName="HomeScreen"
         screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen name="HomeScreen" component={AuthProviderWrapper(HomeScreen)} />
+        <Stack.Screen
+          name="LoginScreen"
+          component={AuthProviderWrapper(LoginScreen)}
+          initialParams={{ errorMessage: '' }}
+        />
+        <Stack.Screen
+          name="RegisterScreen"
+          component={AuthProviderWrapper(RegisterScreen)}
+          initialParams={{ errorMessage: '' }}
+        />
         <Stack.Screen
           name="ForgotPasswordScreen"
-          component={ForgotPasswordScreen}
+          component={AuthProviderWrapper(ForgotPasswordScreen)}
         />
-        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Dashboard" component={AuthProviderWrapper(Dashboard)} />
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

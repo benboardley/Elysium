@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
@@ -8,18 +8,30 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { nameValidator, passwordValidator } from '../core/utils';
-import { Navigation } from '../types';
+import { Navigation, Route } from '../types';
 import { Platform } from 'react-native';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import {setAuthToken, getAuthToken} from '../helper'
+import  { AuthContext }  from '../context/AuthContext';
+
 type Props = {
   navigation: Navigation;
+  route: Route<{ errorMessage?: string }>;
 };
 
-const LoginScreen = ({ navigation }: Props) => {
+const LoginScreen = ({ navigation, route }: Props) => {
   const [username, setusername] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
+  const errorMessage = route.params?.errorMessage || '';
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    // Handle the case where the context is not available
+    return null;
+  }
 
-  const _onLoginPressed = () => {
+  const { loginUser } = authContext;
+
+  const _onLoginPressed = async () => {
     const usernameError = nameValidator(username.value);
     const passwordError = passwordValidator(password.value);
 
@@ -28,7 +40,8 @@ const LoginScreen = ({ navigation }: Props) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    let endpoint = '';
+
+    /*let endpoint: string = '';
     if (Platform.OS === 'web') {
       // Logic for web platform
       endpoint = 'http://localhost:8000/user/login/';
@@ -42,19 +55,39 @@ const LoginScreen = ({ navigation }: Props) => {
       // Fallback for other platforms
       endpoint = 'http://10.0.0.2:8000/user/login/';
     }
-    axios.post(endpoint, {
-      username: username.value,
-      password: password.value
-    })
-    .then(response => {
-      console.log('API Response:', response.data);
-      navigation.navigate('Dashboard');
-    })
-    .catch(error => {
-      console.error('API Error:', error);
-      // Handle error or show a relevant message to the user
-    });
-    navigation.navigate('Dashboard');
+
+    try {
+      const response = await axios.post(endpoint, {
+        username: username.value,
+        password: password.value,
+      });
+
+      if ('token' in response.data) {
+        await setAuthToken(response.data.token);
+        navigation.navigate('Dashboard');
+      } else if ('error' in response.data) {
+        console.error(response.status, response.data);
+        setusername({ value: username.value, error: response.data.error });
+        setPassword({ value: '', error: '' });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const responseData = error.response.data as { error: string };
+        console.error(error.response.status, responseData.error);
+        setusername({ value: username.value, error: responseData.error });
+        setPassword({ value: '', error: '' });
+      } else {
+        console.error('Error:', error);
+        setusername({ value: username.value, error: 'Unknown Error' });
+        setPassword({ value: '', error: '' });
+      }
+    }*/
+    try {
+      await loginUser(username.value, password.value);
+      //navigation.navigate('Dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -84,7 +117,9 @@ const LoginScreen = ({ navigation }: Props) => {
         errorText={password.error}
         secureTextEntry
       />
-
+      {!!errorMessage && (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      )}
       <View style={styles.forgotPassword}>
         <TouchableOpacity
           onPress={() => navigation.navigate('ForgotPasswordScreen')}
@@ -123,6 +158,10 @@ const styles = StyleSheet.create({
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 
