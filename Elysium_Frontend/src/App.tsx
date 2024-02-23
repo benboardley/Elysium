@@ -4,12 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
 import { AuthProvider } from './context/AuthContext';
 import { NavigationContainerRef } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import {
   HomeScreen,
   LoginScreen,
   RegisterScreen,
   ForgotPasswordScreen,
   Dashboard,
+  Feed,
 } from './screens';
 
 type RootStackParamList = {
@@ -18,8 +20,11 @@ type RootStackParamList = {
   RegisterScreen: { errorMessage?: string };
   ForgotPasswordScreen: undefined;
   Dashboard: undefined;
+  MainScreen: undefined;
+  Feed: undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const App = () => {
   const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
@@ -51,28 +56,17 @@ const App = () => {
           name="ForgotPasswordScreen"
           component={AuthProviderWrapper(ForgotPasswordScreen)}
         />
-        <Stack.Screen name="Dashboard" component={AuthProviderWrapper(Dashboard)} />
-      </Stack.Navigator>
+        <Stack.Screen name="MainScreen" options={{ headerShown: false }} >
+          {() => (
+            <Tab.Navigator>
+              <Tab.Screen name="Feed" component={AuthProviderWrapper(Feed)} />
+              <Tab.Screen name="Dashboard" component={AuthProviderWrapper(Dashboard)} />
+            </Tab.Navigator>
+          )}
+          </Stack.Screen>
+        </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#C3E8BD',
-    paddingTop: 40,
-    paddingHorizontal: 10,
-  },
-  button: {
-    backgroundColor: '#ADBDFF',
-    padding: 5,
-    marginVertical: 20,
-    alignSelf: 'flex-start',
-  },
-  title: {
-    fontSize: 40,
-  },
-});
 
 export default App;

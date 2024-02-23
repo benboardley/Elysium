@@ -128,12 +128,12 @@ const LoginScreen = ({ navigation, route }: Props) => {
         </TouchableOpacity>
       </View>
 
-      <Button mode="contained" onPress={_onLoginPressed}>
+      <Button mode="outlined" onPress={_onLoginPressed}>
         Login
       </Button>
 
       <View style={styles.row}>
-        <Text style={styles.label}>Don’t have an account? </Text>
+        <Text style={styles.label}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
