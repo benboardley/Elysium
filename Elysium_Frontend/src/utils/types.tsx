@@ -7,3 +7,8 @@ export type Route<T = {}> = {
   name: string;
   params: T;
 };
+
+export type Screen = {
+  main: any;
+  nested: any;
+};

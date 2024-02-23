@@ -1,4 +1,4 @@
-import React, { memo, useState, useContext } from 'react';
+import React, { memo, useState, useContext, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
@@ -8,7 +8,8 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { nameValidator, passwordValidator } from '../core/utils';
-import { Navigation, Route } from '../types';
+import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
+import { Navigation, Route, Screen } from '../utils/types';
 import { Platform } from 'react-native';
 import axios, { AxiosError } from 'axios';
 import {setAuthToken, getAuthToken} from '../helper'
@@ -17,9 +18,20 @@ import  { AuthContext }  from '../context/AuthContext';
 type Props = {
   navigation: Navigation;
   route: Route<{ errorMessage?: string }>;
+  screen: Screen;
 };
 
-const LoginScreen = ({ navigation, route }: Props) => {
+const LoginScreen = ({ navigation, route, screen }: Props) => {
+  const updatedScreen: Screen = {
+    main: "LoginScreen",
+    nested: null
+  };
+  setCurrentScreen(updatedScreen);
+  /*
+  screen.main = "LoginScreen";
+  screen.nested = null;
+  setCurrentScreen(screen);
+  */
   const [username, setusername] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const errorMessage = route.params?.errorMessage || '';

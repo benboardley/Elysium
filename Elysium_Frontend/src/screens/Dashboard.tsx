@@ -4,20 +4,32 @@ import Logo from '../components/Logo';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
-import { Navigation } from '../types';
+import { Navigation, Screen } from '../utils/types';
 import { makeAuthenticatedRequest } from '../helper'; // Import the makeAuthenticatedRequest function
 import jwtDecode from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext';
+import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
 type Props = {
   navigation: Navigation;
+  //screen: Screen;
 };
 
 const Dashboard = ({ navigation }: Props) => {
-  const authContext = useContext(AuthContext);
+  const updatedScreen: Screen = {
+      main: "MainScreen",
+      nested: "Dashboard"
+  };
+  setCurrentScreen(updatedScreen);
 
+  /*
+  screen.main = "MainScreen";
+  screen.nested = "Dashboard";
+  setCurrentScreen(screen);
+  */
+  const authContext = useContext(AuthContext);
   const handleLogout = () => {
     authContext?.logoutUser(); // Call the logoutUser function from AuthContext
-    navigation.navigate('HomeScreen')
+    navigation.navigate("HomeScreen")
   };
 
   return (
