@@ -13,7 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from requests import Request, post
 from ..credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer
-from .utils import update_or_create_user_tokens, is_spotify_authenticated, get_user_tokens
+from .utils import create_user_tokens, is_spotify_authenticated, get_user_tokens
 from ..models import *
 from datetime import datetime
 import secrets
@@ -174,7 +174,7 @@ def spotify_callback(request, format=None):
     expires_in = response.get('expires_in')
     error = response.get('error')
 
-    update_or_create_user_tokens(
+    create_user_tokens(
         state_value, access_token, token_type, expires_in, refresh_token)
 
     return redirect('http://localhost:8080/')
