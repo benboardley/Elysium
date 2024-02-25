@@ -35,9 +35,9 @@ const Dashboard = ({ navigation }: Props) => {
   return (
     <Background>
       <Logo />
-      <Header>Let's start</Header>
+      <Header>User Dashboard</Header>
       <Paragraph>
-        Your amazing app starts here. Open your favourite code editor and start editing this project.
+        Populate usesr profile information.
       </Paragraph>
       <Button mode="outlined" onPress={handleLogout}>
         Logout

@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
     const [authTokens, setAuthTokens] = useState<any>(null);
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [cookies, setCookie, removeCookie] = useCookies(['authTokens', 'currentScreen']);
+    const [cookies, setCookie, removeCookie] = useCookies(['authTokens']);
 
     const retrieveTokens = async () => {
         if (Platform.OS === 'android' || Platform.OS === 'ios') {

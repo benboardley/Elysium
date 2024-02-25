@@ -9,6 +9,8 @@ import Paragraph from '../components/Paragraph';
 import { AuthContext } from '../context/AuthContext'; // Import your AuthContext
 import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
 
+import { useCookies } from 'react-cookie';
+
 type Props = {
   navigation: Navigation;
   screen: Screen;
@@ -16,25 +18,28 @@ type Props = {
 
 const HomeScreen = ({ navigation, screen }: Props) => {
   const updatedScreen: Screen = {
-    main: "MainScreen",
-    nested: "HomeScreen"
+    main: "HomeScreen",
+    nested: null
   };
   setCurrentScreen(updatedScreen);
 
-  /****** THERE IS AN ERROR HERE? *****/
+  /****** THERE IS AN ERROR HERE? ****  */
   const authContext = useContext(AuthContext);
   useEffect(() => {
     // Check if authTokens exist and navigate to Dashboard if they do
     if (authContext?.authTokens) {
-      navigation.navigate("LoginScreen");
+      //navigation.navigate("Dashboard");
       let currScreen: Screen = getCurrentScreen();
+      console.log(currScreen);
       if (currScreen.nested) {
         navigation.navigate(currScreen.main, { screen: currScreen.nested })
       } else {
         navigation.navigate(currScreen.main);
       }
     }
+
   }, [authContext]);
+
 
   return (
     <Background>
