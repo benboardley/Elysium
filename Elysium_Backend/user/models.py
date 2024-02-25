@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.utils import timezone
+from datetime import timedelta
 class CustomUser(AbstractUser):
     # Your custom fields here
     # Should already contain:
@@ -35,3 +36,28 @@ class Profile(models.Model):
     )
     def __str__(self):
         return self.user.username
+
+class SpotifyToken(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="spotifytoken")
+    created_at = models.DateTimeField(auto_now_add=True)
+    refresh_token = models.CharField(max_length=150)
+    access_token = models.CharField(max_length=150)
+    expires_in = models.DateTimeField()
+    token_type = models.CharField(max_length=50)
+
+class OAuthState(models.Model):
+    state_value = models.CharField(max_length=255, unique=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    expires_at = models.DateTimeField()
+
+    def is_expired(self):
+        return self.expires_at < timezone.now()
+    
+    def save(self, *args, **kwargs):
+        # Set expiration time to 15 minutes from now
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timezone.timedelta(minutes=15)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.state_value}"

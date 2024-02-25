@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -10,10 +10,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.views import TokenObtainPairView
-#from rest_auth.views import LoginView
+from requests import Request, post
+from ..credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer
+from .utils import update_or_create_user_tokens, is_spotify_authenticated, get_user_tokens
 from ..models import *
 from datetime import datetime
+import secrets
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -132,3 +135,54 @@ class Follow(APIView):
         profile = user.profile.follow.get(id=id)
         response_data = ProfileSerializer(following, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
+    
+class AuthURL(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        state_value = secrets.token_urlsafe(16)
+        scopes = 'user-library-read user-top-read playlist-modify-private playlist-modify-public user-library-modify'
+        OAuthState.objects.create(state_value=state_value, user = request.user)
+        url = Request('GET', 'https://accounts.spotify.com/authorize', params={
+            'scope': scopes,
+            'response_type': 'code',
+            'redirect_uri': REDIRECT_URI,
+            'client_id': CLIENT_ID,
+            'state': state_value
+        }).prepare().url
+
+        return Response({'url': url}, status=status.HTTP_200_OK)
+
+
+def spotify_callback(request, format=None):
+    #serializer_class = UserSerializer
+    #permission_classes = [permissions.AllowAny]
+    code = request.GET.get('code')
+    state_value = request.GET.get('state')
+    print('callback')
+    response = post('https://accounts.spotify.com/api/token', data={
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': REDIRECT_URI,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'state': state_value,
+    }).json()
+
+    access_token = response.get('access_token')
+    token_type = response.get('token_type')
+    refresh_token = response.get('refresh_token')
+    expires_in = response.get('expires_in')
+    error = response.get('error')
+
+    update_or_create_user_tokens(
+        state_value, access_token, token_type, expires_in, refresh_token)
+
+    return redirect('http://localhost:8080/')
+
+
+class SpotifyAuthenticated(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        is_authenticated = is_spotify_authenticated(
+            request.user)
+        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
