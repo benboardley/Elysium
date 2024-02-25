@@ -88,7 +88,7 @@ const Dashboard = ({ navigation }: Props) => {
   return (
     <Background>
       <Logo />
-      <Header>Let’s start</Header>
+      <Header>Let's start</Header>
       <Paragraph>
         Your amazing app starts here. Open your favourite code editor and start editing this project.
       </Paragraph>
