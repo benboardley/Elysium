@@ -4,17 +4,30 @@ import Logo from '../components/Logo';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
-import { Navigation } from '../types';
+import { Navigation, Screen } from '../utils/types';
 import { makeAuthenticatedRequest } from '../helper'; // Import the makeAuthenticatedRequest function
 import jwtDecode from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext';
+import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
 import  useAxios  from "../utils/useAxios";
 import { Platform } from 'react-native';
 type Props = {
   navigation: Navigation;
+  //screen: Screen;
 };
 
 const Dashboard = ({ navigation }: Props) => {
+  const updatedScreen: Screen = {
+      main: "MainScreen",
+      nested: "Dashboard"
+  };
+  setCurrentScreen(updatedScreen);
+
+  /*
+  screen.main = "MainScreen";
+  screen.nested = "Dashboard";
+  setCurrentScreen(screen);
+  */
   const [postData, setPostData] = useState<any | null>(null);
   const [playlistData, setPlaylistData] = useState<any | null>(null);
   const axiosInstance = useAxios(navigation);
@@ -57,7 +70,7 @@ const Dashboard = ({ navigation }: Props) => {
 
   const handleLogout = () => {
     authContext?.logoutUser(); // Call the logoutUser function from AuthContext
-    navigation.navigate('HomeScreen')
+    navigation.navigate("HomeScreen")
   };
 
   const authenticateSpotify = () => {
@@ -88,9 +101,9 @@ const Dashboard = ({ navigation }: Props) => {
   return (
     <Background>
       <Logo />
-      <Header>Let's start</Header>
+      <Header>User Dashboard</Header>
       <Paragraph>
-        Your amazing app starts here. Open your favourite code editor and start editing this project.
+        Populate usesr profile information.
       </Paragraph>
       <Button mode="outlined" onPress={authenticateSpotify}>
         Connect Spotify

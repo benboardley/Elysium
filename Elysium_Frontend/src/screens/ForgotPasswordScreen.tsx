@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { emailValidator } from '../core/utils';
 import Background from '../components/Background';
@@ -8,13 +8,25 @@ import Header from '../components/Header';
 import TextInput from '../components/TextInput';
 import { theme } from '../core/theme';
 import Button from '../components/Button';
-import { Navigation } from '../types';
+import { Navigation, Screen } from '../utils/types';
+import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
 
 type Props = {
   navigation: Navigation;
+  screen: Screen;
 };
 
-const ForgotPasswordScreen = ({ navigation }: Props) => {
+const ForgotPasswordScreen = ({ navigation, screen }: Props) => {
+  const updatedScreen: Screen = {
+      main: "ForgotPasswordScreen",
+      nested: null
+  };
+  setCurrentScreen(updatedScreen);
+  /*
+  screen.main = "ForgotPasswordScreen";
+  screen.nested = null;
+  setCurrentScreen(screen);
+  */
   const [email, setEmail] = useState({ value: '', error: '' });
 
   const _onSendPressed = () => {
@@ -44,7 +56,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
         error={!!email.error}
         errorText={email.error}
         autoCapitalize="none"
-        autoCompleteType="email"
+        autoComplete="email"
         textContentType="emailAddress"
         keyboardType="email-address"
       />

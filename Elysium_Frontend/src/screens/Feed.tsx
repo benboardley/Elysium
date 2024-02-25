@@ -4,17 +4,30 @@ import Logo from '../components/Logo';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
-import { Navigation } from '../types';
+import { Navigation, Screen } from '../utils/types';
 import { makeAuthenticatedRequest } from '../helper'; // Import the makeAuthenticatedRequest function
 import { Platform } from 'react-native';
 import  useAxios  from "../utils/useAxios";
 import jwtDecode from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext';
+import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
 type Props = {
   navigation: Navigation;
+  screen: Screen;
 };
 
-const Feed = ({ navigation }: Props) => {
+
+const Feed = ({ navigation, screen }: Props) => {
+  const updatedScreen: Screen = {
+      main: "MainScreen",
+      nested: "Feed"
+  };
+  setCurrentScreen(updatedScreen);
+    /*
+  screen.main = "MainScreen";
+  screen.nested = "Feed";
+  setCurrentScreen(screen);
+  */
   const [postData, setPostData] = useState<any | null>(null);
   const axiosInstance = useAxios(navigation);
   const authContext = useContext(AuthContext);

@@ -3,8 +3,9 @@ import { jwtDecode } from "jwt-decode";
 import { Platform } from 'react-native';
 import SensitiveInfo from 'react-native-sensitive-info';
 import Swal from 'sweetalert2';
-import { Navigation, Route } from '../types';
+import { Navigation, Route } from '../utils/types';
 import { useCookies } from 'react-cookie';
+import { setCurrentScreen } from './currentScreen';
 
 interface AuthContextProps {
     user: any;
@@ -70,13 +71,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
         if(response.status === 200){
             setAuthTokens(data);
             setUser(jwtDecode(data.access));
+            navigation.navigate('MainScreen', { screen: 'Dashboard' });
             if (Platform.OS === 'android' || Platform.OS === 'ios') {
                 await SensitiveInfo.setItem("authTokens", JSON.stringify(data), {});
             } else {
                 //localStorage.setItem("authTokens", JSON.stringify(data));
                 setCookie('authTokens', JSON.stringify(data), { path: '/' });
             }
-            navigation.navigate('MainScreen', { screen: 'Dashboard' });
             Swal.fire({
                 title: "Login Successful",
                 icon: "success",
@@ -112,9 +113,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
                 email, username, password, first_name, last_name
             })
         });
+        console.log(JSON.stringify({email, username, password, first_name, last_name}))
 
         if(response.status === 201){
-            navigation.navigate('Dashboard');
+            //navigation.navigate('LoginScreen');
             Swal.fire({
                 title: "Registration Successful, Login Now",
                 icon: "success",
@@ -124,6 +126,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
                 timerProgressBar: true,
                 showConfirmButton: false,
             });
+            loginUser(username, password);
         } else {
             console.log(response.status);
             console.log("there was a server issue");

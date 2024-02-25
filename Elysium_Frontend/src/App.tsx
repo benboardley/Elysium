@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { AuthProvider } from './context/AuthContext';
 import { NavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { CookiesProvider } from "react-cookie";
 import {
   HomeScreen,
   LoginScreen,
@@ -37,35 +38,37 @@ const App = () => {
   );
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        initialRouteName="HomeScreen"
-        screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="HomeScreen" component={AuthProviderWrapper(HomeScreen)} />
-        <Stack.Screen
-          name="LoginScreen"
-          component={AuthProviderWrapper(LoginScreen)}
-          initialParams={{ errorMessage: '' }}
-        />
-        <Stack.Screen
-          name="RegisterScreen"
-          component={AuthProviderWrapper(RegisterScreen)}
-          initialParams={{ errorMessage: '' }}
-        />
-        <Stack.Screen
-          name="ForgotPasswordScreen"
-          component={AuthProviderWrapper(ForgotPasswordScreen)}
-        />
-        <Stack.Screen name="MainScreen" options={{ headerShown: false }} >
-          {() => (
-            <Tab.Navigator>
-              <Tab.Screen name="Feed" component={AuthProviderWrapper(Feed)} />
-              <Tab.Screen name="Dashboard" component={AuthProviderWrapper(Dashboard)} />
-            </Tab.Navigator>
-          )}
-          </Stack.Screen>
-        </Stack.Navigator>
-    </NavigationContainer>
+    <CookiesProvider>
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator
+          initialRouteName="HomeScreen"
+          screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="HomeScreen" component={AuthProviderWrapper(HomeScreen)} />
+          <Stack.Screen
+            name="LoginScreen"
+            component={AuthProviderWrapper(LoginScreen)}
+            initialParams={{ errorMessage: '' }}
+          />
+          <Stack.Screen
+            name="RegisterScreen"
+            component={AuthProviderWrapper(RegisterScreen)}
+            initialParams={{ errorMessage: '' }}
+          />
+          <Stack.Screen
+            name="ForgotPasswordScreen"
+            component={AuthProviderWrapper(ForgotPasswordScreen)}
+          />
+          <Stack.Screen name="MainScreen" options={{ headerShown: false }} >
+            {() => (
+              <Tab.Navigator>
+                <Tab.Screen name="Feed" component={AuthProviderWrapper(Feed)} />
+                <Tab.Screen name="Dashboard" component={AuthProviderWrapper(Dashboard)} />
+              </Tab.Navigator>
+            )}
+            </Stack.Screen>
+          </Stack.Navigator>
+      </NavigationContainer>
+    </CookiesProvider>
   );
 };
 

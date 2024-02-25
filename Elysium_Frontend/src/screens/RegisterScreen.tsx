@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
@@ -7,26 +7,48 @@ import Button from '../components/Button';
 import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
-import { Navigation } from '../types';
-
+import { Navigation, Route, Screen } from '../utils/types';
+import { AuthContext }  from '../context/AuthContext';
+import { setCurrentScreen, getCurrentScreen } from '../context/currentScreen';
 import {
   emailValidator,
   passwordValidator,
   nameValidator,
 } from '../core/utils';
 import axios from 'axios';
+
 type Props = {
   navigation: Navigation;
+  screen: Screen;
+  //route: Route<{ errorMessage?: string }>;
 };
 
-const RegisterScreen = ({ navigation }: Props) => {
+const RegisterScreen = ({ navigation, screen }: Props) => {
+  const updatedScreen: Screen = {
+      main: "RegisterScreen",
+      nested: null
+  };
+  setCurrentScreen(updatedScreen);
+  /*
+  screen.main = "RegisterScreen";
+  screen.nested = null;
+  setCurrentScreen(screen);
+  */
   const [username, setUsername] = useState({ value: '', error: '' });
   const [firstname, setFirstname] = useState({ value: '', error: '' });
   const [lastname, setLastname] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
+  //const errorMessage = route.params?.errorMessage || '';
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    // Handle the case where the context is not available
+    return null;
+  }
 
-  const _onSignUpPressed = () => {
+  const { registerUser } = authContext;
+
+  const _onSignUpPressed = async () => {
     const usernameError = nameValidator(username.value);
     const firstnameError = nameValidator(firstname.value);
     const lastnameError = nameValidator(lastname.value);
@@ -41,6 +63,8 @@ const RegisterScreen = ({ navigation }: Props) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
+
+    /*
     let endpoint = '';
     if (Platform.OS === 'web') {
       // Logic for web platform
@@ -62,16 +86,12 @@ const RegisterScreen = ({ navigation }: Props) => {
       email: email.value,
       password: password.value,
     })
-    .then(response => {
-      console.log('API Response:', response.data);
-      navigation.navigate('Dashboard');
-    })
-    .catch(error => {
-      console.error('API Error:', error);
-      // Handle error or show a relevant message to the user
-    });
-
-    navigation.navigate('Dashboard');
+    */
+    try {
+      await registerUser(email.value, username.value, firstname.value, lastname.value, password.value);
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
   };
 
   return (
@@ -117,7 +137,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         error={!!email.error}
         errorText={email.error}
         autoCapitalize="none"
-        autoCompleteType="email"
+        autoComplete="email"
         textContentType="emailAddress"
         keyboardType="email-address"
       />
@@ -132,7 +152,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         secureTextEntry
       />
 
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
+      <Button mode="outlined" onPress={_onSignUpPressed} style={styles.button}>
         Sign Up
       </Button>
 
