@@ -16,6 +16,7 @@ type Props = {
 
 const Dashboard = ({ navigation }: Props) => {
   const [postData, setPostData] = useState<any | null>(null);
+  const [playlistData, setPlaylistData] = useState<any | null>(null);
   const axiosInstance = useAxios(navigation);
   const authContext = useContext(AuthContext);
   let endpoint: string = '';
@@ -41,8 +42,17 @@ const Dashboard = ({ navigation }: Props) => {
         console.error('Error fetching posts:', error);
       }
     };
-
+    const fetchPlaylists = async () => {
+      try {
+        const result = await axiosInstance.get('http://localhost:8000/music/spotify/playlists');
+        setPlaylistData(result.data);
+      } catch (error) {
+        console.error('Error fetching playlists:', error);
+        setPlaylistData(error)
+      }
+    };
     fetchPosts();
+    fetchPlaylists();
   }, []);//[axiosInstance, endpoint]);
 
   const handleLogout = () => {
@@ -50,6 +60,31 @@ const Dashboard = ({ navigation }: Props) => {
     navigation.navigate('HomeScreen')
   };
 
+  const authenticateSpotify = () => {
+    axiosInstance.get("http://localhost:8000/user/spotify/is-authenticated")
+      .then((response) => response.data)
+      .then((data) => {
+        //this.setState({ spotifyAuthenticated: data.status });
+        console.log(data.status);
+        if (!data.status) {
+          axiosInstance.get("http://localhost:8000/user/spotify/get-auth-url")
+            .then((response) => response.data)
+            .then((data) => {
+              window.location.replace(data.url);
+            })
+            .catch((error) => {
+              // Handle the error here
+              console.error("Error fetching authentication URL:", error);
+          
+              // Optionally, you can check the specific error status
+              if (error.response && error.response.status === 401) {
+                // Handle 401 Unauthorized
+                console.error("Unauthorized request");
+              }
+            });
+        }
+      });
+  }
   return (
     <Background>
       <Logo />
@@ -57,12 +92,16 @@ const Dashboard = ({ navigation }: Props) => {
       <Paragraph>
         Your amazing app starts here. Open your favourite code editor and start editing this project.
       </Paragraph>
+      <Button mode="outlined" onPress={authenticateSpotify}>
+        Connect Spotify
+      </Button>
       <Button mode="outlined" onPress={handleLogout}>
         Logout
       </Button>
       {postData && (
         <Paragraph>
           Posts data: {JSON.stringify(postData)}
+          Playlists: {JSON.stringify(playlistData)}
         </Paragraph>
       )}
     </Background>
