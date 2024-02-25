@@ -17,8 +17,9 @@ def get_user_tokens(user):
         return None
 
 
-def update_or_create_user_tokens(state_value, access_token, token_type, expires_in, refresh_token):
-    print(state_value)
+def create_user_tokens(state_value, access_token, token_type, expires_in, refresh_token):
+    #print(state_value)
+
     user = OAuthState.objects.get(state_value=state_value).user
     tokens = get_user_tokens(user)
     expires_in = timezone.now() + timedelta(seconds=expires_in)
@@ -35,6 +36,17 @@ def update_or_create_user_tokens(state_value, access_token, token_type, expires_
                               refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
         tokens.save()
 
+def update_user_tokens(user, access_token, token_type, expires_in, refresh_token):
+    tokens = get_user_tokens(user)
+    expires_in = timezone.now() + timedelta(seconds=expires_in)
+
+    if tokens:
+        tokens.access_token = access_token
+        tokens.refresh_token = refresh_token
+        tokens.expires_in = expires_in
+        tokens.token_type = token_type
+        tokens.save(update_fields=['access_token',
+                                   'refresh_token', 'expires_in', 'token_type'])
 
 def is_spotify_authenticated(user):
     tokens = get_user_tokens(user)
@@ -58,10 +70,10 @@ def refresh_spotify_token(user):
         'client_secret': CLIENT_SECRET
     }).json()
 
+    print("response: ", response)
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
-    refresh_token = response.get('refresh_token')
 
-    update_or_create_user_tokens(
-        user, access_token, token_type, expires_in, refresh_token)
+    #print("refresh token: ",refresh_token)
+    update_user_tokens(user, access_token, token_type, expires_in, refresh_token)
