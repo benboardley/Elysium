@@ -9,4 +9,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('follow/', Following.as_view(), name='follow'),
     path('profile/<int:id>', ProfileView.as_view(), name='profile'),
+    path('spotify/get-auth-url', AuthURL.as_view()),
+    path('spotify/redirect', spotify_callback),
+    path('spotify/is-authenticated', SpotifyAuthenticated.as_view())
 ]
