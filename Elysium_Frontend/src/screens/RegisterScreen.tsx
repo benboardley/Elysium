@@ -117,7 +117,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         error={!!email.error}
         errorText={email.error}
         autoCapitalize="none"
-        autoCompleteType="email"
+        autoComplete="email"
         textContentType="emailAddress"
         keyboardType="email-address"
       />
@@ -132,7 +132,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         secureTextEntry
       />
 
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
+      <Button mode="outlined" onPress={_onSignUpPressed} style={styles.button}>
         Sign Up
       </Button>
 

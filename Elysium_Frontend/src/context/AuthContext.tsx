@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
                 //localStorage.setItem("authTokens", JSON.stringify(data));
                 setCookie('authTokens', JSON.stringify(data), { path: '/' });
             }
-            navigation.navigate('Dashboard');
+            navigation.navigate('MainScreen', { screen: 'Dashboard' });
             Swal.fire({
                 title: "Login Successful",
                 icon: "success",
