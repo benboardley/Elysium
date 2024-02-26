@@ -10,7 +10,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .serialzers import PostSerializer
 from user.models import CustomUser, Profile
-from ..models import Post
+from ..models import Post, SongPost
 # Create your views here.
 
 class Posts(APIView):
@@ -18,11 +18,13 @@ class Posts(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self,request):
-        posts = Post.objects.all()
-        serializers = PostSerializer(posts, many=True)
-        return Response(serializers.data, status=status.HTTP_200_OK)
+        posts = Post.objects.filter(songpost__isnull=True)
+        song_posts = SongPost.objects.all()
+        combined_posts = list(posts) + list(song_posts)
+        post_serializers = PostSerializer(combined_posts, many=True)
+        return Response(post_serializers.data, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
-        user_profile = request.user.profile.get()
+        user_profile = request.user.profile
 
         if not user_profile:
             return Response({"error": "User profile not found"}, status=status.HTTP_400_BAD_REQUEST)
@@ -42,7 +44,7 @@ class Posts(APIView):
 class AccessPost(APIView):
 
     #authentication_classes = [TokenAuthentication]
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self,request,id):
         post = get_object_or_404(Post, id=id)
