@@ -36,3 +36,31 @@ class GetSpotifyPlaylists(APIView):
             code = status.HTTP_404_NOT_FOUND
             message = {'message': 'Connect with spotify to see playlists'}
         return Response(message, status=code)
+
+
+class GetSpotifyTopSong(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        user = request.user
+        spotifytoken = user.spotifytoken
+        print(spotifytoken)
+        track = []
+        if(spotifytoken):
+            sp = spotipy.Spotify(auth=spotifytoken.access_token)
+            try:
+                top_track = sp.current_user_top_tracks(limit=1)
+                for song in top_track['items']:
+                    track = ([song['name'],
+                                song['album']['artists'][0]['name'],
+                                song['album']['images'][1]['url'],
+                                song['preview_url']])
+            except spotipy.SpotifyException as e:
+                # Handle Spotify API errors if necessary
+                print(f"Spotify API Error: {e}")
+        if(track):
+            code = status.HTTP_200_OK
+            message = {'song': track}
+        else:
+            code = status.HTTP_404_NOT_FOUND
+            message = {'message': 'Connect with spotify to see playlists'}
+        return Response(message, status=code)

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
+import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
-import Logo from '../components/Logo';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
@@ -16,43 +16,46 @@ type Props = {
 
 const Dashboard = ({ navigation }: Props) => {
   const [postData, setPostData] = useState<any | null>(null);
-  const [playlistData, setPlaylistData] = useState<any | null>(null);
+  //const [userData, setUserData] = useState<any | null>(null);
+  const [followingData, setFollowingData] = useState<any | null>(null);
   const axiosInstance = useAxios(navigation);
   const authContext = useContext(AuthContext);
-  let endpoint: string = '';
-  if (Platform.OS === 'web') {
+  let postsEndpoint: string = '';
+  //let userEndpoint: string = '';
+  let followingEndpoint: string = '';
+  if (Platform.OS === 'web' || Platform.OS === 'ios') {
     // Logic for web platform
-    endpoint = 'http://localhost:8000/social/posts/';
-  } else if (Platform.OS === 'ios') {
-    // Logic for iOS platform
-    endpoint = 'http://localhost:8000/social/posts/';
-  } else if (Platform.OS === 'android') {
-    // Logic for Android platform
-    endpoint = 'http://10.0.0.2:8000/social/posts/';
+    postsEndpoint = 'http://localhost:8000/social/posts/';
+    //userEndpoint = 'http://localhost:8000/user/profile/';
+    followingEndpoint = 'http://localhost:8000/user/follow/';
   } else {
-    // Fallback for other platforms
-    endpoint = 'http://10.0.0.2:8000/social/posts/';
+    // // Logic for Android platform and ther platforms
+    postsEndpoint = 'http://10.0.0.2:8000/social/posts/';
+    //userEndpoint = 'http://10.0.0.2:8000/user/profile/';
+    followingEndpoint = 'http://10.0.0.2:8000/user/follow/';
   }
   useEffect(() => {
+    
     const fetchPosts = async () => {
       try {
-        const result = await axiosInstance.get(endpoint);
+        const result = await axiosInstance.get(postsEndpoint);
         setPostData(result.data);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
     };
-    const fetchPlaylists = async () => {
+    /*
+    const fetchUserData = async () => {
       try {
-        const result = await axiosInstance.get('http://localhost:8000/music/spotify/playlists');
-        setPlaylistData(result.data);
+        const result = await axiosInstance.get(userEndpoint);
+        setUserData(result.data);
       } catch (error) {
-        console.error('Error fetching playlists:', error);
-        setPlaylistData(error)
+        console.error('Error fetching user data:', error);
       }
     };
+    */
     fetchPosts();
-    fetchPlaylists();
+    //fetchUserData();
   }, []);//[axiosInstance, endpoint]);
 
   const handleLogout = () => {
@@ -87,25 +90,40 @@ const Dashboard = ({ navigation }: Props) => {
   }
   return (
     <Background>
-      <Logo />
-      <Header>Let's start</Header>
+      <Header>User Dashboard</Header>
       <Paragraph>
-        Your amazing app starts here. Open your favourite code editor and start editing this project.
+        This is where a user's profile will be displayed. 
       </Paragraph>
       <Button mode="outlined" onPress={authenticateSpotify}>
         Connect Spotify
       </Button>
-      <Button mode="outlined" onPress={handleLogout}>
-        Logout
-      </Button>
       {postData && (
         <Paragraph>
           Posts data: {JSON.stringify(postData)}
-          Playlists: {JSON.stringify(playlistData)}
         </Paragraph>
       )}
+      <Button style={styles.logoutButton} mode="outlined" onPress={handleLogout}>
+        Logout
+      </Button>
     </Background>
   );
 };
+
+/*
+        {userData && (
+          <Paragraph>
+            User data: {JSON.stringify(userData)}
+          </Paragraph>
+        )}
+*/
+
+const styles = StyleSheet.create({
+  logoutButton: {
+    position: 'absolute',
+    bottom: 0,
+    width: 105,
+    margin: 16,
+  },
+});
 
 export default memo(Dashboard);

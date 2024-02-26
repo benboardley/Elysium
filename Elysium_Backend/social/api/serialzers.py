@@ -4,12 +4,14 @@ from ..models import Post
 # Assuming you have Song, Album, and Playlist models defined somewhere
 
 class PostSerializer(serializers.ModelSerializer):
-    profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
+    profile = serializers.SerializerMethodField()#serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
     creation_time = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Post
         fields = '__all__'
-
+    
+    def get_profile(self, obj):
+        return obj.profile.user.username
 '''
 class SongPostSerializer(serializers.ModelSerializer):
     # Assuming you have a SongSerializer defined somewhere
