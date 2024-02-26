@@ -50,6 +50,7 @@ def update_user_tokens(user, access_token, token_type, expires_in, refresh_token
 
 def is_spotify_authenticated(user):
     tokens = get_user_tokens(user)
+    print(tokens)
     if tokens:
         expiry = tokens.expires_in
         if expiry <= timezone.now():

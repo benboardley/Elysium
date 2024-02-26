@@ -27,7 +27,7 @@ class Song(models.Model):
     uri = models.CharField(max_length=255, unique=True)
     audio_features = models.JSONField(default=dict)
     other_available_platforms = models.JSONField(default=list)
-    song_clip_location = models.URLField(max_length=255)
+    song_clip_location = models.URLField(max_length=255, blank=True, null=True)
     song_thumbnail_location = models.URLField(max_length=255, blank=True, null=True)
 
     def save(self, *args, **kwargs):

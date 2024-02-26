@@ -139,6 +139,7 @@ class Follow(APIView):
 class AuthURL(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
+        print("in here")
         state_value = secrets.token_urlsafe(16)
         scopes = 'user-library-read user-top-read playlist-modify-private playlist-modify-public user-library-modify'
         OAuthState.objects.create(state_value=state_value, user = request.user)
@@ -185,4 +186,5 @@ class SpotifyAuthenticated(APIView):
     def get(self, request):
         is_authenticated = is_spotify_authenticated(
             request.user)
-        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+        print(is_authenticated)
+        return Response({'auth': is_authenticated}, status=status.HTTP_200_OK)

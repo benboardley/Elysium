@@ -12,7 +12,7 @@ class Post(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     caption = models.TextField()
     title = models.TextField(blank=True)
-    objects = InheritanceManager()
+    #objects = InheritanceManager()
 
 class SongPost(Post):
     # Fields specific to song posts
