@@ -97,11 +97,6 @@ const Dashboard = ({ navigation }: Props) => {
       <Button mode="outlined" onPress={authenticateSpotify}>
         Connect Spotify
       </Button>
-      {postData && (
-        <Paragraph>
-          Posts data: {JSON.stringify(postData)}
-        </Paragraph>
-      )}
       <Button style={styles.logoutButton} mode="outlined" onPress={handleLogout}>
         Logout
       </Button>
@@ -115,6 +110,11 @@ const Dashboard = ({ navigation }: Props) => {
             User data: {JSON.stringify(userData)}
           </Paragraph>
         )}
+      {postData && (
+        <Paragraph>
+          Posts data: {JSON.stringify(postData)}
+        </Paragraph>
+      )}
 */
 
 const styles = StyleSheet.create({
