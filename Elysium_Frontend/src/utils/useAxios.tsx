@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Navigation, Route } from '../types';
+import { Navigation, Route } from './types';
 const baseURL = "http://127.0.0.1:8000/user";
 
 const useAxios = (navigation: Navigation) => {

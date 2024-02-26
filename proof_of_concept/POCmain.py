@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv
-from proof_of_concept.POCsong import POCsong
-from proof_of_concept.POCplaylist import POClist
-from proof_of_concept.POCspotify import POCspotify
-from proof_of_concept.POCapplmus import POCapplmus
+from POCsong import POCsong
+from POCplaylist import POCplaylist
+from POCspotify import POCspotify
+from POCapplmus import POCapplmus
 
 ### Set Up Environment variables ###
 def setup_env():
@@ -137,6 +137,9 @@ if __name__ == '__main__':
     else:
         transfer_from = spotify
         """transfer_to = applmus"""
+
+    transfer_from.print_song_data()
+    exit(0)
 
     ### CONDITIONAL ON APPLE MUSIC ###
     transfer_from = spotify

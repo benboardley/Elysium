@@ -1,4 +1,4 @@
-from proof_of_concept.POCsong import POCsong
+from POCsong import POCsong
 
 class POCplaylist:
     ### POCspotify class variables ###

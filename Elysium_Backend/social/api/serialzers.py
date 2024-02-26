@@ -7,6 +7,8 @@ from music.api.serializers import SongSerializer
 
 class PostSerializer(serializers.ModelSerializer):
     song_post = serializers.SerializerMethodField()
+    profile = serializers.SerializerMethodField()#serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
+
 
     class Meta:
         model = Post
@@ -23,12 +25,15 @@ class PostSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         # Add more customization here if needed
         return ret
+    
+    def get_profile(self, obj):
+        return obj.profile.user.username
 
 
 
 '''
 class PostSerializer(serializers.ModelSerializer):
-    profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
+    profile = serializers.SerializerMethodField()#serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
     creation_time = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Post

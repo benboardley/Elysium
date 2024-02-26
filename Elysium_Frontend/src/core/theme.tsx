@@ -10,6 +10,7 @@ export const theme = {
     white: '#ffffff',
     dark_brown: '#211b00',
     light_brown: ' #D2B48C',
+    black: '0x000000',
     background: '#826939',
     error: '#e6072d',
   },

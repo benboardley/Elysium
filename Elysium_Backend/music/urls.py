@@ -4,4 +4,5 @@ urlpatterns = [
     path('spotify/playlists', GetSpotifyPlaylists.as_view(), name='spotify-playlists'),
     path('spotify/songs', SpotifySongs.as_view(), name='spotify-songs'),
     path('stored/songs', StoredSongs.as_view(), name='stored-songs'),
+    path('spotify/topsong', GetSpotifyTopSong.as_view(), name='spotify-topsong'),
 ]

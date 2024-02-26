@@ -8,7 +8,7 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { nameValidator, passwordValidator } from '../core/utils';
-import { Navigation, Route } from '../types';
+import { Navigation, Route } from '../utils/types';
 import { Platform } from 'react-native';
 import axios, { AxiosError } from 'axios';
 import {setAuthToken, getAuthToken} from '../helper'

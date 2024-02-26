@@ -2,8 +2,8 @@ import os
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from proof_of_concept.POCsong import POCsong
-from proof_of_concept.POCplaylist import POCplaylist
+from POCsong import POCsong
+from POCplaylist import POCplaylist
 
 class POCspotify:
     ### POCspotify class variables ###
@@ -69,6 +69,26 @@ class POCspotify:
         except:
             pass
         return track_list
+    
+
+    def top_three_tracks(self):
+        track_list = []
+        try:
+            top_tracks = self.sp.current_user_top_tracks(limit=3)
+            for track in top_tracks['items']:
+                track_list.append(track)
+        except:
+            pass
+        return track_list
+    
+
+    def print_song_data(self):
+        try:
+            top_tracks = self.sp.current_user_top_tracks(limit=1)
+            for track in top_tracks['items']:
+                print(track)
+        except:
+            pass
 
     ### This needs to be changed to create song and playlist objects elsewhere ###
     def get_playlists(self):

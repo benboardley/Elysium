@@ -7,7 +7,7 @@ import Button from '../components/Button';
 import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
-import { Navigation } from '../types';
+import { Navigation } from '../utils/types';
 
 import {
   emailValidator,

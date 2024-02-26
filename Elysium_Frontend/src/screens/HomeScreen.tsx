@@ -1,5 +1,5 @@
 import React, { memo, useContext, useEffect } from 'react';
-import { Navigation } from '../types';
+import { Navigation } from '../utils/types';
 import Background from '../components/Background';
 import { Text } from 'react-native';
 import Logo from '../components/Logo';
@@ -18,7 +18,7 @@ const HomeScreen = ({ navigation }: Props) => {
   useEffect(() => {
     // Check if authTokens exist and navigate to Dashboard if they do
     if (authContext?.authTokens) {
-      navigation.navigate('Dashboard');
+      navigation.navigate('MainScreen', { screen: 'Dashboard' });
     }
   }, [authContext]);
 
