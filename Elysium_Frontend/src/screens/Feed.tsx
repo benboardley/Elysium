@@ -11,8 +11,9 @@ import  useAxios  from "../utils/useAxios";
 import jwtDecode from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext';
 import { Post } from '../utils/interfaces';
-import UserPost from '../components/post';
+import UserPost from '../components/Post';
 import { theme } from '../core/theme';
+import PlusSong from '../components/AddSong';
 type Props = {
   navigation: Navigation;
 };
@@ -41,24 +42,6 @@ const Feed = ({ navigation }: Props) => {
     };
     fetchPosts();
   }, []);//[axiosInstance, endpoint]);
-
-  let post: Post | null = null;
-  if (postData) {
-    const postInfo = JSON.parse(JSON.stringify(postData[0]));
-    post = {
-      id: postInfo.id,
-      profile: postInfo.profile,
-      creation_time: postInfo.creation_time,
-      update_time: postInfo.update_time,
-      title: postInfo.title,
-      caption: postInfo.caption,
-      parent_post: postInfo.parent_post,
-      song: postInfo.song,
-      playlist: postInfo.playlist,
-      album: postInfo.album,
-      likes: postInfo.likes,
-    };
-  }
   let posts: Post[] = [];
   if (postData) {
     const postInfo = postData.map((post: any) => JSON.parse(JSON.stringify(post)));
@@ -85,9 +68,9 @@ const Feed = ({ navigation }: Props) => {
       {postData && (
         <React.Fragment>
           {posts.map(post => (
-            <UserPost post={post} />
+              <UserPost post={post} />
           ))}
-        </React.Fragment>
+          </React.Fragment>
       )}
     </Background>
   );

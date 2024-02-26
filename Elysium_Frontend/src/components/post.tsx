@@ -2,23 +2,34 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { theme } from '../core/theme';
 import { Post } from '../utils/interfaces';
+import PlusSong from '../components/AddSong';
+import { Navigation, Route } from '../types';
 
 interface UserPostProps {
   post: Post;
 }
 
-const UserPost: React.FC<UserPostProps> = ({ post }) => {
+type Props = {
+  navigation?: Navigation;
+};
+
+const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.header}>
         <Text style={styles.profile}>{post.profile}</Text>
-        <Text style={styles.creation_time}>{post.creation_time}</Text>
+        <View style={styles.header}>
+          <Text style={styles.addSongText}>Add Song</Text>
+          <PlusSong addSong={() => navigation.navigate('MainScreen', { screen: 'Dashboard' })} />
+        </View>
       </View>
       <Text style={styles.title}>{post.title}</Text>
       <Text style={styles.caption}>{post.caption}</Text>
+      <Text style={styles.footer}>{post.creation_time}</Text>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -33,6 +44,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginTop: 4,
+    marginBottom: 2,
+    fontSize: 12,
+    color: theme.colors.secondary,
   },
   profile: {
     fontSize: 14,
@@ -52,6 +72,11 @@ const styles = StyleSheet.create({
   caption: {
     fontSize: 16,
     color: theme.colors.black,
+  },
+  addSongText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: theme.colors.secondary,
   },
 });
 
