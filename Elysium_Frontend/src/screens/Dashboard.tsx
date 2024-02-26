@@ -4,7 +4,7 @@ import Background from '../components/Background';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
-import { Navigation } from '../types';
+import { Navigation } from '../utils/types';
 import { makeAuthenticatedRequest } from '../helper'; // Import the makeAuthenticatedRequest function
 import { Platform } from 'react-native';
 import  useAxios  from "../utils/useAxios";

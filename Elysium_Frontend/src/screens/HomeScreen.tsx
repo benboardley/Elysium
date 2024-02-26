@@ -1,5 +1,5 @@
 import React, { memo, useContext, useEffect } from 'react';
-import { Navigation } from '../types';
+import { Navigation } from '../utils/types';
 import Background from '../components/Background';
 import { Text } from 'react-native';
 import Logo from '../components/Logo';

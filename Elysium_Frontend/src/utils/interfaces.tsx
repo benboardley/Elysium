@@ -1,3 +1,5 @@
+import { songType } from '../utils/types'
+
 export interface Post {
     id: string;
     profile: string;
@@ -10,4 +12,5 @@ export interface Post {
     playlist?: object;
     album?: object;
     likes: number;
+    song_post?: songType;
 }

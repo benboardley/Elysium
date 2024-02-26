@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { Platform } from 'react-native';
 import SensitiveInfo from 'react-native-sensitive-info';
 import Swal from 'sweetalert2';
-import { Navigation, Route } from '../types';
+import { Navigation, Route } from '../utils/types';
 import { useCookies } from 'react-cookie';
 
 interface AuthContextProps {

@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { View, Text, StyleSheet } from 'react-native';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
-import { Navigation } from '../types';
+import { Navigation } from '../utils/types';
 import { makeAuthenticatedRequest } from '../helper'; // Import the makeAuthenticatedRequest function
 import { Platform } from 'react-native';
 import  useAxios  from "../utils/useAxios";
@@ -57,6 +57,7 @@ const Feed = ({ navigation }: Props) => {
       playlist: post.playlist,
       album: post.album,
       likes: post.likes,
+      song_post: post.song_post,
     }));
   }
 
@@ -68,7 +69,7 @@ const Feed = ({ navigation }: Props) => {
       {postData && (
         <React.Fragment>
           {posts.map(post => (
-              <UserPost post={post} />
+              <UserPost post={post} navigation={navigation} />
           ))}
           </React.Fragment>
       )}
