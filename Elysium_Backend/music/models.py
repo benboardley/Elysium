@@ -22,7 +22,7 @@ class Song(models.Model):
     album = models.ForeignKey(Album, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     artist = models.CharField(max_length=255)
-    artist_features = models.JSONField(default=list)
+    artist_features = models.JSONField(default=list, blank=True, null=True)
     origin = models.CharField(max_length=255)
     uri = models.CharField(max_length=255, unique=True)
     audio_features = models.JSONField(default=dict)

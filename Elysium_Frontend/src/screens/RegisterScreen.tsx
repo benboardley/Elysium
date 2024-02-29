@@ -64,14 +64,14 @@ const RegisterScreen = ({ navigation }: Props) => {
     })
     .then(response => {
       console.log('API Response:', response.data);
-      navigation.navigate('Dashboard');
+      navigation.navigate('LoginScreen');
     })
     .catch(error => {
       console.error('API Error:', error);
       // Handle error or show a relevant message to the user
     });
 
-    navigation.navigate('Dashboard');
+    navigation.navigate('LoginScreen');
   };
 
   return (

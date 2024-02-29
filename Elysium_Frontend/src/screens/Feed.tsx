@@ -63,9 +63,6 @@ const Feed = ({ navigation }: Props) => {
 
   return (
     <Background>
-    <View style={styles.headerContainer}>
-      <Text style={styles.header}>User Feed</Text>
-    </View>
       {postData && (
         <React.Fragment>
           {posts.map(post => (
@@ -76,6 +73,12 @@ const Feed = ({ navigation }: Props) => {
     </Background>
   );
 };
+
+/*
+    <View style={styles.headerContainer}>
+      <Text style={styles.header}>User Feed</Text>
+    </View>
+*/
 
 const styles = StyleSheet.create({
   headerContainer: {
