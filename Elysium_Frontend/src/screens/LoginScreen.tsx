@@ -96,7 +96,7 @@ const LoginScreen = ({ navigation, route }: Props) => {
 
       <Logo />
 
-      <Header>Welcome back.</Header>
+      <Header>Welcome!</Header>
 
       <TextInput
         label="username"

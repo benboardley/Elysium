@@ -1,6 +1,6 @@
 module.exports = {
     presets: ['module:metro-react-native-babel-preset'],
-    plugins: ['react-native-reanimated/plugin'], // <-- Added this line
+    plugins: ['react-native-reanimated/plugin'],
 }
 
 
@@ -23,7 +23,7 @@ const babelLoaderConfiguration = {
     // Add every directory that needs to be compiled by Babel during the build.
     include: [
         path.resolve(__dirname, 'index.web.js'), // Entry to your application
-        path.resolve(__dirname, 'App.tsx'), // Change this to your main App file
+        path.resolve(__dirname, './App.tsx'), // Change this to your main App file
         path.resolve(__dirname, 'src'),
         ...compileNodeModules,
     ],

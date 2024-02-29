@@ -7,7 +7,6 @@ import  useAxios  from "../utils/useAxios";
 import { Navigation, Route } from '../utils/types';
 import Swal from 'sweetalert2';
 
-
 interface UserPostProps {
   post: Post;
 }
@@ -75,9 +74,9 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
       <Text style={styles.title}>{post.title}</Text>
       <Text style={styles.caption}>{post.caption}</Text>
       {post.song_post ? (
-        <View style={styles.songPost}>
-          <Text>{post.song_post.name}</Text>
+        <View style={styles.songPostContainer}>
           <Image style={styles.image} source={{uri: post.song_post.song_thumbnail_location}}/>
+          <Text style={styles.caption}>{post.song_post.name}</Text>
         </View>
       ) : null}
       <Text style={styles.footer}>{post.creation_time}</Text>
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   footer: {
     flexDirection: 'row',
@@ -108,16 +107,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: theme.colors.secondary,
   },
-  songPost: {
+  songPostContainer: {
+    backgroundColor: theme.colors.songBackground,
+    padding: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 4,
+    borderRadius: 8,
   },
   image: {
-    width: 30,
-    height: 30,
+    width: 60,
+    height: 60,
+    marginRight: 10,
   },
   profile: {
     fontSize: 14,
@@ -131,11 +131,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 4,
     color: theme.colors.black,
   },
   caption: {
     fontSize: 16,
+    padding: 4,
     color: theme.colors.black,
   },
   addSongText: {

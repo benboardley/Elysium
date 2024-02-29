@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, ScrollView, Text, View } from 'react-native';
 import Background from '../components/Background';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
@@ -90,22 +90,20 @@ const Dashboard = ({ navigation }: Props) => {
   }
   return (
     <Background>
-      <Header>User Dashboard</Header>
-      <Paragraph>
-        This is where a user's profile will be displayed. 
-      </Paragraph>
-      <Button mode="outlined" onPress={authenticateSpotify}>
-        Connect Spotify
-      </Button>
-      {postData && (
+      <ScrollView>
+        <Header>User Dashboard</Header>
         <Paragraph>
-          Posts data: {JSON.stringify(postData)}
+          This is where a user's profile will be displayed. 
         </Paragraph>
-      )}
+        <Button mode="outlined" onPress={authenticateSpotify}>
+          Connect Spotify
+        </Button>
+      </ScrollView>
       <Button style={styles.logoutButton} mode="outlined" onPress={handleLogout}>
-        Logout
-      </Button>
+          Logout
+        </Button>
     </Background>
+
   );
 };
 
@@ -115,6 +113,11 @@ const Dashboard = ({ navigation }: Props) => {
             User data: {JSON.stringify(userData)}
           </Paragraph>
         )}
+      {postData && (
+        <Paragraph>
+          Posts data: {JSON.stringify(postData)}
+        </Paragraph>
+      )}
 */
 
 const styles = StyleSheet.create({

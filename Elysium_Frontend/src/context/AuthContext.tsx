@@ -114,7 +114,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
         });
 
         if(response.status === 201){
-            navigation.navigate('Dashboard');
             Swal.fire({
                 title: "Registration Successful, Login Now",
                 icon: "success",
@@ -124,6 +123,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
                 timerProgressBar: true,
                 showConfirmButton: false,
             });
+            loginUser(username, password);
         } else {
             console.log(response.status);
             console.log("there was a server issue");
