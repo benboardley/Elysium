@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
 import Background from '../components/Background';
 import Header from '../components/Header';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
 import { Navigation } from '../utils/types';
@@ -62,15 +62,17 @@ const Feed = ({ navigation }: Props) => {
   }
 
   return (
-    <Background>
-      {postData && (
-        <React.Fragment>
-          {posts.map(post => (
-              <UserPost post={post} navigation={navigation} />
-          ))}
-          </React.Fragment>
-      )}
-    </Background>
+    <ScrollView>
+      <Background>
+        {postData && (
+          <React.Fragment>
+            {posts.map(post => (
+                <UserPost post={post} navigation={navigation} />
+            ))}
+            </React.Fragment>
+        )}
+      </Background>
+    </ScrollView>
   );
 };
 
