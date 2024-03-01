@@ -94,53 +94,64 @@ class StoredSongs(APIView):
     #    song = get_object_or_404(Song, id = id)
     #    serialized_song = SongSerializer(song)
     #    return Response(serialized_song, status=status.HTTP_200_OK)
-    
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         data = request.data
+        user = request.user
+        
         try:
-            uri = data.get('uri')
-            # Check if the song with the given URI already exists
-            existing_song = Song.objects.filter(uri=uri).first()
-            if existing_song:
-                # If the song already exists, return its data
-                song_data = SongSerializer(existing_song).data
-                return Response(song_data, status=status.HTTP_200_OK)
+            if user.spotifytoken:
+                print(data)
+                uri = data['uri']
+                # Check if the song with the given URI already exists
+                existing_song = Song.objects.filter(uri=uri).first()
+                if existing_song:
+                    # If the song already exists, return its data
+                    song_data = SongSerializer(existing_song).data
+                    return Response(song_data, status=status.HTTP_200_OK)
 
-            auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
-            sp = spotipy.Spotify(auth_manager=auth_manager)
-            track_info = sp.track(uri)
+                #auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+                #sp = spotipy.Spotify(auth_manager=auth_manager)
+                print(user.spotifytoken.access_token)
+                sp = spotipy.Spotify(auth=user.spotifytoken.access_token)
+                track_info = sp.track(uri, market=None)
+                print(track_info)
 
-            # Get audio features for the track
-            audio_features = sp.audio_features(uri)
+                # Get audio features for the track
+                audio_features = sp.audio_features(uri)
 
-            # Create a dictionary with the desired information
-            if len(track_info['artists']) > 1:
-                features = [track["name"] for track in track_info['artists'][1:]]
+                # Create a dictionary with the desired information
+                if len(track_info['artists']) > 1:
+                    features = [track["name"] for track in track_info['artists'][1:]]
+                else:
+                    features = None
+
+                song_data = {
+                    #'album': track_info['album']['name'],
+                    'name': track_info['name'],
+                    'artist': track_info['artists'][0]['name'],
+                    'artist_features': features,
+                    'origin': 'spotify',
+                    'uri': uri,
+                    'audio_features': audio_features[0] if audio_features else None,
+                    'other_available_platforms': [],
+                    'song_clip_location': track_info['preview_url'],
+                    'song_thumbnail_location': track_info['album']['images'][0]['url'] if track_info['album']['images'] else None,
+                }
+
+                # Save the new song to the database
+                song_serializer = SongSerializer(data=song_data)
+                if song_serializer.is_valid():
+                    song_serializer.save()
+                    return Response(song_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                features = None
-
-            song_data = {
-                #'album': track_info['album']['name'],
-                'name': track_info['name'],
-                'artist': track_info['artists'][0]['name'],
-                'artist_features': features,
-                'origin': 'spotify',
-                'uri': uri,
-                'audio_features': audio_features[0] if audio_features else None,
-                'other_available_platforms': [],
-                'song_clip_location': track_info['preview_url'],
-                'song_thumbnail_location': track_info['album']['images'][0]['url'] if track_info['album']['images'] else None,
-            }
-
-            # Save the new song to the database
-            song_serializer = SongSerializer(data=song_data)
-            if song_serializer.is_valid():
-                song_serializer.save()
-                return Response(song_serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+                code = status.HTTP_400_BAD_REQUEST
+                message = {'error': 'Connect with spotify to add songs'}
+                return Response(message, code)
         except Exception as e:
+            print(e)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetSpotifyTopSong(APIView):

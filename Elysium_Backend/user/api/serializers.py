@@ -34,6 +34,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    username = serializers.SerializerMethodField()
     #posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     #posts = PostSerializer(many=True, read_only=True)
     #posts = serializers.RelatedField(queryset=Post.objects.all(),many=True)
@@ -47,6 +48,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_posts(self, obj):
         post_ids = obj.post_set.all().values_list('pk', flat=True)  # Assuming 'posts' is the related name in your Profile model
         return list(post_ids)
+    def get_username(self, obj):
+        return obj.user.username
 '''
     
     def create(self, validated_data):
