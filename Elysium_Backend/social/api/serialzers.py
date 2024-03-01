@@ -7,12 +7,13 @@ from datetime import datetime
 
 class PostSerializer(serializers.ModelSerializer):
     song_post = serializers.SerializerMethodField()
-    profile = serializers.SerializerMethodField()#serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
+    profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
+    profile_username = serializers.SerializerMethodField()
     creation_time = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ('profile', 'parent_post', 'likes', 'creation_time', 'update_time', 'caption', 'title', 'song_post')
+        fields = ('id','profile_username','profile', 'parent_post', 'likes', 'creation_time', 'update_time', 'caption', 'title', 'song_post')
 
     def get_song_post(self, instance):
         if isinstance(instance, SongPost):
@@ -26,7 +27,7 @@ class PostSerializer(serializers.ModelSerializer):
         # Add more customization here if needed
         return ret
 
-    def get_profile(self, obj):
+    def get_profile_username(self, obj):
         return obj.profile.user.username
 
     def get_creation_time(self, instance):
