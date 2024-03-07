@@ -113,28 +113,43 @@ class ProfileView(APIView):
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
 
         
-class Following(APIView):
-    #authentication_classes = [TokenAuthentication]
+class Followers(APIView):
+   # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         # Your endpoint logic here
         user = self.request.user
-        profile = user.profile.first()
-        following = profile.follow.all()
-        response_data = ProfileSerializer(following, many=True)
+        profile = user.profile
+        followers = profile.followers.all()
+        response_data = ProfileSerializer(followers, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
     
 class Follow(APIView):
     #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id, *args, **kwargs):
+    def get(self, request, id = None, *args, **kwargs):
         # Your endpoint logic here
-        user = self.request.user
-        profile = user.profile.follow.get(id=id)
+        user = request.user
+        profile = user.profile
+        following = profile.follow.all()
         response_data = ProfileSerializer(following, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, id = None, *args, **kwargs):
+        user = request.user
+        profile = user.profile
+        profile_to_follow = get_object_or_404(Profile, id=request.data['id'])
+        profile.follow.add(profile_to_follow)
+        return Response({"message":"followed"}, status=status.HTTP_202_ACCEPTED)
+    
+    def delete(self, request, id = None, *args, **kwargs):
+        user = request.user
+        profile = user.profile
+        profile_to_unfollow = get_object_or_404(Profile, id=id)
+        profile.follow.remove(profile_to_unfollow)
+        return Response({"message":"unfollowed"}, status=status.HTTP_202_ACCEPTED)
     
 class AuthURL(APIView):
     permission_classes = [IsAuthenticated]

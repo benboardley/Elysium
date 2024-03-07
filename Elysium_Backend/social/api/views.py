@@ -17,13 +17,26 @@ class Posts(APIView):
     #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self,request, id=None):
+        if id:
+            post = Post.objects.filter(songpost__isnull=True, id=id)
+            if post:
+                post_serializer = PostSerializer(post)
+                return Response(post_serializer.data, status=status.HTTP_200_OK)
+            song_posts = SongPost.objects.filter(id = id)
+            if song_posts:
+                post_serializer = PostSerializer(post)
+                return Response(post_serializer.data, status=status.HTTP_200_OK)
+            
+            return Response({"message":"Post not found"}, status=status.HTTP_404_NOT_FOUND)
         posts = Post.objects.filter(songpost__isnull=True)
         song_posts = SongPost.objects.all()
         combined_posts = list(posts) + list(song_posts)
-        post_serializers = PostSerializer(combined_posts, many=True)
+        sorted_posts = sorted(combined_posts, key=lambda post: post.creation_time, reverse=True)
+        post_serializers = PostSerializer(sorted_posts, many=True)
         return Response(post_serializers.data, status=status.HTTP_200_OK)
-    def post(self, request, *args, **kwargs):
+    
+    def post(self, request, id=None, *args, **kwargs):
         user_profile = request.user.profile
 
         if not user_profile:
@@ -31,7 +44,7 @@ class Posts(APIView):
 
         mutable_data = request.data.copy()
         mutable_data['profile'] = user_profile.pk
-
+        print(user_profile.pk)
         # Assuming you have a PostSerializer defined
         serializer = PostSerializer(data=mutable_data)
 
@@ -41,30 +54,24 @@ class Posts(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-class AccessPost(APIView):
-
-    #authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self,request,id):
-        post = get_object_or_404(Post, id=id)
-        serializer = PostSerializer(post)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     def put(self,request,id):
-        post = get_object_or_404(Post, id=id)
-        post_serializer = PostSerializer(post, data=request.data)
+        user = request.user
+        user_profile = user.profile
+        post = get_object_or_404(Post, id=id, profile = user_profile)
+        mutable_data = request.data.copy()
+        mutable_data['profile'] = user_profile.pk
+        post_serializer = PostSerializer(post, data=mutable_data, partial=True)
 
         if post_serializer.is_valid():
             post = post_serializer.save()
             return Response({"message":"update successful"}, status=status.HTTP_202_ACCEPTED)
         return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def delete(self,request,id):
-        post = Post.objects.get(id=id)
+        
+    def delete(self,request, id):
+        post = get_object_or_404(Post, id=id, profile = request.user.profile)
         post.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
+        
     
 
 class FollowFeed(APIView):
