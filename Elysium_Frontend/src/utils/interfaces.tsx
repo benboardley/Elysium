@@ -14,3 +14,9 @@ export interface Post {
     likes: number;
     song_post?: songType;
 }
+
+export interface Follower {
+    id: string;
+    username: string;
+    email: string;
+}

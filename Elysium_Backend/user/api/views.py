@@ -114,7 +114,7 @@ class ProfileView(APIView):
 
         
 class Following(APIView):
-    authentication_classes = [TokenAuthentication]
+    #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -126,7 +126,7 @@ class Following(APIView):
         return Response(response_data.data, status=status.HTTP_200_OK)
     
 class Follow(APIView):
-    authentication_classes = [TokenAuthentication]
+    #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, id, *args, **kwargs):

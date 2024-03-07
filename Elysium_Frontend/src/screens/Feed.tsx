@@ -69,7 +69,7 @@ const Feed = ({ navigation }: Props) => {
             {posts.map(post => (
                 <UserPost post={post} navigation={navigation} />
             ))}
-            </React.Fragment>
+          </React.Fragment>
         )}
       </Background>
     </ScrollView>
