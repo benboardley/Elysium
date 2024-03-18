@@ -48,6 +48,7 @@ const Feed = ({ navigation }: Props) => {
     posts = postInfo.map((post: any) => ({
       id: post.id,
       profile: post.profile,
+      profile_username: post.profile_username,
       creation_time: post.creation_time,
       update_time: post.update_time,
       title: post.title,
@@ -69,7 +70,7 @@ const Feed = ({ navigation }: Props) => {
             {posts.map(post => (
                 <UserPost post={post} navigation={navigation} />
             ))}
-            </React.Fragment>
+          </React.Fragment>
         )}
       </Background>
     </ScrollView>
