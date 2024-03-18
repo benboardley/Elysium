@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Your API Title
-  version: 1.0.0
-paths:
+  title: Elysium App
+  version: BETA 1.0.0
+  paths:
   /social/posts/:
     get:
       summary: Retrieve all posts

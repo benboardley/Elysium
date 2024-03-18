@@ -3,6 +3,7 @@ import { songType } from '../utils/types'
 export interface Post {
     id: string;
     profile: string;
+    profile_username: string;
     creation_time: string;
     update_time: string;
     title?: string;

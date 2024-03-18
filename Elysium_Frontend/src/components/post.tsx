@@ -63,7 +63,7 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.header}>
-        <Text style={styles.profile}>{post.profile}</Text>
+        <Text style={styles.profile}>{post.profile_username}</Text>
         {post.song_post ? (
         <View style={styles.header}>
           <Text style={styles.addSongText}>Add Song</Text>

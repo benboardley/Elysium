@@ -76,11 +76,18 @@ const Dashboard = ({ navigation }: Props) => {
 
   useEffect(() => {
     const setConnected = async () => {
-      if (authContext) {
-        setIsConnected(true);
-      } else {
-        setIsConnected(false);
-      }
+      axiosInstance.get("http://localhost:8000/user/spotify/is-authenticated")
+      .then((response) => response.data)
+      .then((data) => {
+        //this.setState({ spotifyAuthenticated: data.status });
+        
+        if (data.auth) {
+          setIsConnected(true);
+        } else {
+          setIsConnected(false);
+        }
+        console.log(isConnected)
+      });
     };
     setConnected();
   }, []);//[axiosInstance, endpoint]);
@@ -137,7 +144,7 @@ const Dashboard = ({ navigation }: Props) => {
           {isConnected ? (
             <Image source={require('../assets/check-icon.png')} style={{ tintColor: 'green', width: 20, height: 20 }} />
           ) : (
-            <Image source={require('../assets/x.svg')} style={{ tintColor: 'red', width: 20, height: 20 }} />
+            <Image source={require('../assets/x.png')} style={{ tintColor: 'red', width: 20, height: 20 }} />
           )}
           
         </Button>
