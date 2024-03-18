@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Elysium App
-  version: BETA 1.0.0
-  paths:
+  title: Your API Title
+  version: 1.0.0
+paths:
   /social/posts/:
     get:
       summary: Retrieve all posts
@@ -380,3 +380,57 @@ info:
       responses:
         '202':
           description: User profile has been deleted successfully
+          
+  /user/search/{username_substring}:
+    get:
+      summary: Retrieve user profile by string
+      operationId: searchUser
+      parameters:
+        - name: username_substring
+          in: path
+          required: true
+          description: Substring of username
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The potential user profiles
+          content:
+            application/json:
+              example: |
+                [
+                    {
+                        "id": 2,
+                        "user": 2,
+                        "username": "gare",
+                        "posts": [],
+                        "creation_time": "2024-02-25T23:02:42.680017Z",
+                        "bio": "",
+                        "location": "",
+                        "update_time": "2024-02-25T23:02:42.693524Z",
+                        "follow": [
+                            2
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "user": 1,
+                        "username": "gwp",
+                        "posts": [
+                            5
+                        ],
+                        "creation_time": "2024-02-25T22:55:46.315461Z",
+                        "bio": "",
+                        "location": "",
+                        "update_time": "2024-02-25T22:55:46.331060Z",
+                        "follow": [
+                            1
+                        ]
+                    }
+                ]
+        '404':
+          description: No matching profiles
+          content:
+            application/json:
+              example: |
+                {"message": "No Profiles Found"}
