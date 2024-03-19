@@ -39,6 +39,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     #posts = PostSerializer(many=True, read_only=True)
     #posts = serializers.RelatedField(queryset=Post.objects.all(),many=True)
     posts = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField()
     creation_time = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Profile
@@ -50,6 +51,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         return list(post_ids)
     def get_username(self, obj):
         return obj.user.username
+    
+    def get_followers(self, obj):
+        post_ids = obj.followers.all().values_list('pk', flat=True)  # Assuming 'posts' is the related name in your Profile model
+        return list(post_ids)
 '''
     
     def create(self, validated_data):

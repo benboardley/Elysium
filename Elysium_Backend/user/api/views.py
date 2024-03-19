@@ -93,11 +93,11 @@ class ProfileView(APIView):
     #authentication_classes = [TokenAuthentication]
     #permission_classes = [IsAuthenticated]
     permission_classes = [permissions.AllowAny]
-    def get(self, request,id):
+    def get(self, request, id):
         profile = get_object_or_404(Profile,id=id)
-        print(profile.post_set.first())
+        #print(profile.post_set.first())
         serializer = ProfileSerializer(profile, context={'request': request})
-        print(serializer.data)
+        #print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def put(self, request, id):
         profile = get_object_or_404(Profile, id=id)
