@@ -197,7 +197,7 @@ const Dashboard = ({ navigation }: Props) => {
         
         {userPostsData && (
           <React.Fragment>
-            {posts.map(post => (
+            {posts.reverse().map(post => (
                 <UserPost post={post} navigation={navigation} />
             ))}
           </React.Fragment>
