@@ -176,7 +176,7 @@ const Dashboard = ({ navigation }: Props) => {
               <Paragraph>Posts</Paragraph>
             </View>
             <View style={styles.column}>
-              <Text style={styles.number}>0</Text>
+              <Text style={styles.number}>{userInfo?.followers.length}</Text>
               <Paragraph>Followers</Paragraph>
             </View>
             <View style={styles.column}>
