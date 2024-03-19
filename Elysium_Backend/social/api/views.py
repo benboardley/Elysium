@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .serialzers import PostSerializer
+from .serializers import PostSerializer
 from user.models import CustomUser, Profile
 from ..models import Post, SongPost
 # Create your views here.

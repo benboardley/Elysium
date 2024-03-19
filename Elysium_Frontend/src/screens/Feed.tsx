@@ -42,6 +42,7 @@ const Feed = ({ navigation }: Props) => {
     };
     fetchPosts();
   }, []);//[axiosInstance, endpoint]);
+  
   let posts: Post[] = [];
   if (postData) {
     const postInfo = postData.map((post: any) => JSON.parse(JSON.stringify(post)));

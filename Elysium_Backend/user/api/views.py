@@ -16,6 +16,7 @@ from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSer
 from .utils import create_user_tokens, is_spotify_authenticated, get_user_tokens
 from ..models import *
 from datetime import datetime
+from social.api.serializers import PostSerializer
 import secrets
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -93,7 +94,7 @@ class ProfileView(APIView):
     #authentication_classes = [TokenAuthentication]
     #permission_classes = [IsAuthenticated]
 
-    def get(self, request,id):
+    def get(self, request, id):
         profile = get_object_or_404(Profile,id=id)
         print(profile.post_set.first())
         serializer = ProfileSerializer(profile, context={'request': request})
@@ -112,6 +113,23 @@ class ProfileView(APIView):
         profile.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
 
+class PersonalView(APIView):
+    #authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)   
+
+class ProfilePosts(APIView):
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
+
+    def get(self, request,id):
+        posts = get_object_or_404(Profile, id=id).post_set.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
 class Followers(APIView):
    # authentication_classes = [TokenAuthentication]

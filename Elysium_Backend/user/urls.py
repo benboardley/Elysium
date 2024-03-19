@@ -11,7 +11,9 @@ urlpatterns = [
     path('follow/<int:id>', Follow.as_view(), name='follow'),
     path('followers/', Followers.as_view(), name='followers'),
     path('profile/<int:id>', ProfileView.as_view(), name='profile'),
+    path('self/', PersonalView.as_view(), name='profile2'),
     path('spotify/get-auth-url', AuthURL.as_view()),
     path('spotify/redirect', spotify_callback),
-    path('spotify/is-authenticated', SpotifyAuthenticated.as_view())
+    path('spotify/is-authenticated', SpotifyAuthenticated.as_view()),
+    path('profile/posts/<int:id>', ProfilePosts.as_view(), name='profile-posts')
 ]

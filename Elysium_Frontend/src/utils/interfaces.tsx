@@ -1,5 +1,18 @@
 import { songType } from '../utils/types'
 
+export interface User {
+    id: number;
+    username: string;
+    email: string;
+    password: string;
+    followers: string[];
+    following: string[];
+    posts: string[];
+    playlists: string[];
+    albums: string[];
+    songs: string[];
+}
+
 export interface Post {
     id: string;
     profile: string;
