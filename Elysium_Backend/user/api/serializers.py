@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from ..models import CustomUser, Profile
 from social.models import Post
-from social.api.serialzers import PostSerializer
+from social.api.serializers import PostSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UserSerializer(serializers.ModelSerializer):
