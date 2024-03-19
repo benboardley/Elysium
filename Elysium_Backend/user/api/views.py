@@ -93,12 +93,12 @@ class UserLoginView(APIView):
 class ProfileView(APIView):
     #authentication_classes = [TokenAuthentication]
     #permission_classes = [IsAuthenticated]
-
+    permission_classes = [permissions.AllowAny]
     def get(self, request, id):
         profile = get_object_or_404(Profile,id=id)
-        print(profile.post_set.first())
+        #print(profile.post_set.first())
         serializer = ProfileSerializer(profile, context={'request': request})
-        print(serializer.data)
+        #print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def put(self, request, id):
         profile = get_object_or_404(Profile, id=id)
@@ -112,7 +112,18 @@ class ProfileView(APIView):
         profile = get_object_or_404(Profile, id=id)
         profile.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
-
+    
+class UserSearch(APIView):
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
+    
+    def get(self, request, substring, *args, **kwargs):
+        # Your endpoint logic
+        profiles = Profile.objects.filter(user__username__icontains=substring)
+        response_data = ProfileSerializer(profiles, many=True)
+        if not profiles:
+            return Response({"message":"No profiles found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(response_data.data, status=status.HTTP_200_OK)
 class PersonalView(APIView):
     #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
