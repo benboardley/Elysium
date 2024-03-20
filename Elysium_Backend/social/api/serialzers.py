@@ -48,10 +48,11 @@ class PostSerializer(serializers.ModelSerializer):
 
         # If song data is present, create a SongPost; otherwise, create a generic Post
         if song_uri:
-            song = Song.objects.get(uri=song_uri)
+            song = Song.objects.filter(uri=song_uri).first()
             if not song:
-                song_serializer = get_song_data(song_uri)
-                song = song_serializer.save()
+                return None
+            #    song_serializer = get_song_data(song_uri)
+            #    song = song_serializer.save()
             post = SongPost.objects.create(song=song, **validated_data)
         else:
             post = Post.objects.create(**validated_data)
