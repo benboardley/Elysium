@@ -44,10 +44,19 @@ class Posts(APIView):
 
         mutable_data = request.data.copy()
         mutable_data['profile'] = user_profile.pk
-        print(user_profile.pk)
+        
         # Assuming you have a PostSerializer defined
         serializer = PostSerializer(data=mutable_data)
+        song_uri = request.data.get('song_uri', None)
+        if song_uri:
+            #serializer = PostSerializer(data=request.data)
 
+            # Validate the serializer
+            if serializer.is_valid():
+                serializer.save(song_uri = song_uri)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -72,7 +81,7 @@ class Posts(APIView):
         post.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
         
-    
+
 
 class FollowFeed(APIView):
 

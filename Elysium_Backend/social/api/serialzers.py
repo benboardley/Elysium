@@ -2,6 +2,8 @@ from rest_framework import serializers
 from user.models import Profile
 from ..models import Post, SongPost
 from music.api.serializers import SongSerializer
+from music.models import Song
+from music.api.utils import get_song_data
 from datetime import datetime
 # Assuming you have Song, Album, and Playlist models defined somewhere
 
@@ -39,6 +41,22 @@ class PostSerializer(serializers.ModelSerializer):
             creation_time_obj = datetime.strptime(creation_time, "%Y-%m-%dT%H:%M:%S.%fZ")
 
         return creation_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+    
+    def create(self, validated_data):
+        # Check if song data is present in the validated data
+        song_uri = validated_data.pop('song_uri', None)
+
+        # If song data is present, create a SongPost; otherwise, create a generic Post
+        if song_uri:
+            song = Song.objects.get(uri=song_uri)
+            if not song:
+                song_serializer = get_song_data(song_uri)
+                song = song_serializer.save()
+            post = SongPost.objects.create(song=song, **validated_data)
+        else:
+            post = Post.objects.create(**validated_data)
+
+        return post
 
 """
 class PostSerializer(serializers.ModelSerializer):
