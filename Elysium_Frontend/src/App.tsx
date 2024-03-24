@@ -13,6 +13,7 @@ import {
   ForgotPasswordScreen,
   Dashboard,
   Feed,
+  Search,
 } from './screens';
 
 type RootStackParamList = {
@@ -23,9 +24,12 @@ type RootStackParamList = {
   Dashboard: undefined;
   MainScreen: undefined;
   Feed: undefined;
+  Search: undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
+
+
 
 const App = () => {
   const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
@@ -87,6 +91,18 @@ const App = () => {
                 }}
               />
               <Tab.Screen
+                name="Search"
+                component={AuthProviderWrapper(Search)}
+                options={{
+                  tabBarIcon: ({ color, size }) => (
+                    <Image
+                      source={require('./assets/search-icon.png')}
+                      style={{ tintColor: theme.colors.black, width: 25, height: 25 }}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
                 name="Dashboard"
                 component={AuthProviderWrapper(Dashboard)}
                 options={{
@@ -105,29 +121,5 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
-/*
-            <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ focused, color, size }) => {
-                let iconName;
-
-                if (route.name === 'Feed') {
-                  iconName = focused
-                    ? 'home.png'
-                    : 'home.png';
-                } else if (route.name === 'Dashboard') {
-                  iconName = focused ? 'profile.png' : 'profile.png';
-                }
-
-                // You can return any component that you like here!
-                return <Ionicons name={iconName} size={size} color={color} />;
-              },
-              tabBarActiveTintColor: 'tomato',
-              tabBarInactiveTintColor: 'gray',
-            })}>
-              <Tab.Screen name="Feed" component={AuthProviderWrapper(Feed)} />
-              <Tab.Screen name="Dashboard" component={AuthProviderWrapper(Dashboard)} />
-*/
 
 export default App;

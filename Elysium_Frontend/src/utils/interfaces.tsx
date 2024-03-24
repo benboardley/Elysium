@@ -13,6 +13,11 @@ export interface User {
     songs: string[];
 }
 
+export interface StripUser {
+    id: number;
+    username: string;
+}
+
 export interface Post {
     id: string;
     profile: string;
