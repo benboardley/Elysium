@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user.models import Profile
 from ..models import Post, SongPost
+from music.models import Song
 from music.api.serializers import SongSerializer
 from datetime import datetime
 # Assuming you have Song, Album, and Playlist models defined somewhere
