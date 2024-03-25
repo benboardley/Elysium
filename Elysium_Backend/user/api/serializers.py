@@ -33,6 +33,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class ProfileSerializer(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(required=False)
     user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     username = serializers.SerializerMethodField()
     #posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -55,6 +56,17 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_followers(self, obj):
         post_ids = obj.followers.all().values_list('pk', flat=True)  # Assuming 'posts' is the related name in your Profile model
         return list(post_ids)
+
+class ProfileSearchSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+    class Meta:
+        model = Profile
+        fields = ['username', 'id', 'profile_image']
+
+
+    def get_username(self, obj):
+        return obj.user.username
+
 '''
     def create(self, validated_data):
         # Extract user data from validated_data

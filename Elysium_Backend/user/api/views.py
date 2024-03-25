@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.views import TokenObtainPairView
 from requests import Request, post
 from ..credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
-from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer
+from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer, ProfileSearchSerializer
 from .utils import create_user_tokens, is_spotify_authenticated, get_user_tokens
 from ..models import *
 from datetime import datetime
@@ -120,7 +120,7 @@ class UserSearch(APIView):
     def get(self, request, substring, *args, **kwargs):
         # Your endpoint logic
         profiles = Profile.objects.filter(user__username__icontains=substring)
-        response_data = ProfileSerializer(profiles, many=True)
+        response_data = ProfileSearchSerializer(profiles, many=True)
         if not profiles:
             return Response({"message":"No profiles found"}, status=status.HTTP_404_NOT_FOUND)
         return Response(response_data.data, status=status.HTTP_200_OK)
@@ -151,7 +151,7 @@ class Followers(APIView):
         user = self.request.user
         profile = user.profile
         followers = profile.followers.all()
-        response_data = ProfileSerializer(followers, many=True)
+        response_data = ProfileSearchSerializer(followers, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
     
 class Follow(APIView):
@@ -163,7 +163,7 @@ class Follow(APIView):
         user = request.user
         profile = user.profile
         following = profile.follow.all()
-        response_data = ProfileSerializer(following, many=True)
+        response_data = ProfileSearchSerializer(following, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
     
     def post(self, request, id = None, *args, **kwargs):
