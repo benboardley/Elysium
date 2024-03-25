@@ -33,6 +33,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class ProfileSerializer(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(required=False)
     user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     username = serializers.SerializerMethodField()
     #posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
