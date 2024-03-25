@@ -56,7 +56,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         post_ids = obj.followers.all().values_list('pk', flat=True)  # Assuming 'posts' is the related name in your Profile model
         return list(post_ids)
 '''
-    
     def create(self, validated_data):
         # Extract user data from validated_data
         user_data = validated_data.pop('user')

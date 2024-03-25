@@ -40,11 +40,11 @@ class Song(models.Model):
 class Playlist(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    artist = models.CharField(max_length=255)
-    artist_features = models.JSONField(default=list)
+    #artist = models.CharField(max_length=255)
+    #artist_features = models.JSONField(default=list)
     origin = models.CharField(max_length=255)
     uri = models.CharField(max_length=255, unique=True)
     songs = models.ManyToManyField(Song, related_name='playlists')
 
     def __str__(self):
-        return f"{self.name} - {self.artist}"
+        return f"{self.name}"

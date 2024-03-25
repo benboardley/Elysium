@@ -14,7 +14,7 @@ from ..models import Song
 from .serializers import SongSerializer
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from .utils import get_playlist_id
+from .utils import get_playlist_id, get_song_data
 # Create your views here.
 
 class GetSpotifyPlaylists(APIView):
@@ -86,8 +86,32 @@ class SpotifySongs(APIView):
         except Exception as e:
             print(e)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
+class SongSearch(APIView):
+    def get(self, request, query):
+        if False:#Song.objects.filter(name__icontains=query).exists():
+            songs = Song.objects.filter(name__icontains=query)
+            song_data = SongSerializer(songs, many=True).data
+            return Response(song_data, status=status.HTTP_200_OK)
+        else:
+            try:
+                auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+                sp = spotipy.Spotify(auth_manager=auth_manager)
+                results = sp.search(q=query, type='track', limit=5)
+                songs = []
+                for track in results['tracks']['items']:
+                    song = {
+                        'name': track['name'],
+                        'artist': track['artists'][0]['name'],
+                        'uri': track['uri'],
+                        'thumbnail': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                    }
+                    songs.append(song)
+                return Response(songs, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 class StoredSongs(APIView):
 
     #def get(self, request, id):
@@ -100,7 +124,7 @@ class StoredSongs(APIView):
         user = request.user
         
         try:
-            if user.spotifytoken:
+            if True:#user.spotifytoken:
                 print(data)
                 uri = data['uri']
                 # Check if the song with the given URI already exists
@@ -110,37 +134,8 @@ class StoredSongs(APIView):
                     song_data = SongSerializer(existing_song).data
                     return Response(song_data, status=status.HTTP_200_OK)
 
-                #auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
-                #sp = spotipy.Spotify(auth_manager=auth_manager)
-                print(user.spotifytoken.access_token)
-                sp = spotipy.Spotify(auth=user.spotifytoken.access_token)
-                track_info = sp.track(uri, market=None)
-                print(track_info)
-
-                # Get audio features for the track
-                audio_features = sp.audio_features(uri)
-
-                # Create a dictionary with the desired information
-                if len(track_info['artists']) > 1:
-                    features = [track["name"] for track in track_info['artists'][1:]]
-                else:
-                    features = None
-
-                song_data = {
-                    #'album': track_info['album']['name'],
-                    'name': track_info['name'],
-                    'artist': track_info['artists'][0]['name'],
-                    'artist_features': features,
-                    'origin': 'spotify',
-                    'uri': uri,
-                    'audio_features': audio_features[0] if audio_features else None,
-                    'other_available_platforms': [],
-                    'song_clip_location': track_info['preview_url'],
-                    'song_thumbnail_location': track_info['album']['images'][0]['url'] if track_info['album']['images'] else None,
-                }
-
-                # Save the new song to the database
-                song_serializer = SongSerializer(data=song_data)
+                song_serializer = get_song_data(uri)
+                
                 if song_serializer.is_valid():
                     song_serializer.save()
                     return Response(song_serializer.data, status=status.HTTP_201_CREATED)

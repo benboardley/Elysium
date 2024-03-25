@@ -11,6 +11,9 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import PostSerializer
 from user.models import CustomUser, Profile
 from ..models import Post, SongPost
+from music.api.serializers import SongSerializer
+from music.models import Song
+from music.api.utils import get_song_data
 # Create your views here.
 
 class Posts(APIView):
@@ -44,13 +47,31 @@ class Posts(APIView):
 
         mutable_data = request.data.copy()
         mutable_data['profile'] = user_profile.pk
-        print(user_profile.pk)
+        
         # Assuming you have a PostSerializer defined
         serializer = PostSerializer(data=mutable_data)
-
+        song_uri = request.data.get('song_uri', None)
         if serializer.is_valid():
-            serializer.save()
+            if song_uri:
+                try:
+                    song = Song.objects.filter(uri=song_uri).first()
+                    if not song:
+                        song_serializer = get_song_data(song_uri)
+                        if song_serializer.is_valid():
+                            song = song_serializer.save()
+                        else:
+                            return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    out = serializer.save(song_uri = song.uri)
+                    if out:
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)   
+                    return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
+                except:
+                    return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+                
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -72,7 +93,7 @@ class Posts(APIView):
         post.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
         
-    
+
 
 class FollowFeed(APIView):
 
