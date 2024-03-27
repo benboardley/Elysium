@@ -6,3 +6,6 @@ dotenv_path = os.path.join((os.path.dirname(os.path.dirname(os.path.abspath(__fi
 load_dotenv(dotenv_path)
 print(dotenv_path)
 OPENAI_KEY = os.environ["openaikey"]
+SPOTIPY_ID = os.environ["client_id"]
+SPOTIPY_SECRET = os.environ["client_secret"]
+
