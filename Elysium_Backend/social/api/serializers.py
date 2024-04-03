@@ -1,27 +1,35 @@
 from rest_framework import serializers
 from user.models import Profile
-from ..models import Post, SongPost
-from music.models import Song
-from music.api.serializers import SongSerializer
+from ..models import Post, SongPost, PlaylistPost
+from music.models import Song, Playlist
+from music.api.serializers import SongSerializer, PlaylistSerializer
 from datetime import datetime
 # Assuming you have Song, Album, and Playlist models defined somewhere
 
 class PostSerializer(serializers.ModelSerializer):
     song_post = serializers.SerializerMethodField()
+    playlist_post = serializers.SerializerMethodField()
     profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
     profile_username = serializers.SerializerMethodField()
     creation_time = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ('id','profile_username','profile', 'parent_post', 'likes', 'creation_time', 'update_time', 'caption', 'title', 'song_post')
+        fields = ('id','profile_username','profile', 'parent_post', 'likes', 'creation_time', 'update_time', 'caption', 'title', 'song_post', 'playlist_post')
 
     def get_song_post(self, instance):
         if isinstance(instance, SongPost):
             # If the post is a SongPost, serialize the related Song
             return SongSerializer(instance.song).data
         return None  # If it's not a SongPost, return None or customize as needed
-
+    
+    def get_playlist_post(self, instance):
+        if isinstance(instance, PlaylistPost):
+            # If the post is a SongPost, serialize the related Song
+            
+            return PlaylistSerializer(instance.playlist).data
+        return None
+    
     def to_representation(self, instance):
         # Customize representation if needed
         ret = super().to_representation(instance)
@@ -43,7 +51,7 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Check if song data is present in the validated data
         song_uri = validated_data.pop('song_uri', None)
-
+        playlist_uri = validated_data.pop('playlist_uri', None)
         # If song data is present, create a SongPost; otherwise, create a generic Post
         if song_uri:
             song = Song.objects.filter(uri=song_uri).first()
@@ -52,6 +60,13 @@ class PostSerializer(serializers.ModelSerializer):
             #    song_serializer = get_song_data(song_uri)
             #    song = song_serializer.save()
             post = SongPost.objects.create(song=song, **validated_data)
+        if playlist_uri:
+            playlist = Playlist.objects.filter(uri=playlist_uri).first()
+            if not playlist:
+                return None
+            #    song_serializer = get_song_data(song_uri)
+            #    song = song_serializer.save()
+            post = PlaylistPost.objects.create(playlist=playlist, **validated_data)
         else:
             post = Post.objects.create(**validated_data)
 
