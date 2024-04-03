@@ -57,7 +57,7 @@ class GetSpotifyPlaylistSongs(APIView):
                     return Response({'message':'Error getting playlist, check uri or check back later'}, status=status.HTTP_400_BAD_REQUEST)
                 #for track in tracks['items']:
                 uris = [track['track']['uri'] for track in tracks['items']]
-                song_serialize = get_song_data_list(uris = uris)
+                song_serialize, page, max_page = get_song_data_list(uris = uris)
                 
                 return Response(song_serialize, status=status.HTTP_200_OK)
             except Exception as e:
