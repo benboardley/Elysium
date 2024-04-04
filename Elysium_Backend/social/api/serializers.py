@@ -25,9 +25,9 @@ class PostSerializer(serializers.ModelSerializer):
     
     def get_playlist_post(self, instance):
         if isinstance(instance, PlaylistPost):
-            # If the post is a SongPost, serialize the related Song
+            context = self.context  # This grabs the context passed to PostSerializer
             
-            return PlaylistSerializer(instance.playlist).data
+            return PlaylistSerializer(instance.playlist, context=context).data
         return None
     
     def to_representation(self, instance):

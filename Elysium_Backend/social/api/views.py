@@ -106,7 +106,22 @@ class Posts(APIView):
         post.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
         
+class PlaylistPosts(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, id=None):
+        # Existing implementation for handling specific post retrieval...
+
+        # For listing posts:
+        posts = get_object_or_404(PlaylistPost, id=id)
+        page = self.request.query_params.get('page', 1)
+        page_size = self.request.query_params.get('page_size', 50)
+        # Assuming you are serializing PlaylistPost instances that include playlists...
+        # You need to pass the pagination context to each serializer
+        context = {'request': request, 'page': int(page), 'page_size': int(page_size)}
+        post_serializers = PostSerializer(posts, context=context)
+        print(len(post_serializers.data['playlist_post']['songs']))
+        return Response(post_serializers.data, status=status.HTTP_200_OK)
 
 class FollowFeed(APIView):
 
