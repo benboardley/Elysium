@@ -10,11 +10,11 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from user.models import CustomUser, Profile, SpotifyToken
 from user.credentials import CLIENT_ID, CLIENT_SECRET
-from ..models import Song
+from ..models import Song, Playlist
 from .serializers import SongSerializer
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from .utils import get_playlist_id, get_song_data, get_song_data_list
+from .utils import get_playlist_id, get_song_data, get_song_data_list, add_playlist
 # Create your views here.
 
 class GetSpotifyPlaylists(APIView):
@@ -40,7 +40,24 @@ class GetSpotifyPlaylists(APIView):
         else:
             code = status.HTTP_400_BAD_REQUEST
             message = {'message': 'Connect with spotify to see playlists'}
-        return Response(message, status=code)    
+        return Response(message, status=code)
+
+    def post(self,request):
+        try:
+            user = request.user
+            uri = request.data['uri']
+            #print("here")
+            if user.spotifytoken:
+                playlist = get_object_or_404(Playlist, uri=uri)
+                add_playlist(playlist, user.spotifytoken)
+            else:
+                code = status.HTTP_400_BAD_REQUEST
+                message = {'error': 'Connect with spotify to add playlists'}
+                return Response(message, code)
+            return Response({'message': 'Playlist added successfully!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class GetSpotifyPlaylistSongs(APIView):

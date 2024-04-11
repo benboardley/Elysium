@@ -147,3 +147,23 @@ def create_playlist(playlist_uri):
     )
     playlist.songs.set(all_relevant_songs)
     return playlist, created
+
+def add_playlist(playlist, user_token):
+    sp = spotipy.Spotify(auth=user_token.access_token)
+    playlist_name = playlist.name
+    playlist_description = playlist.description
+    user_id = sp.current_user()['id']  # Get the current user's ID
+
+    new_playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=True, description=playlist_description)
+
+    playlist_id = new_playlist['id']
+    # Add songs to the playlist
+    tracks = playlist.songs.all().values('uri')
+    tracks = [track['uri'] for track in tracks]
+    max_page = math.ceil(len(tracks)/50)
+    page = 0
+    
+    while page < max_page:
+        track_uris =  tracks[page*50:(page+1)*50]
+        sp.playlist_add_items(playlist_id, track_uris)
+        page += 1
