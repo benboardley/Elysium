@@ -60,7 +60,7 @@ class PostSerializer(serializers.ModelSerializer):
             #    song_serializer = get_song_data(song_uri)
             #    song = song_serializer.save()
             post = SongPost.objects.create(song=song, **validated_data)
-        if playlist_uri:
+        elif playlist_uri:
             playlist = Playlist.objects.filter(uri=playlist_uri).first()
             if not playlist:
                 return None
@@ -71,6 +71,42 @@ class PostSerializer(serializers.ModelSerializer):
             post = Post.objects.create(**validated_data)
 
         return post
+    def update(self, instance, validated_data):
+        song_uri = validated_data.pop('song_uri', instance.song.uri if isinstance(instance, SongPost) else None)
+        playlist_uri = validated_data.pop('playlist_uri', instance.playlist.uri if isinstance(instance, PlaylistPost) else None)
+        #print(playlist_uri)
+        # Update based on the type of post
+        if song_uri:
+            song = Song.objects.filter(uri=song_uri).first()
+            if not song:
+                # Optionally, handle the case where the song does not exist yet
+                return None
+            if isinstance(instance, SongPost):
+                instance.song = song
+            else:
+                # Optionally handle changing a generic post to a song post, or error out
+                return None
+        elif playlist_uri:
+            playlist = Playlist.objects.filter(uri=playlist_uri).first()
+            if not playlist:
+                # Optionally, handle the case where the playlist does not exist yet
+                return None
+            if isinstance(instance, PlaylistPost):
+                instance.playlist = playlist
+            else:
+                # Optionally handle changing a generic post to a playlist post, or error out
+                return None
+        else:
+            if isinstance(instance, SongPost) or isinstance(instance, PlaylistPost):
+                # Handle converting a SongPost or PlaylistPost to a generic post, or error out
+                return None
+
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        return instance
 """
 class PostSerializer(serializers.ModelSerializer):
     song_post = serializers.SerializerMethodField()

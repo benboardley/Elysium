@@ -77,12 +77,11 @@ class Posts(APIView):
                     if out:
                         return Response(serializer.data, status=status.HTTP_201_CREATED)   
                     return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                    
+                else:
+                    serializer.save() 
             except Exception as e:
                 print(e)
                 return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
                 
         else:
@@ -91,15 +90,68 @@ class Posts(APIView):
     def put(self,request,id):
         user = request.user
         user_profile = user.profile
-        post = get_object_or_404(Post, id=id, profile = user_profile)
+        song_uri = request.data.get('song_uri', None)
+        playlist_uri = request.data.get('playlist_uri', None)
+        # Attempt to fetch a generic post, a song post, or a playlist post
+        try:
+            post = SongPost.objects.get(id=id, profile=user_profile)
+        except SongPost.DoesNotExist:
+            post = None
+
+        if not post:
+            try:
+                post = PlaylistPost.objects.get(id=id, profile=user_profile)
+            except PlaylistPost.DoesNotExist:
+                post = None
+
+        if not post:
+            try:
+                post = Post.objects.get(id=id, profile=user_profile)
+            except Post.DoesNotExist:
+                return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create a mutable copy of the request data and update profile
         mutable_data = request.data.copy()
         mutable_data['profile'] = user_profile.pk
-        post_serializer = PostSerializer(post, data=mutable_data, partial=True)
 
-        if post_serializer.is_valid():
-            post = post_serializer.save()
-            return Response({"message":"update successful"}, status=status.HTTP_202_ACCEPTED)
-        return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Use the correct serializer based on the type of post
+        if isinstance(post, SongPost):
+            serializer = PostSerializer(post, data=mutable_data, partial=True)
+            if serializer.is_valid():
+                if song_uri:
+                    song = Song.objects.filter(uri=song_uri).first()
+                    if not song:
+                        song_serializer = get_song_data(song_uri)
+                        if song_serializer.is_valid():
+                            song = song_serializer.save()
+                        else:
+                            return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    out = serializer.save(song_uri = song.uri)
+                    if out:
+                        return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)
+            
+                post = serializer.save()
+                return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)
+            return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif isinstance(post, PlaylistPost):
+            serializer = PostSerializer(post, data=mutable_data, partial=True)
+            if serializer.is_valid():
+                if playlist_uri:
+                    playlist, created = create_playlist(playlist_uri)
+                    if not playlist:
+                        return Response({"error": "Playlist not found or Try again later"}, status=status.HTTP_404_NOT_FOUND) 
+                    out = serializer.save(playlist_uri = playlist_uri)
+                else:
+                    out = serializer.save()
+                if out:
+                    return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)   
+            return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer = PostSerializer(post, data=mutable_data, partial=True)
+            if serializer.is_valid():
+                post = serializer.save()
+                return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def delete(self,request, id):
         post = get_object_or_404(Post, id=id, profile = request.user.profile)
