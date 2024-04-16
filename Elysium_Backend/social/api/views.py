@@ -10,10 +10,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .serializers import PostSerializer
 from user.models import CustomUser, Profile
-from ..models import Post, SongPost
-from music.api.serializers import SongSerializer
-from music.models import Song
-from music.api.utils import get_song_data
+from ..models import Post, SongPost, PlaylistPost
+from music.api.serializers import SongSerializer, PlaylistSerializer
+from music.models import Song, Playlist
+from music.api.utils import get_song_data, create_playlist
 # Create your views here.
 
 class Posts(APIView):
@@ -32,9 +32,10 @@ class Posts(APIView):
                 return Response(post_serializer.data, status=status.HTTP_200_OK)
             
             return Response({"message":"Post not found"}, status=status.HTTP_404_NOT_FOUND)
-        posts = Post.objects.filter(songpost__isnull=True)
+        posts = Post.objects.filter(songpost__isnull=True, playlistpost__isnull=True)
         song_posts = SongPost.objects.all()
-        combined_posts = list(posts) + list(song_posts)
+        playlist_posts = PlaylistPost.objects.all()
+        combined_posts = list(posts) + list(song_posts) + list(playlist_posts)
         sorted_posts = sorted(combined_posts, key=lambda post: post.creation_time, reverse=True)
         post_serializers = PostSerializer(sorted_posts, many=True)
         return Response(post_serializers.data, status=status.HTTP_200_OK)
@@ -51,9 +52,73 @@ class Posts(APIView):
         # Assuming you have a PostSerializer defined
         serializer = PostSerializer(data=mutable_data)
         song_uri = request.data.get('song_uri', None)
+        playlist_uri = request.data.get('playlist_uri', None)
         if serializer.is_valid():
-            if song_uri:
-                try:
+            try:
+                if song_uri:
+                    
+                        song = Song.objects.filter(uri=song_uri).first()
+                        if not song:
+                            song_serializer = get_song_data(song_uri)
+                            if song_serializer.is_valid():
+                                song = song_serializer.save()
+                            else:
+                                return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                        out = serializer.save(song_uri = song.uri)
+                        if out:
+                            return Response(serializer.data, status=status.HTTP_201_CREATED)   
+                        return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                elif playlist_uri:
+                    playlist = Playlist.objects.filter(uri=playlist_uri).first()
+                    playlist, created = create_playlist(playlist_uri)
+                    if not playlist:
+                        return Response({"error": "Playlist not found or Try again later"}, status=status.HTTP_404_NOT_FOUND) 
+                    out = serializer.save(playlist_uri = playlist.uri)
+                    if out:
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)   
+                    return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    serializer.save() 
+            except Exception as e:
+                print(e)
+                return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def put(self,request,id):
+        user = request.user
+        user_profile = user.profile
+        song_uri = request.data.get('song_uri', None)
+        playlist_uri = request.data.get('playlist_uri', None)
+        # Attempt to fetch a generic post, a song post, or a playlist post
+        try:
+            post = SongPost.objects.get(id=id, profile=user_profile)
+        except SongPost.DoesNotExist:
+            post = None
+
+        if not post:
+            try:
+                post = PlaylistPost.objects.get(id=id, profile=user_profile)
+            except PlaylistPost.DoesNotExist:
+                post = None
+
+        if not post:
+            try:
+                post = Post.objects.get(id=id, profile=user_profile)
+            except Post.DoesNotExist:
+                return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create a mutable copy of the request data and update profile
+        mutable_data = request.data.copy()
+        mutable_data['profile'] = user_profile.pk
+
+        # Use the correct serializer based on the type of post
+        if isinstance(post, SongPost):
+            serializer = PostSerializer(post, data=mutable_data, partial=True)
+            if serializer.is_valid():
+                if song_uri:
                     song = Song.objects.filter(uri=song_uri).first()
                     if not song:
                         song_serializer = get_song_data(song_uri)
@@ -63,37 +128,52 @@ class Posts(APIView):
                             return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                     out = serializer.save(song_uri = song.uri)
                     if out:
-                        return Response(serializer.data, status=status.HTTP_201_CREATED)   
-                    return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                
-                except:
-                    return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-                
+                        return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)
+            
+                post = serializer.save()
+                return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)
+            return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif isinstance(post, PlaylistPost):
+            serializer = PostSerializer(post, data=mutable_data, partial=True)
+            if serializer.is_valid():
+                if playlist_uri:
+                    playlist, created = create_playlist(playlist_uri)
+                    if not playlist:
+                        return Response({"error": "Playlist not found or Try again later"}, status=status.HTTP_404_NOT_FOUND) 
+                    out = serializer.save(playlist_uri = playlist_uri)
+                else:
+                    out = serializer.save()
+                if out:
+                    return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)   
+            return Response(song_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    def put(self,request,id):
-        user = request.user
-        user_profile = user.profile
-        post = get_object_or_404(Post, id=id, profile = user_profile)
-        mutable_data = request.data.copy()
-        mutable_data['profile'] = user_profile.pk
-        post_serializer = PostSerializer(post, data=mutable_data, partial=True)
-
-        if post_serializer.is_valid():
-            post = post_serializer.save()
-            return Response({"message":"update successful"}, status=status.HTTP_202_ACCEPTED)
-        return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = PostSerializer(post, data=mutable_data, partial=True)
+            if serializer.is_valid():
+                post = serializer.save()
+                return Response({"message": "Update successful"}, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def delete(self,request, id):
         post = get_object_or_404(Post, id=id, profile = request.user.profile)
         post.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
         
+class PlaylistPosts(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, id=None):
+        # Existing implementation for handling specific post retrieval...
+
+        # For listing posts:
+        posts = get_object_or_404(PlaylistPost, id=id)
+        page = self.request.query_params.get('page', 1)
+        page_size = self.request.query_params.get('page_size', 50)
+        # Assuming you are serializing PlaylistPost instances that include playlists...
+        # You need to pass the pagination context to each serializer
+        context = {'request': request, 'page': int(page), 'page_size': int(page_size)}
+        post_serializers = PostSerializer(posts, context=context)
+        print(len(post_serializers.data['playlist_post']['songs']))
+        return Response(post_serializers.data, status=status.HTTP_200_OK)
 
 class FollowFeed(APIView):
 
