@@ -23,69 +23,73 @@ const Search = ({ navigation }: Props) => {
   const [searchResult, setSearchResult] = useState<any | null>(null);
   const axiosInstance = useAxios(navigation);
   let searchEndpoint: string = '';
-  let users: StripUser[] = [];
   
   const handleSearch = async () => {
-      console.log('Searching for:', searchQuery);
-      if (Platform.OS === 'web' || Platform.OS === 'ios') {
-          // Logic for web platform
-          searchEndpoint = 'http://localhost:8000/user/search/'+searchQuery.toString();
-          } else {
-          // // Logic for Android platform and ther platforms
-          searchEndpoint = 'http://10.0.0.2:8000/user/search/'+searchQuery.toString();
-          }
-      try {
-          const result = await axiosInstance.get(searchEndpoint);
-          setSearchResult(result.data);
-      } catch (error) {
-          console.error('Error fetching users:', error);
-      }
+    if (!searchQuery) return;
+    console.log('Searching for:', searchQuery);
+    if (Platform.OS === 'web' || Platform.OS === 'ios') {
+        // Logic for web platform
+        searchEndpoint = 'http://localhost:8000/user/search/'+searchQuery.toString();
+        } else {
+        // // Logic for Android platform and ther platforms
+        searchEndpoint = 'http://10.0.0.2:8000/user/search/'+searchQuery.toString();
+        }
+    try {
+        const result = await axiosInstance.get(searchEndpoint);
+        setSearchResult(result.data);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
   };
 
   useEffect(() => {
     handleSearch();
   }, [searchQuery]);
   
-  /***** RETRIEVES ALL USERS MATCHING THE SEARCH *****/ 
+  /***** RETRIEVES ALL USERS MATCHING THE SEARCH *****/
+  let users: StripUser[] = [];
   if (searchResult) {
-  const searchInfo = searchResult.map((user: any) => JSON.parse(JSON.stringify(user)));
-  users = searchInfo.map((user: any) => ({
-      id: user.id,
-      username: user.username,
-  }));
+    const searchInfo = searchResult.map((user: any) => JSON.parse(JSON.stringify(user)));
+    users = searchInfo.map((user: any) => ({
+        id: user.id,
+        username: user.username,
+    }));
   }  
 
   return (
-    <Background>
-      <View>
-        <View style={styles.container}>
-            <TextInput
-            style={styles.input}
-            placeholder="search"
-            placeholderTextColor={theme.colors.black}
-            value={searchQuery}
-            onChangeText={text => setSearchQuery(text)}
-            />
-            <View>
-              <Button mode="outlined" onPress={handleSearch} style={styles.buttonContainer}>
+  <Background>
+    <View>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="search"
+          placeholderTextColor={theme.colors.black}
+          value={searchQuery}
+          onChangeText={text => setSearchQuery(text)}
+        />
+        <View>
+          <Button 
+            mode="outlined" 
+            onPress={handleSearch} 
+            style={styles.buttonContainer}>
                 <Image
                   source={require('../assets/search-icon.png')}
                   style={{ tintColor: theme.colors.black, width: 25, height: 25 }}
                 />
-              </Button>
-              </View>
-          </View>
-          <ScrollView>
-              {searchResult && (
-                  <React.Fragment>
-                  {users.map(user => (
-                      <PopUser user={user} navigation={navigation} />
-                  ))}
-                  </React.Fragment>
-              )}
-          </ScrollView>
+          </Button>
+        </View>
       </View>
-    </Background>
+      <ScrollView>
+        {(searchResult && searchQuery) ? ( // Check both searchResult and searchQuery
+          <React.Fragment>
+            {users.map(user => (
+              <PopUser key={user.id} user={user} navigation={navigation} />
+            ))}
+          </React.Fragment>
+        ) : null}
+      </ScrollView>
+    </View>
+  </Background>
   );
 };
 

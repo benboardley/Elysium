@@ -17,7 +17,7 @@ type Props = {
   navigation: Navigation;
 };
 
-const Dashboard = ({ navigation }: Props) => {
+const Dashboard = (navigation: Navigation) => {
   const [userData, setUserData] = useState<any | null>(null);
   const [userPostsData, setUserPostsData] = useState<any | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -48,7 +48,7 @@ const Dashboard = ({ navigation }: Props) => {
   useEffect(() =>{
     const fetchUserPosts = async () => {
       try {
-        let userId: string = '';
+        let userId: number;
         if (userData) {
           userId = userData.id;
           if (Platform.OS === 'web' || Platform.OS === 'ios') {
@@ -68,7 +68,9 @@ const Dashboard = ({ navigation }: Props) => {
         console.error('Error fetching user posts:', error);
       }
     }
-    fetchUserPosts();
+    if (userData) {
+      fetchUserPosts();
+    }
   }, [userData]);
 
   /***** RETRIEVES ALL DATA OF LOGGED IN USER *****/ 
@@ -78,15 +80,15 @@ const Dashboard = ({ navigation }: Props) => {
     const uInfo = JSON.parse(JSON.stringify(userData));
     userInfo = {
       id: uInfo.id,
+      user: uInfo.user,
       username: uInfo.username,
-      email: uInfo.email,
-      password: uInfo.password,
       followers: uInfo.followers,
       following: uInfo.follow,
       posts: uInfo.posts,
-      playlists: uInfo.playlists,
-      albums: uInfo.albums,
-      songs: uInfo.songs,
+      creation_time: uInfo.creation_time,
+      bio: uInfo.bio,
+      location: uInfo.location,
+      update_time: uInfo.update_time,
     };
   }
 
@@ -198,7 +200,7 @@ const Dashboard = ({ navigation }: Props) => {
         {userPostsData && (
           <React.Fragment>
             {posts.reverse().map(post => (
-                <UserPost post={post} navigation={navigation} />
+                <UserPost key={post.id} post={post} navigation={navigation} />
             ))}
           </React.Fragment>
         )}

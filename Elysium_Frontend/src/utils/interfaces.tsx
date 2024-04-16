@@ -1,16 +1,20 @@
 import { songType } from '../utils/types'
 
+export interface RouteParams {
+    userInfo: User;
+  }
+
 export interface User {
     id: number;
+    user: number;
     username: string;
-    email: string;
-    password: string;
-    followers: string[];
-    following: string[];
-    posts: string[];
-    playlists: string[];
-    albums: string[];
-    songs: string[];
+    followers: number[];
+    following: number[];
+    posts: number[];
+    creation_time: string;
+    bio?: string;
+    location?: string;
+    update_time?: string;
 }
 
 export interface StripUser {

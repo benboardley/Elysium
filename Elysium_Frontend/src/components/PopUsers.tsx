@@ -21,29 +21,45 @@ const UserPost: React.FC<UserPopProps & Props> = ({ user, navigation }) => {
   let userEndpoint = '';
   const axiosInstance = useAxios(navigation);
 
-  const goUser = () => {
-    
+  useEffect(() => {
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
-      userEndpoint = 'http://localhost:8000/user/profile/'+user.id.toString()+'/';
+      userEndpoint = 'http://localhost:8000/user/profile/'+user.id.toString();
     } else {
-      // Logic for Android platform and ther platforms
-      userEndpoint = 'http://localhost:8000/user/profile/'+user.id.toString()+'/';
+      // Logic for Android platform and other platforms
+      userEndpoint = 'http://localhost:8000/user/profile/'+user.id.toString();
     }
 
-    useEffect(() => {
-      const fetchUserData = async () => {
-        try {
-          const result = await axiosInstance.get(userEndpoint);
-          setUserData(result.data);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-      fetchUserData();
-    }, []);
+    const fetchUserData = async () => {
+      try {
+        const result = await axiosInstance.get(userEndpoint);
+        setUserData(result.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
-    navigation.navigate("ViewUser", { userData });
+  const goUser = () => {
+    let userInfo: User | null = null;
+    //console.log(JSON.stringify(userData))
+    if (userData) {
+      const uInfo = JSON.parse(JSON.stringify(userData));
+      userInfo = {
+        id: uInfo.id,
+        user: uInfo.user,
+        username: uInfo.username,
+        followers: uInfo.followers,
+        following: uInfo.follow,
+        posts: uInfo.posts,
+        creation_time: uInfo.creation_time,
+        bio: uInfo.bio,
+        location: uInfo.location,
+        update_time: uInfo.update_time,
+      };
+    }
+    navigation.navigate('ViewUser', { userInfo: userInfo });
   };
 
   return (

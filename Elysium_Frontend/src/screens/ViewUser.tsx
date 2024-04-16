@@ -6,28 +6,51 @@ import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
 import { Navigation } from '../utils/types';
-import { Follower, Post, User } from '../utils/interfaces';
+import { Follower, Post, User, RouteParams, StripUser } from '../utils/interfaces';
 import UserPost from '../components/Post';
 import { makeAuthenticatedRequest } from '../helper'; // Import the makeAuthenticatedRequest function
 import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import  useAxios  from "../utils/useAxios";
+import { json, useParams } from 'react-router-dom';
+import { Route } from '@react-navigation/native';
+import Swal from 'sweetalert2';
 type Props = {
   navigation: Navigation;
 };
+type ViewUserProps = {
+  route: Route<string, { userInfo: User }>;
+};
 
-const Dashboard = (route, { navigation }: Props) => {
-  const { userData } = route.params;
+const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
+  const [selfData, setSelfData] = useState<any | null>(null);
   const [userPostsData, setUserPostsData] = useState<any | null>(null);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const axiosInstance = useAxios(navigation);
   let userPostEndpoint: string = '';
+  let selfEndpoint: string = '';
+
+  let userInfo: User | null = route.params?.userInfo;
+  if (!route.params) {
+    console.error('User parameter not found in route');
+    Swal.fire({
+      title: "User Not Found",
+      icon: "error",
+      toast: true,
+      timer: 6000,
+      position: 'top-right',
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
+    navigation.navigate('MainScreen', { screen: 'Search' }); // Redirect to search screen 
+  }
 
   useEffect(() =>{
     const fetchUserPosts = async () => {
       try {
-        let userId: string = '';
-        if (userData) {
-          userId = userData.id;
+        let userId: number;
+        if (userInfo) {
+          userId = userInfo.id;
           if (Platform.OS === 'web' || Platform.OS === 'ios') {
             // Logic for web platform
             userPostEndpoint = 'http://localhost:8000/user/profile/posts/'+userId.toString();
@@ -46,24 +69,42 @@ const Dashboard = (route, { navigation }: Props) => {
       }
     }
     fetchUserPosts();
-  }, [userData]);
+  }, [userInfo]);
 
-  /***** RETRIEVES ALL DATA OF LOGGED IN USER *****/ 
-  let userInfo: User | null = null;
-  //console.log(JSON.stringify(userData))
-  if (userData) {
-    const uInfo = JSON.parse(JSON.stringify(userData));
-    userInfo = {
+  useEffect(() => {
+    if (Platform.OS === 'web' || Platform.OS === 'ios') {
+      // Logic for web platform
+      selfEndpoint = 'http://localhost:8000/user/self/';
+    } else {
+      // Logic for Android platform and ther platforms
+      selfEndpoint = 'http://10.0.0.2:8000/user/self/';
+    }
+    const fetchUserData = async () => {
+      try {
+        const result = await axiosInstance.get(selfEndpoint);
+        setSelfData(result.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  /****** HOLDS DATA FOR CURRENT USER ********/
+  let selfInfo: User | null = null;
+  if (selfData) {
+    const uInfo = JSON.parse(JSON.stringify(selfData));
+    selfInfo = {
       id: uInfo.id,
+      user: uInfo.user,
       username: uInfo.username,
-      email: uInfo.email,
-      password: uInfo.password,
       followers: uInfo.followers,
       following: uInfo.follow,
       posts: uInfo.posts,
-      playlists: uInfo.playlists,
-      albums: uInfo.albums,
-      songs: uInfo.songs,
+      creation_time: uInfo.creation_time,
+      bio: uInfo.bio,
+      location: uInfo.location,
+      update_time: uInfo.update_time,
     };
   }
 
@@ -88,8 +129,62 @@ const Dashboard = (route, { navigation }: Props) => {
     }));
   }
 
+  useEffect(() => {
+    const checkFollowing = async () => {
+      if (selfInfo && userInfo) { // Check if userInfo exists as well
+        const followingList = selfInfo.following;
+        const userId: number = userInfo.id;
+        const isUserFollowing = followingList.includes(userId);
+        setIsFollowing(isUserFollowing);
+      }
+    };
+    checkFollowing();
+  }, [selfInfo, userInfo]); // Include userInfo in the dependency array
+
+  const followUser = () => {
+    const followUserHelper = async () => {
+      if (!userInfo) {
+        console.error('Error following user: User data not found');
+        return;
+      }
+      const followEndpoint = 'http://localhost:8000/user/follow/';
+      const jsonId = {
+        "id": userInfo.id
+      };
+      try {
+        const result = await axiosInstance.post(followEndpoint, jsonId);
+        setIsFollowing(true);
+        console.log("Followed user: ", result.data);
+      } catch (error) {
+        console.error('Error following user:', error);
+      }
+    }
+    followUserHelper();
+  };
+
+  const unfollowUser = () => {
+    const unfollowUserHelper = async () => {
+      if (!userInfo) {
+        console.error('Error following user: User data not found');
+        return;
+      }
+      const unfollowEndpoint = 'http://localhost:8000/user/follow/'+userInfo.id.toString();
+      try {
+        const result = await axiosInstance.delete(unfollowEndpoint);
+        setIsFollowing(false);
+        console.log("Unfollowed user: ", result.data);
+      } catch (error) {
+        console.error('Error unfollowing user:', error);
+      }
+    }
+    unfollowUserHelper();
+  };
+
   return (
     <Background>
+      <Button mode="outlined" onPress={() => navigation.navigate('MainScreen', { screen: 'Search' })}>
+        Back to Search
+      </Button>
       <ScrollView>
         <View style={styles.container}>
           <Header>{userInfo?.username}'s Dashboard</Header>
@@ -111,11 +206,20 @@ const Dashboard = (route, { navigation }: Props) => {
             </View>
           </View>
         </View>
+        {isFollowing ? (
+          <Button mode="outlined" style={styles.unfButton} onPress={unfollowUser}>
+            Unfollow
+          </Button>
+        ) : (
+          <Button mode="outlined" style={styles.fButton} onPress={followUser}>
+            Follow
+          </Button>
+        )}
         
         {userPostsData && (
           <React.Fragment>
             {posts.map(post => (
-                <UserPost post={post} navigation={navigation} />
+                <UserPost key={post.id} post={post} navigation={navigation} />
             ))}
           </React.Fragment>
         )}
@@ -125,6 +229,14 @@ const Dashboard = (route, { navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
+  fButton: {
+    opacity: 0.5,
+    backgroundColor: 'green',
+  },
+  unfButton: {
+    opacity: 0.5,
+    backgroundColor: 'red',
+  },
   bottomContainer: {
     bottom: 0,
     width: 105,
@@ -170,4 +282,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(Dashboard);
+export default memo(ViewUser);

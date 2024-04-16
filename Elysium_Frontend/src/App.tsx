@@ -14,6 +14,7 @@ import {
   Dashboard,
   Feed,
   Search,
+  ViewUser,
 } from './screens';
 
 type RootStackParamList = {
@@ -25,10 +26,10 @@ type RootStackParamList = {
   MainScreen: undefined;
   Feed: undefined;
   Search: undefined;
+  ViewUser: undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
-
 
 
 const App = () => {
@@ -60,6 +61,10 @@ const App = () => {
         <Stack.Screen
           name="ForgotPasswordScreen"
           component={AuthProviderWrapper(ForgotPasswordScreen)}
+        />
+        <Stack.Screen
+          name="ViewUser"
+          component={AuthProviderWrapper(ViewUser)}
         />
         <Stack.Screen name="MainScreen" options={{ headerShown: false }} >
           {() => (
