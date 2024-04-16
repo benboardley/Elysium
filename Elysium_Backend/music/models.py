@@ -38,13 +38,14 @@ class Song(models.Model):
         return f"{self.name} - {self.artist}"
     
 class Playlist(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    #creator_uri = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     #artist = models.CharField(max_length=255)
     #artist_features = models.JSONField(default=list)
     origin = models.CharField(max_length=255)
     uri = models.CharField(max_length=255, unique=True)
     songs = models.ManyToManyField(Song, related_name='playlists')
-
+    description = models.TextField(blank=True, null=True)
+    playlist_thumbnail_location = models.URLField(max_length=255, blank=True, null=True)
     def __str__(self):
         return f"{self.name}"

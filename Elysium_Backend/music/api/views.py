@@ -10,11 +10,11 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from user.models import CustomUser, Profile, SpotifyToken
 from user.credentials import CLIENT_ID, CLIENT_SECRET
-from ..models import Song
+from ..models import Song, Playlist
 from .serializers import SongSerializer
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from .utils import get_playlist_id, get_song_data
+from .utils import get_playlist_id, get_song_data, get_song_data_list, add_playlist
 # Create your views here.
 
 class GetSpotifyPlaylists(APIView):
@@ -29,18 +29,63 @@ class GetSpotifyPlaylists(APIView):
                 try:
                     playlists = sp.current_user_playlists()
                     for playlist in playlists['items']:
-                        playlist_list.append([playlist['name'], playlist['id']])
+                        playlist_list.append([playlist['name'], playlist['id'], playlist['uri'], playlist['images'][0]['url'] if playlist['images'] else None])
                 except spotipy.SpotifyException as e:
                     # Handle Spotify API errors if necessary
                     print(f"Spotify API Error: {e}")
                     return Response({'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
                 code = status.HTTP_200_OK
-                message = {'playlists': playlist_list[:3]}
+                message = {'playlists': playlist_list}
         else:
             code = status.HTTP_400_BAD_REQUEST
             message = {'message': 'Connect with spotify to see playlists'}
-        return Response(message, status=code)    
+        return Response(message, status=code)
+
+    def post(self,request):
+        try:
+            user = request.user
+            uri = request.data['uri']
+            #print("here")
+            if user.spotifytoken:
+                playlist = get_object_or_404(Playlist, uri=uri)
+                add_playlist(playlist, user.spotifytoken)
+            else:
+                code = status.HTTP_400_BAD_REQUEST
+                message = {'error': 'Connect with spotify to add playlists'}
+                return Response(message, code)
+            return Response({'message': 'Playlist added successfully!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class GetSpotifyPlaylistSongs(APIView):
+    def get(self, request, uri):
+            try:
+                track_list = []
+                auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+                sp = spotipy.Spotify(auth_manager=auth_manager)
+                try:
+                    tracks = sp.playlist_tracks(uri)
+                except spotipy.SpotifyException as e:
+                    # Handle Spotify API errors if necessary
+                    print(f"Spotify API Error: {e}")
+                    return Response({'message':'Error getting playlist, check uri or check back later'}, status=status.HTTP_400_BAD_REQUEST)
+                #for track in tracks['items']:
+                uris = [track['track']['uri'] for track in tracks['items']]
+                song_serialize, page, max_page = get_song_data_list(uris = uris)
+                
+                return Response(song_serialize, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def put(self,request):
+        pass
+
+    def post(sepf,request):
+        pass
+
 
 class SpotifySongs(APIView):
 
@@ -148,6 +193,11 @@ class StoredSongs(APIView):
         except Exception as e:
             print(e)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class StoredPlaylists(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        pass
 
 class GetSpotifyTopSong(APIView):
     permission_classes = [IsAuthenticated]
