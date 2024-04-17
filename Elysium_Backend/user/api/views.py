@@ -176,6 +176,7 @@ class Follow(APIView):
     def post(self, request, id = None, *args, **kwargs):
         user = request.user
         profile = user.profile
+        print(request.data)
         profile_to_follow = get_object_or_404(Profile, id=request.data['id'])
         profile.follow.add(profile_to_follow)
         return Response({"message":"followed"}, status=status.HTTP_202_ACCEPTED)
