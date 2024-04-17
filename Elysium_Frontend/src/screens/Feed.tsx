@@ -69,7 +69,7 @@ const Feed = ({ navigation }: Props) => {
         {postData && (
           <React.Fragment>
             {posts.map(post => (
-                <UserPost post={post} navigation={navigation} />
+                <UserPost key={post.id} post={post} navigation={navigation} />
             ))}
           </React.Fragment>
         )}
