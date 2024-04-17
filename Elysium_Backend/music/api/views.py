@@ -87,6 +87,39 @@ class GetSpotifyPlaylistSongs(APIView):
         pass
 
 
+class AlbumSearch(APIView):
+    def get(self, request, query):
+        # This is where you would normally check if the album already exists in your database
+        # if Album.objects.filter(title__icontains=query).exists():
+        #     albums = Album.objects.filter(title__icontains=query)
+        #     album_data = AlbumSerializer(albums, many=True).data
+        #     return Response(album_data, status=status.HTTP_200_OK)
+        # else:
+        try:
+            # Authenticate with Spotify
+            auth_manager = SpotifyClientCredentials(client_id= CLIENT_ID, client_secret=CLIENT_SECRET)
+            sp = spotipy.Spotify(auth_manager=auth_manager)
+
+            # Search for albums using the provided query
+            results = sp.search(q=query, type='album', limit=10)
+            albums = []
+            for album in results['albums']['items']:
+                album_details = {
+                    'name': album['name'],
+                    'artist': album['artists'][0]['name'] if album['artists'] else 'Various Artists',
+                    'uri': album['uri'],
+                    'thumbnail': album['images'][0]['url'] if album['images'] else None
+                }
+                albums.append(album_details)
+
+            # Return the search results
+            return Response(albums, status=status.HTTP_200_OK)
+        except Exception as e:
+            # Handle exceptions such as connection errors
+            print(e)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class SpotifySongs(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -149,7 +182,7 @@ class SongSearch(APIView):
                         'name': track['name'],
                         'artist': track['artists'][0]['name'],
                         'uri': track['uri'],
-                        'thumbnail': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                        'song_thumbnail_location': track['album']['images'][0]['url'] if track['album']['images'] else None,
                     }
                     songs.append(song)
                 return Response(songs, status=status.HTTP_200_OK)

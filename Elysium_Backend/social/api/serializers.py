@@ -1,21 +1,22 @@
 from rest_framework import serializers
 from user.models import Profile
-from ..models import Post, SongPost, PlaylistPost
-from music.models import Song, Playlist
-from music.api.serializers import SongSerializer, PlaylistSerializer
+from ..models import Post, SongPost, PlaylistPost, AlbumPost
+from music.models import Song, Playlist, Album
+from music.api.serializers import SongSerializer, PlaylistSerializer, AlbumSerializer
 from datetime import datetime
 # Assuming you have Song, Album, and Playlist models defined somewhere
 
 class PostSerializer(serializers.ModelSerializer):
     song_post = serializers.SerializerMethodField()
     playlist_post = serializers.SerializerMethodField()
+    album_post = serializers.SerializerMethodField()
     profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
     profile_username = serializers.SerializerMethodField()
     creation_time = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ('id','profile_username','profile', 'parent_post', 'likes', 'creation_time', 'update_time', 'caption', 'title', 'song_post', 'playlist_post')
+        fields = ('id','profile_username','profile', 'parent_post', 'likes', 'creation_time', 'update_time', 'caption', 'title', 'song_post', 'playlist_post', 'album_post')
 
     def get_song_post(self, instance):
         if isinstance(instance, SongPost):
@@ -29,7 +30,12 @@ class PostSerializer(serializers.ModelSerializer):
             
             return PlaylistSerializer(instance.playlist, context=context).data
         return None
-    
+    def get_album_post(self, instance):
+        if isinstance(instance, AlbumPost):
+            context = self.context  # This grabs the context passed to PostSerializer
+            
+            return AlbumSerializer(instance.album, context=context).data
+        return None
     def to_representation(self, instance):
         # Customize representation if needed
         ret = super().to_representation(instance)
@@ -52,6 +58,7 @@ class PostSerializer(serializers.ModelSerializer):
         # Check if song data is present in the validated data
         song_uri = validated_data.pop('song_uri', None)
         playlist_uri = validated_data.pop('playlist_uri', None)
+        album_uri = validated_data.pop('album_uri', None)
         # If song data is present, create a SongPost; otherwise, create a generic Post
         if song_uri:
             song = Song.objects.filter(uri=song_uri).first()
@@ -67,6 +74,11 @@ class PostSerializer(serializers.ModelSerializer):
             #    song_serializer = get_song_data(song_uri)
             #    song = song_serializer.save()
             post = PlaylistPost.objects.create(playlist=playlist, **validated_data)
+        elif album_uri:
+            album = Album.objects.filter(uri=album_uri).first()
+            if not album:
+                return None
+            post = AlbumPost.objects.create(album=album, **validated_data)
         else:
             post = Post.objects.create(**validated_data)
 
@@ -74,6 +86,7 @@ class PostSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         song_uri = validated_data.pop('song_uri', instance.song.uri if isinstance(instance, SongPost) else None)
         playlist_uri = validated_data.pop('playlist_uri', instance.playlist.uri if isinstance(instance, PlaylistPost) else None)
+        album_uri = validated_data.pop('album_uri', instance.album.uri if isinstance(instance, AlbumPost) else None)
         #print(playlist_uri)
         # Update based on the type of post
         if song_uri:
@@ -93,6 +106,16 @@ class PostSerializer(serializers.ModelSerializer):
                 return None
             if isinstance(instance, PlaylistPost):
                 instance.playlist = playlist
+            else:
+                # Optionally handle changing a generic post to a playlist post, or error out
+                return None
+        elif album_uri:
+            album = Album.objects.filter(uri=album_uri).first()
+            if not album:
+                # Optionally, handle the case where the playlist does not exist yet
+                return None
+            if isinstance(instance, AlbumPost):
+                instance.album = album
             else:
                 # Optionally handle changing a generic post to a playlist post, or error out
                 return None
