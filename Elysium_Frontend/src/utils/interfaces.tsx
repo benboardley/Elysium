@@ -22,6 +22,21 @@ export interface StripUser {
     username: string;
 }
 
+export interface StripSong {
+    name: string;
+    artist: string;
+    uri: string;
+    song_thumbnail_location: string;
+}
+
+export interface StripPost {
+    title: string;
+    caption: string;
+    song_uri?: string;
+    album_uri?: string;
+    playlist_uri?: string;
+}
+
 export interface Post {
     id: string;
     profile: string;

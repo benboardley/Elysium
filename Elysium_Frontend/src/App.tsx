@@ -15,6 +15,7 @@ import {
   Feed,
   Search,
   ViewUser,
+  CreatePost,
 } from './screens';
 
 type RootStackParamList = {
@@ -27,6 +28,7 @@ type RootStackParamList = {
   Feed: undefined;
   Search: undefined;
   ViewUser: undefined;
+  CreatePost: undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -102,6 +104,18 @@ const App = () => {
                   tabBarIcon: ({ color, size }) => (
                     <Image
                       source={require('./assets/search-icon.png')}
+                      style={{ tintColor: theme.colors.black, width: 25, height: 25 }}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="CreatePost"
+                component={AuthProviderWrapper(CreatePost)}
+                options={{
+                  tabBarIcon: ({ color, size }) => (
+                    <Image
+                      source={require('./assets/create_post_icon.png')}
                       style={{ tintColor: theme.colors.black, width: 25, height: 25 }}
                     />
                   ),

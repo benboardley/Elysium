@@ -17,7 +17,7 @@ type Props = {
   navigation: Navigation;
 };
 
-const Dashboard = (navigation: Navigation) => {
+const Dashboard = ({ navigation }: Props) => {
   const [userData, setUserData] = useState<any | null>(null);
   const [userPostsData, setUserPostsData] = useState<any | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);

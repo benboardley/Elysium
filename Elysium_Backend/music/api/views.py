@@ -149,7 +149,7 @@ class SongSearch(APIView):
                         'name': track['name'],
                         'artist': track['artists'][0]['name'],
                         'uri': track['uri'],
-                        'thumbnail': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                        'song_thumbnail_location': track['album']['images'][0]['url'] if track['album']['images'] else None,
                     }
                     songs.append(song)
                 return Response(songs, status=status.HTTP_200_OK)
