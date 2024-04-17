@@ -9,17 +9,8 @@ class Artist(models.Model):
     image = models.URLField(max_length=255)
 
 
-class Album(models.Model):
-    name = models.CharField(max_length=255)
-    artist = models.CharField(max_length=255)
-    artist_features = models.JSONField(default=list)
-    origin = models.CharField(max_length=255)
-    uri = models.CharField(max_length=255, unique=True)
-    other_available_platforms = models.JSONField(default=list)
-    thumb_nail = models.URLField(max_length=255, blank=True, null=True)
-
 class Song(models.Model):
-    album = models.ForeignKey(Album, null=True, blank=True, on_delete=models.CASCADE)
+    #album = models.ForeignKey(Album, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     artist = models.CharField(max_length=255)
     artist_features = models.JSONField(default=list, blank=True, null=True)
@@ -37,6 +28,18 @@ class Song(models.Model):
     def __str__(self):
         return f"{self.name} - {self.artist}"
     
+class Album(models.Model):
+    name = models.CharField(max_length=255)
+    artist = models.CharField(max_length=255)
+    artist_features = models.JSONField(default=list)
+    origin = models.CharField(max_length=255)
+    songs = models.ManyToManyField(Song, related_name='albums')
+    uri = models.CharField(max_length=255, unique=True)
+    other_available_platforms = models.JSONField(default=list)
+    album_thumbnail_location = models.URLField(max_length=255, blank=True, null=True)
+    def __str__(self):
+        return f"{self.name} - {self.artist}"
+
 class Playlist(models.Model):
     #creator_uri = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)

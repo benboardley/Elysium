@@ -41,8 +41,8 @@ class Profile(models.Model):
 class SpotifyToken(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="spotifytoken")
     created_at = models.DateTimeField(auto_now_add=True)
-    refresh_token = models.CharField(max_length=150)
-    access_token = models.CharField(max_length=150)
+    refresh_token = models.CharField(max_length=1024)
+    access_token = models.CharField(max_length=1024)
     expires_in = models.DateTimeField()
     token_type = models.CharField(max_length=50)
 

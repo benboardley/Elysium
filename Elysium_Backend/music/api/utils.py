@@ -1,7 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from user.credentials import CLIENT_ID, CLIENT_SECRET
-from ..models import Song, Playlist
+from ..models import Song, Playlist, Album
 from .serializers import SongSerializer
 from django.core.exceptions import ObjectDoesNotExist
 import math
@@ -147,6 +147,49 @@ def create_playlist(playlist_uri):
     )
     playlist.songs.set(all_relevant_songs)
     return playlist, created
+
+def create_album(album_uri):
+    auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+    sp = spotipy.Spotify(auth_manager=auth_manager)
+    album_id = album_uri.split(':')[-1]
+    try:
+        album = sp.album(album_id)
+    except Exception as e:
+        print(e)
+        return None, False
+
+    album_name = album['name']
+    album_artist = album['artists'][0]['name']
+    artist_features = [artist['name'] for artist in album['artists'][1:]]
+    tracks = []
+    results = sp.album_tracks(album_id)
+    track_uris = [track['uri'] for track in results['items']]
+    while results['next']:
+        results = sp.next(results)
+        track_uris.extend([track['uri'] for track in results['items']])
+    
+    # Here you might want to fetch or save tracks in your database
+    # Let's say you have a method to process and optionally save track details
+    tracks, page, max_page = get_song_data_list(track_uris, save=True)
+    while page < max_page:
+        tracks, page, max_page = get_song_data_list(track_uris, page=page+1, save=True)
+    
+    all_relevant_tracks = Song.objects.filter(uri__in=track_uris)
+    
+    # Now let's update or create the album in your database
+    album, created = Album.objects.update_or_create(
+        uri=album_uri,
+        defaults={
+            'name': album_name,
+            'artist': album_artist,
+            'artist_features': artist_features,
+            'origin': 'spotify',
+            'album_thumbnail_location': album['images'][0]['url'] if album['images'] else None,
+        }
+    )
+    album.songs.set(all_relevant_tracks)  # assuming Album has a ManyToMany field to tracks
+    return album, created
+
 
 def add_playlist(playlist, user_token):
     sp = spotipy.Spotify(auth=user_token.access_token)

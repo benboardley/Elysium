@@ -3,6 +3,121 @@ info:
   title: Your API Title
   version: 1.0.0
 paths:
+  /music/song/<str:query>:
+    get:
+      summary: Search for songs
+      operationId: searchSongs
+      responses:
+        '200':
+          description: list found songs
+          content:
+            application/json:
+              example: |
+                [
+                  {
+                      "name": "Call Me Maybe",
+                      "artist": "Carly Rae Jepsen",
+                      "uri": "spotify:track:3TGRqZ0a2l1LRblBkJoaDx",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b273a111f7769013f1731e9c697c"
+                  },
+                  {
+                      "name": "Call Out My Name",
+                      "artist": "The Weeknd",
+                      "uri": "spotify:track:09mEdoA6zrmBPgTEN5qXmN",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b2731f6a2a40bb692936879db730"
+                  },
+                  {
+                      "name": "Call Your Mom",
+                      "artist": "Noah Kahan",
+                      "uri": "spotify:track:3yn01PcU95PTbiZ3xvop2j",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b27365a472d8326d4571bf725422"
+                  },
+                  {
+                      "name": "Calling My Phone",
+                      "artist": "Lil Tjay",
+                      "uri": "spotify:track:3J8EOeKLTLXORtWPpOU5bE",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b2735af0305457ff290e06dcc4c2"
+                  },
+                  {
+                      "name": "Call Your Mom (with Lizzy McAlpine)",
+                      "artist": "Noah Kahan",
+                      "uri": "spotify:track:3fKpSA5w8iqLe9sNdIDESW",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b273f0b007441dc1a09cbbfd77f6"
+                  }
+                ]
+  /music/album/<str:query>:
+    get:
+      summary: Search for albums
+      operationId: searchAlbums
+      responses:
+        '200':
+          description: list found songs
+          content:
+            application/json:
+              example: |
+                  [
+                      {
+                          "name": "Tana Talk 3",
+                          "artist": "Benny The Butcher",
+                          "uri": "spotify:album:5OsHMGOg6lRV9REoVxbcWA",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                      },
+                      {
+                          "name": "心新たな春の作業用音楽",
+                          "artist": "Mystery Trip",
+                          "uri": "spotify:album:0GBhNoY0oL9XPWHf1y0TPh",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b2733f2c5faf4dc0252a0130290a"
+                      },
+                      {
+                          "name": "Tana Talk 4",
+                          "artist": "Benny The Butcher",
+                          "uri": "spotify:album:4FZ2ilW8I4HxVz0gWEYzX2",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b2736f7e02a599bf17973444fdee"
+                      },
+                      {
+                          "name": "Tana",
+                          "artist": "Jakob Maler",
+                          "uri": "spotify:album:19M53ox1gdUcimYMaEeeDG",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b273fb559111c81b4badcc2960a8"
+                      },
+                      {
+                          "name": "TANA",
+                          "artist": "Vangan",
+                          "uri": "spotify:album:5HApTa93RT1hsoVMJEqxpq",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b27382d7ca4fb586289bcf2ff84b"
+                      },
+                      {
+                          "name": "心新たな春の作業用音楽",
+                          "artist": "Rainbow Stripe Lemon",
+                          "uri": "spotify:album:0cPnUZkpYdYynfWwRwjytB",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b2731ba0e01c80d9a56f273e4f92"
+                      },
+                      {
+                          "name": "Tana",
+                          "artist": "The Nile Project",
+                          "uri": "spotify:album:19gZ7DkaEvTw5jWPRo3peP",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b273613d9762a0440216686f6133"
+                      },
+                      {
+                          "name": "心新たな春の作業用音楽",
+                          "artist": "Honey Bee Groove",
+                          "uri": "spotify:album:6X45wwMq6D0B1rotBwFOew",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b2732de3f2b1ee94d79af9dfdb8b"
+                      },
+                      {
+                          "name": "Tana",
+                          "artist": "Soto Asa",
+                          "uri": "spotify:album:0CuVyBRHivMKpAQztUuI02",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b273ca9cf2f24a58b3fac6b1baef"
+                      },
+                      {
+                          "name": "Your Man",
+                          "artist": "Josh Turner",
+                          "uri": "spotify:album:5NATaOfEAcyQFATqWZRKLO",
+                          "thumbnail": "https://i.scdn.co/image/ab67616d0000b273db3f7294d4bfadae81f77b38"
+                      }
+                  ]
+
   /social/posts/:
     get:
       summary: Retrieve all posts
@@ -14,63 +129,211 @@ paths:
             application/json:
               example: |
                 [
-                  {
-                      "id": 1,
-                      "profile_username": "bboardle",
-                      "profile": 2,
-                      "parent_post": null,
-                      "likes": [],
-                      "creation_time": "2024-03-01 00:18:11",
-                      "update_time": "2024-03-01T00:32:40.025771Z",
-                      "caption": "Ben knows it can only if the cat dragged him around the block",
-                      "title": "**Tommy Enters**",
-                      "song_post": null
-                  },
-                  {
-                      "id": 3,
-                      "profile_username": "bboardle",
-                      "profile": 2,
-                      "parent_post": null,
-                      "likes": [],
-                      "creation_time": "2024-03-01 15:43:23",
-                      "update_time": "2024-03-01T15:43:23.172298Z",
-                      "caption": "Greater than the art piece fr",
-                      "title": "I really like this song",
-                      "song_post": {
-                          "id": 2,
-                          "name": "Mona Lisa (feat. Kendrick Lamar)",
-                          "artist": "Lil Wayne",
-                          "artist_features": [
-                              "Kendrick Lamar"
-                          ],
-                          "origin": "spotify",
-                          "uri": "spotify:track:1B4IEIe1C21C5s1JFbRRWZ",
-                          "audio_features": {
-                              "danceability": 0.856,
-                              "energy": 0.694,
-                              "key": 2,
-                              "loudness": -4.393,
-                              "mode": 1,
-                              "speechiness": 0.169,
-                              "acousticness": 0.371,
-                              "instrumentalness": 0,
-                              "liveness": 0.109,
-                              "valence": 0.489,
-                              "tempo": 122.08,
-                              "type": "audio_features",
-                              "id": "1B4IEIe1C21C5s1JFbRRWZ",
-                              "uri": "spotify:track:1B4IEIe1C21C5s1JFbRRWZ",
-                              "track_href": "https://api.spotify.com/v1/tracks/1B4IEIe1C21C5s1JFbRRWZ",
-                              "analysis_url": "https://api.spotify.com/v1/audio-analysis/1B4IEIe1C21C5s1JFbRRWZ",
-                              "duration_ms": 324189,
-                              "time_signature": 4
-                          },
-                          "other_available_platforms": [],
-                          "song_clip_location": null,
-                          "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273d9cc4a9ece3df3ad0b6cdcdc",
-                          "album": null
-                      }
-                  }
+                    {
+                        "id": 4,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:40:24",
+                        "update_time": "2024-04-17T16:40:24.796287Z",
+                        "caption": "One of every post type",
+                        "title": "Examples",
+                        "song_post": null,
+                        "playlist_post": null,
+                        "album_post": null
+                    },
+                    {
+                        "id": 3,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:40:02",
+                        "update_time": "2024-04-17T16:40:02.621443Z",
+                        "caption": "What I been on",
+                        "title": "Preach",
+                        "song_post": {
+                            "id": 18,
+                            "name": "Runaway",
+                            "artist": "Kanye West",
+                            "artist_features": [
+                                "Pusha T"
+                            ],
+                            "origin": "spotify",
+                            "uri": "spotify:track:3DK6m7It6Pw857FcQftMds",
+                            "audio_features": {
+                                "id": "3DK6m7It6Pw857FcQftMds",
+                                "key": 1,
+                                "uri": "spotify:track:3DK6m7It6Pw857FcQftMds",
+                                "mode": 0,
+                                "type": "audio_features",
+                                "tempo": 84.733,
+                                "energy": 0.568,
+                                "valence": 0.111,
+                                "liveness": 0.513,
+                                "loudness": -3.825,
+                                "track_href": "https://api.spotify.com/v1/tracks/3DK6m7It6Pw857FcQftMds",
+                                "duration_ms": 547733,
+                                "speechiness": 0.109,
+                                "acousticness": 0.219,
+                                "analysis_url": "https://api.spotify.com/v1/audio-analysis/3DK6m7It6Pw857FcQftMds",
+                                "danceability": 0.374,
+                                "time_signature": 4,
+                                "instrumentalness": 0.00219
+                            },
+                            "other_available_platforms": [],
+                            "song_clip_location": null,
+                            "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273d9194aa18fa4c9362b47464f"
+                        },
+                        "playlist_post": null,
+                        "album_post": null
+                    },
+                    {
+                        "id": 2,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:37:38",
+                        "update_time": "2024-04-17T16:37:38.527302Z",
+                        "caption": "ong",
+                        "title": "This playlist was created by that Discz app",
+                        "song_post": null,
+                        "playlist_post": {
+                            "name": "Discz",
+                            "uri": "spotify:playlist:1dOD6O6vHsnH535qsK9IzJ",
+                            "description": "Created on the Discz app",
+                            "songs": [
+                                {
+                                    "pk": 15,
+                                    "name": "POWER",
+                                    "artist": "Moving in Silence",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b2735fd25412dd33f9c40dcf594d"
+                                },
+                                {
+                                    "pk": 16,
+                                    "name": "RELENTLESS (feat. Lil Uzi Vert)",
+                                    "artist": "Gunna",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273fae944bd93dd1e47591a0df9"
+                                },
+                                {
+                                    "pk": 17,
+                                    "name": "Mona Lisa (Spider-Man: Across the Spider-Verse)",
+                                    "artist": "Dominic Fike",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273f4e6ed5d6b134635c45f8602"
+                                }
+                            ],
+                            "playlist_thumbnail_location": "https://i.scdn.co/image/ab67616d00001e025fd25412dd33f9c40dcf594d"
+                        },
+                        "album_post": null
+                    },
+                    {
+                        "id": 1,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:35:08",
+                        "update_time": "2024-04-17T16:35:08.316280Z",
+                        "caption": "type shit",
+                        "title": "what I been on",
+                        "song_post": null,
+                        "playlist_post": null,
+                        "album_post": {
+                            "name": "Tana Talk 3",
+                            "uri": "spotify:album:5OsHMGOg6lRV9REoVxbcWA",
+                            "artist": "Benny The Butcher",
+                            "artist_features": [],
+                            "songs": [
+                                {
+                                    "pk": 1,
+                                    "name": "Intro: Babs",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 2,
+                                    "name": "Goodnight",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 3,
+                                    "name": "Scarface vs. Sosa, Pt. 2",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 4,
+                                    "name": "Rubber Bands & Weight",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 5,
+                                    "name": "Fast Eddie",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 6,
+                                    "name": "Broken Bottles",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 7,
+                                    "name": "Echo Long (feat. WestsideGunn & Meyhem Lauren)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 8,
+                                    "name": "'97 Hov",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 9,
+                                    "name": "Joe Pesci 38",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 10,
+                                    "name": "Who Are You (feat. Royce da 5'9 & Melanie Rutherford)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 11,
+                                    "name": "Fifty One (feat. WestsideGunn)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 12,
+                                    "name": "Rick",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 13,
+                                    "name": "Langfield",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 14,
+                                    "name": "All 70 (feat. Conway)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                }
+                            ],
+                            "album_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                        }
+                    }
                 ]
     post:
       summary: Create a new post
@@ -80,10 +343,27 @@ paths:
         content:
           application/json:
             example: |
-              {
-                "title": "New Post",
-                "content": "Content of the new post"
-              }
+              [
+                {
+                  "title": "New Post",
+                  "caption": "Content of the new post"
+                },
+                {
+                  "title": "song post",
+                  "caption": "add uri field",
+                  "song_uri": "spotify:track:3TGRqZ0a2l1LRblBkJoaDx"
+                },
+                {
+                  "title": "playlist post",
+                  "caption": "add uri field",
+                  "playlist_uri": "spotify:playlist:uri"
+                },
+                {
+                  "title": "album post",
+                  "caption": "add uri field",
+                  "album_uri": "spotify:album:uri"
+                }
+              ]
       responses:
         '201':
           description: The created post
@@ -93,9 +373,10 @@ paths:
                 {
                   "id": 3,
                   "title": "New Post",
-                  "content": "Content of the new post",
+                  "caption": "Content of the new post",
                   "creation_time": "2022-02-15T13:00:00Z"
                 }
+                
   /social/posts/{id}:
 
     get:
@@ -165,18 +446,211 @@ paths:
             application/json:
               example: |
                 [
-                  {
-                    "id": 1,
-                    "title": "Post in Follow Feed",
-                    "content": "Content of Post in Follow Feed",
-                    "creation_time": "2022-02-15T13:30:00Z"
-                  },
-                  {
-                    "id": 2,
-                    "title": "Another Post in Follow Feed",
-                    "content": "Content of Another Post in Follow Feed",
-                    "creation_time": "2022-02-15T14:00:00Z"
-                  }
+                    {
+                        "id": 4,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:40:24",
+                        "update_time": "2024-04-17T16:40:24.796287Z",
+                        "caption": "One of every post type",
+                        "title": "Examples",
+                        "song_post": null,
+                        "playlist_post": null,
+                        "album_post": null
+                    },
+                    {
+                        "id": 3,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:40:02",
+                        "update_time": "2024-04-17T16:40:02.621443Z",
+                        "caption": "What I been on",
+                        "title": "Preach",
+                        "song_post": {
+                            "id": 18,
+                            "name": "Runaway",
+                            "artist": "Kanye West",
+                            "artist_features": [
+                                "Pusha T"
+                            ],
+                            "origin": "spotify",
+                            "uri": "spotify:track:3DK6m7It6Pw857FcQftMds",
+                            "audio_features": {
+                                "id": "3DK6m7It6Pw857FcQftMds",
+                                "key": 1,
+                                "uri": "spotify:track:3DK6m7It6Pw857FcQftMds",
+                                "mode": 0,
+                                "type": "audio_features",
+                                "tempo": 84.733,
+                                "energy": 0.568,
+                                "valence": 0.111,
+                                "liveness": 0.513,
+                                "loudness": -3.825,
+                                "track_href": "https://api.spotify.com/v1/tracks/3DK6m7It6Pw857FcQftMds",
+                                "duration_ms": 547733,
+                                "speechiness": 0.109,
+                                "acousticness": 0.219,
+                                "analysis_url": "https://api.spotify.com/v1/audio-analysis/3DK6m7It6Pw857FcQftMds",
+                                "danceability": 0.374,
+                                "time_signature": 4,
+                                "instrumentalness": 0.00219
+                            },
+                            "other_available_platforms": [],
+                            "song_clip_location": null,
+                            "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273d9194aa18fa4c9362b47464f"
+                        },
+                        "playlist_post": null,
+                        "album_post": null
+                    },
+                    {
+                        "id": 2,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:37:38",
+                        "update_time": "2024-04-17T16:37:38.527302Z",
+                        "caption": "ong",
+                        "title": "This playlist was created by that Discz app",
+                        "song_post": null,
+                        "playlist_post": {
+                            "name": "Discz",
+                            "uri": "spotify:playlist:1dOD6O6vHsnH535qsK9IzJ",
+                            "description": "Created on the Discz app",
+                            "songs": [
+                                {
+                                    "pk": 15,
+                                    "name": "POWER",
+                                    "artist": "Moving in Silence",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b2735fd25412dd33f9c40dcf594d"
+                                },
+                                {
+                                    "pk": 16,
+                                    "name": "RELENTLESS (feat. Lil Uzi Vert)",
+                                    "artist": "Gunna",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273fae944bd93dd1e47591a0df9"
+                                },
+                                {
+                                    "pk": 17,
+                                    "name": "Mona Lisa (Spider-Man: Across the Spider-Verse)",
+                                    "artist": "Dominic Fike",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273f4e6ed5d6b134635c45f8602"
+                                }
+                            ],
+                            "playlist_thumbnail_location": "https://i.scdn.co/image/ab67616d00001e025fd25412dd33f9c40dcf594d"
+                        },
+                        "album_post": null
+                    },
+                    {
+                        "id": 1,
+                        "profile_username": "BenjiBoy",
+                        "profile": 2,
+                        "parent_post": null,
+                        "likes": [],
+                        "creation_time": "2024-04-17 16:35:08",
+                        "update_time": "2024-04-17T16:35:08.316280Z",
+                        "caption": "type shit",
+                        "title": "what I been on",
+                        "song_post": null,
+                        "playlist_post": null,
+                        "album_post": {
+                            "name": "Tana Talk 3",
+                            "uri": "spotify:album:5OsHMGOg6lRV9REoVxbcWA",
+                            "artist": "Benny The Butcher",
+                            "artist_features": [],
+                            "songs": [
+                                {
+                                    "pk": 1,
+                                    "name": "Intro: Babs",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 2,
+                                    "name": "Goodnight",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 3,
+                                    "name": "Scarface vs. Sosa, Pt. 2",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 4,
+                                    "name": "Rubber Bands & Weight",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 5,
+                                    "name": "Fast Eddie",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 6,
+                                    "name": "Broken Bottles",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 7,
+                                    "name": "Echo Long (feat. WestsideGunn & Meyhem Lauren)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 8,
+                                    "name": "'97 Hov",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 9,
+                                    "name": "Joe Pesci 38",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 10,
+                                    "name": "Who Are You (feat. Royce da 5'9 & Melanie Rutherford)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 11,
+                                    "name": "Fifty One (feat. WestsideGunn)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 12,
+                                    "name": "Rick",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 13,
+                                    "name": "Langfield",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                },
+                                {
+                                    "pk": 14,
+                                    "name": "All 70 (feat. Conway)",
+                                    "artist": "Benny The Butcher",
+                                    "song_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                                }
+                            ],
+                            "album_thumbnail_location": "https://i.scdn.co/image/ab67616d0000b273252f9cfc6028c6524297ed04"
+                        }
+                    }
                 ]
   /user/register/:
     post:
@@ -298,18 +772,6 @@ paths:
         '404':
           description: User not found
           
-    delete:
-      summary: unfollow new user
-      operationId: deleteFollowing
-      responses:
-        '202':
-          description: User registered successfully
-          content:
-            application/json:
-              example: |
-                {"message":"unfollowed"}
-        '404':
-          description: User not found
   /user/profile/{id}:
     get:
       summary: Retrieve user profile by ID
