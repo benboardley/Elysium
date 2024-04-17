@@ -149,12 +149,24 @@ WSGI_APPLICATION = 'Elysium_Backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.environ.get("db_host") == None:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ["db_engine"],
+            'NAME': os.environ["db_name"],
+            'USER': os.environ["db_user"],
+            'PASSWORD': os.environ["db_password"],
+            'HOST': os.environ["db_host"],
+            'PORT': os.environ["db_port"],
+        }
+    }
 
 
 # Password validation

@@ -7,4 +7,6 @@ urlpatterns = [
     path('stored/songs', StoredSongs.as_view(), name='stored-songs'),
     path('spotify/topsong', GetSpotifyTopSong.as_view(), name='spotify-topsong'),
     path('song/<str:query>', SongSearch.as_view(), name='song-search'),
+    path('album/<str:query>', AlbumSearch.as_view(), name='album-search'),
+
 ]

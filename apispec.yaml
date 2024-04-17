@@ -3,6 +3,49 @@ info:
   title: Your API Title
   version: 1.0.0
 paths:
+  /music/song/<str:query>:
+    get:
+      summary: Search for songs
+      operationId: searchSongs
+      responses:
+        '200':
+          description: list found songs
+          content:
+            application/json:
+              example: |
+                [
+                  {
+                      "name": "Call Me Maybe",
+                      "artist": "Carly Rae Jepsen",
+                      "uri": "spotify:track:3TGRqZ0a2l1LRblBkJoaDx",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b273a111f7769013f1731e9c697c"
+                  },
+                  {
+                      "name": "Call Out My Name",
+                      "artist": "The Weeknd",
+                      "uri": "spotify:track:09mEdoA6zrmBPgTEN5qXmN",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b2731f6a2a40bb692936879db730"
+                  },
+                  {
+                      "name": "Call Your Mom",
+                      "artist": "Noah Kahan",
+                      "uri": "spotify:track:3yn01PcU95PTbiZ3xvop2j",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b27365a472d8326d4571bf725422"
+                  },
+                  {
+                      "name": "Calling My Phone",
+                      "artist": "Lil Tjay",
+                      "uri": "spotify:track:3J8EOeKLTLXORtWPpOU5bE",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b2735af0305457ff290e06dcc4c2"
+                  },
+                  {
+                      "name": "Call Your Mom (with Lizzy McAlpine)",
+                      "artist": "Noah Kahan",
+                      "uri": "spotify:track:3fKpSA5w8iqLe9sNdIDESW",
+                      "thumbnail": "https://i.scdn.co/image/ab67616d0000b273f0b007441dc1a09cbbfd77f6"
+                  }
+                ]
+
   /social/posts/:
     get:
       summary: Retrieve all posts
@@ -80,10 +123,17 @@ paths:
         content:
           application/json:
             example: |
-              {
-                "title": "New Post",
-                "content": "Content of the new post"
-              }
+              [
+                {
+                  "title": "New Post",
+                  "content": "Content of the new post"
+                },
+                {
+                  "title": "song post",
+                  "content": "add uri field",
+                  "song_uri": "spotify:track:3TGRqZ0a2l1LRblBkJoaDx"
+                }
+              ]
       responses:
         '201':
           description: The created post
@@ -96,6 +146,7 @@ paths:
                   "content": "Content of the new post",
                   "creation_time": "2022-02-15T13:00:00Z"
                 }
+                
   /social/posts/{id}:
 
     get:
@@ -298,18 +349,6 @@ paths:
         '404':
           description: User not found
           
-    delete:
-      summary: unfollow new user
-      operationId: deleteFollowing
-      responses:
-        '202':
-          description: User registered successfully
-          content:
-            application/json:
-              example: |
-                {"message":"unfollowed"}
-        '404':
-          description: User not found
   /user/profile/{id}:
     get:
       summary: Retrieve user profile by ID
