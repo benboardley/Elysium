@@ -1,7 +1,7 @@
 import MySQLdb
 import sys
 try:
-    conn = MySQLdb.connect(host="127.0.0.1", user="root", passwd="Gusman02")
+    conn = MySQLdb.connect(host="127.0.0.1", user="root", passwd="blahblah")
     print("Connection established")
 except MySQLdb.Error as e:
     print(f"Connection Error: {e}")
