@@ -18,6 +18,7 @@ const HomeScreen = ({ navigation }: Props) => {
   useEffect(() => {
     // Check if authTokens exist and navigate to Dashboard if they do
     if (authContext?.authTokens) {
+      console.log(authContext.authTokens)
       navigation.navigate('MainScreen', { screen: 'Dashboard' });
     }
   }, [authContext]);
