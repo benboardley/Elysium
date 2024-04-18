@@ -22,5 +22,5 @@
 #    echo "No online processes to stop and delete." >> "$log_file"
 #fi
 #echo "complete"
-pkill -f 'webpack'
-pkill -f 'runserver'
+sudo pkill -f 'webpack'
+sudo pkill -f 'runserver'
