@@ -10,7 +10,7 @@ DESTINATION_FOLDER="~/project-code"
 
 # Copy the entire GitHub repository code from S3 to the local folder
 #aws s3 sync s3://$S3_BUCKET/$S3_FOLDER $DESTINATION_FOLDER
-source ~/.bashrc
+export PATH="/home/ubuntu/.nvm/versions/node/v18.20.2/bin:$PATH"
 cd /home/ubuntu/apps
 echo $PATH >> /home/ubuntu/path.log
 sudo apt-get clean
