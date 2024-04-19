@@ -10,7 +10,7 @@ DESTINATION_FOLDER="~/project-code"
 
 # Copy the entire GitHub repository code from S3 to the local folder
 #aws s3 sync s3://$S3_BUCKET/$S3_FOLDER $DESTINATION_FOLDER
-
+source ~/.bashrc
 cd /home/ubuntu/apps
 echo $PATH >> /home/ubuntu/path.log
 sudo apt-get clean
@@ -19,8 +19,8 @@ npm cache clean --force
 sudo scp ../environment-files/keys.env Elysium_Backend/keys.env
 cd Elysium_Backend
 pip install -r requirements.txt
-python manage.py makemigrations >> makemigrations.log 2>&1
-python manage.py migrate >> migrate.log 2>&1
+python3 manage.py makemigrations >> makemigrations.log 2>&1
+python3 manage.py migrate >> migrate.log 2>&1
 cd ..
 cd elysium_frontend
 npm install >> npm-install.log 2>&1
