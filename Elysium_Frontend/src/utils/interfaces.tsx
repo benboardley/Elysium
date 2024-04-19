@@ -1,4 +1,4 @@
-import { songType } from '../utils/types'
+import { albumType, playlistType, songType } from '../utils/types'
 
 export interface RouteParams {
     userInfo: User;
@@ -43,14 +43,13 @@ export interface Post {
     profile_username: string;
     creation_time: string;
     update_time: string;
-    title?: string;
-    caption?: string;
-    parent_post: string;
-    song?: object;
-    playlist?: object;
-    album?: object;
-    likes: number;
+    title: string;
+    caption: string;
+    parent_post?: string;
+    likes: Array<number>;
     song_post?: songType;
+    playlist_post?: playlistType;
+    album_post?: albumType;
 }
 
 export interface Follower {
