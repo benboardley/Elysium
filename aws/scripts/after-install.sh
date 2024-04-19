@@ -12,10 +12,11 @@ DESTINATION_FOLDER="~/project-code"
 #aws s3 sync s3://$S3_BUCKET/$S3_FOLDER $DESTINATION_FOLDER
 
 cd /home/ubuntu/apps
+echo $PATH >> /home/ubuntu/path.log
 sudo apt-get clean
 npm cache clean --force
 #scp ../environment-files/package.json .
-scp ../environment-files/keys.env Elysium_Backend/keys.env
+sudo scp ../environment-files/keys.env Elysium_Backend/keys.env
 cd Elysium_Backend
 pip install -r requirements.txt
 python manage.py makemigrations >> makemigrations.log 2>&1
