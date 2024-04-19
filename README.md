@@ -2,13 +2,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elysium: New Generation Music Sharing Application</title>
+</head>
+
+<body>
 <h1>Elysium</h1>
 <h2>New Generation Music Sharing Application</h2>
 <h3>Founders</h3>
 <p>Benjamin Boardley - Garrett Phillips - Jack Gardner</p>
-</head>
-
-<body>
+  
 <h3>Application Description</h3>
 <p>The inspiration for this application initially comes from the argument of "What's better? Spotify or 
 Apple Music?" We saw a divide between music lovers and wanted to find a way to connect them. Out 
