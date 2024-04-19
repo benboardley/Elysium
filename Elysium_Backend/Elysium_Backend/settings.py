@@ -156,6 +156,7 @@ if os.environ.get("db_host") == None:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    print("Using SQLite database")
 else:
     DATABASES = {
         'default': {
@@ -167,7 +168,6 @@ else:
             'PORT': os.environ["db_port"],
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
