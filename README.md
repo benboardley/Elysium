@@ -27,10 +27,11 @@ with the Apple Developer Program. Although, we hope to have Apple Music compatib
 
 <h2>Application Views</h2>
 <p>Login Screen</p>
-
+<img src="Application_Images/login_screen.png">
 <p>User Profile</p>
-
+<img src="Application_Images/dashboard_pic.png">
 <p>User Feed</p>
+<img src="Application_Images/user_feed.png">
 
 <h2>Installation</h2>
 <p>As stated in the description above, our application is available for web users at: **PUT LINK HERE**</p>
