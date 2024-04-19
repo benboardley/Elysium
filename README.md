@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elysium</title>
+<h1>Elysium</h1>
 <h2>New Generation Music Sharing Application</h2>
 <h3>Founders</h3>
 <p>Benjamin Boardley - Garrett Phillips - Jack Gardner</p>
