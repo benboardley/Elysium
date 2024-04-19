@@ -13,7 +13,7 @@ DESTINATION_FOLDER="~/project-code"
 
 cd /home/ubuntu/apps
 sudo apt-get clean
-sudo npm cache clean --force
+npm cache clean --force
 #scp ../environment-files/package.json .
 scp ../environment-files/keys.env Elysium_Backend/keys.env
 cd Elysium_Backend
