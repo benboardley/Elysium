@@ -22,7 +22,7 @@ pip install -r requirements.txt
 python3 manage.py makemigrations >> makemigrations.log 2>&1
 python3 manage.py migrate >> migrate.log 2>&1
 cd ..
-cd elysium_frontend
+cd Elysium_Frontend
 npm install >> npm-install.log 2>&1
 #npm install
 #rm -rf /home/ubuntu/apps/src/frontend

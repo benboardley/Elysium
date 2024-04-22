@@ -8,5 +8,5 @@
 #echo "complete"
 cd /home/ubuntu/apps/Elysium_Backend
 nohup python3 manage.py runserver >> logger.log 2>&1 &
-cd /home/ubuntu/apps/elysium_frontend
+cd /home/ubuntu/apps/Elysium_Frontend
 nohup npm run web >> logger.log 2>&1 &
