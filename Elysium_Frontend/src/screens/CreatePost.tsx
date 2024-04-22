@@ -39,6 +39,9 @@ const CreatePost = ({ navigation }: Props) => {
 
   const [songSearchQuery, setSongSearchQuery] = useState('');
   const [songSearchResult, setSongSearchResult] = useState<any | null>(null);
+
+  const [albumSearchQuery, setAlbumSearchQuery] = useState('');
+  const [albumSearchResult, setAlbumSearchResult] = useState<any | null>(null);
   
   const handleNavAway = () => {
       setModalVisible(true);
@@ -63,6 +66,8 @@ const CreatePost = ({ navigation }: Props) => {
       return unsubscribe;
   }, [navigation]);
   */
+
+  /***** SEARCH FOR SONGS *****/
 
   const handleSongSearch = async () => {
     if (!songSearchQuery) return;
@@ -91,6 +96,35 @@ const CreatePost = ({ navigation }: Props) => {
     console.log('Song search result:', JSON.stringify(songSearchResult));
   }, [selectedSong]);
 
+
+  /***** SEARCH FOR ALBUMS *****/
+  const handleAlbumSearch = async () => {
+    if (!albumSearchQuery) return;
+    console.log('Searching for:', albumSearchQuery);
+    if (Platform.OS === 'web' || Platform.OS === 'ios') {
+        // Logic for web platform
+        searchEndpoint = 'http://localhost:8000/music/song/'+albumSearchQuery.toString();
+        } else {
+        // // Logic for Android platform and ther platforms
+        searchEndpoint = 'http://10.0.0.2:8000/music/song/'+albumSearchQuery.toString();
+        }
+    try {
+        const result = await axiosInstance.get(searchEndpoint);
+        setAlbumSearchResult(result.data);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
+  };
+
+  useEffect(() => {
+    handleAlbumSearch();
+    console.log('Album search result:', JSON.stringify(albumSearchResult));
+  }, [albumSearchQuery]);
+
+  useEffect(() => {
+    console.log('Album search result:', JSON.stringify(albumSearchResult));
+  }, [selectedAlbum]);
+
   /***** RETRIEVES ALL USERS MATCHING THE SEARCH *****/
   let songs: StripSong[] = [];
   if (songSearchResult) {
@@ -103,6 +137,17 @@ const CreatePost = ({ navigation }: Props) => {
     }));
   }
 
+  let albums: StripAlbum[] = [];
+  if (albumSearchResult) {
+    const searchInfo = albumSearchResult.map((album: any) => JSON.parse(JSON.stringify(album)));
+    albums = searchInfo.map((album: any) => ({
+        name: album.name,
+        artist: album.artist,
+        uri: album.uri,
+        album_thumbnail_location: album.album_thumbnail_location,
+    }));
+  }
+
   const handlePost = async () => {
     let data: StripPost = {
         "title": title,
@@ -111,9 +156,9 @@ const CreatePost = ({ navigation }: Props) => {
     if (value === 'song' && selectedSong) {
       data["song_uri"] = selectedSong.uri;
     } else if (value === 'album' && selectedAlbum) {
-        data["album_uri"] = selectedAlbum.uri;
+      data["album_uri"] = selectedAlbum.uri;
     } else if (value === 'playlist' && selectedPlaylist) {
-        data["playlist_uri"] = selectedPlaylist.uri;
+      data["playlist_uri"] = selectedPlaylist.uri;
     }
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
@@ -253,8 +298,57 @@ const CreatePost = ({ navigation }: Props) => {
         </View>
         )}
         {value === 'album' && (
-        <View>
-            <Paragraph>Search for a album!</Paragraph>
+        <View style={styles.conditionalContainer}>
+            <Header>Search for an album!</Header>
+            <View style={styles.searchContainer}>
+                <TextInput
+                style={styles.input}
+                placeholder="search"
+                placeholderTextColor={theme.colors.black}
+                value={albumSearchQuery}
+                onChangeText={text => setAlbumSearchQuery(text)}
+                />
+                <View>
+                <Button 
+                    mode="outlined" 
+                    onPress={handleAlbumSearch} 
+                    style={styles.buttonImageContainer}>
+                        <Image
+                        source={require('../assets/search-icon.png')}
+                        style={{ tintColor: theme.colors.black, width: 25, height: 25 }}
+                        />
+                </Button>
+                </View>
+            </View>
+            <View>
+                {(albumSearchResult && albumSearchQuery) ? (
+                <React.Fragment>
+                    {albums.map(album => (
+                    <React.Fragment>
+                        <View>
+                            <Button
+                            mode="outlined"
+                            style={styles.idvContainer}
+                            onPress={() => setSelectedSong(
+                                { uri: album.uri,
+                                  name: album.name,
+                                  artist: album.artist,
+                                  album_thumbnail_location: album.song_thumbnail_location
+                                })}>
+                                <View style={styles.searchContainer}>
+                                    <Image style={styles.image} source={{uri: album.album_thumbnail_location}}/>
+                                    <View>
+                                    <Text style={styles.title} numberOfLines={2}>{album.name}</Text>
+                                    <Text style={styles.artist} numberOfLines={1}>By: {album.artist}</Text>
+                                    </View>
+                                </View>
+                            </Button>
+                        </View>
+                    </React.Fragment>
+                    ))}
+                </React.Fragment>
+                ) : null}
+            </View>
         </View>
         )}
         {value === 'playlist' && (
