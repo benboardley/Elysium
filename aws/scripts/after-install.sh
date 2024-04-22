@@ -24,7 +24,11 @@ python3 manage.py makemigrations >> makemigrations.log 2>&1
 python3 manage.py migrate >> migrate.log 2>&1
 cd ..
 cd Elysium_Frontend
-npm install >> npm-install.log 2>&1
+npm install -g yarn
+NODE_OPTIONS=--max-old-space-size=3072 yarn install >> npm-install.log 2>&1
+npm install react-native-vector-icons
+cd /home/ubuntu/apps/Elysium_Frontend/src/components
+mv post.tsx Post.tsx
 #npm install
 #rm -rf /home/ubuntu/apps/src/frontend
 #scp -r build/* /var/www/build
