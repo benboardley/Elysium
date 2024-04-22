@@ -1,12 +1,16 @@
 import React, { memo, useEffect, useRef, useState, useContext } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { theme } from '../core/theme';
 import { Post } from '../utils/interfaces';
 import PlusSong from './AddSong';
 import  useAxios  from "../utils/useAxios";
 import { Navigation, Route } from '../utils/types';
+//import { StripSong, StripAlbum, StripPost } from '../utils/interfaces';
+import { stripSongType } from '../utils/types';
+import Button from '../components/Button';
 import Swal from 'sweetalert2';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Paragraph from './Paragraph';
 
 interface UserPostProps {
   post: Post;
@@ -29,9 +33,52 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
   const axiosInstance = useAxios(navigation);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'No Media', value: 'noMedia'},
-  ]);
+
+  let songs: stripSongType[] = [];
+  if (post.album_post) {
+    const searchInfo = post.album_post.songs.map((song: any) => JSON.parse(JSON.stringify(song)));
+    songs = searchInfo.map((song: any) => ({
+        pk: song.pk,
+        name: song.name,
+        artist: song.artist,
+        uri: song.uri,
+        song_thumbnail_location: song.song_thumbnail_location,
+    }));
+  } else if (post.playlist_post) {
+    const searchInfo = post.playlist_post.songs.map((song: any) => JSON.parse(JSON.stringify(song)));
+    songs = searchInfo.map((song: any) => ({
+        pk: song.pk,
+        name: song.name,
+        artist: song.artist,
+        uri: song.uri,
+        song_thumbnail_location: song.song_thumbnail_location,
+    }));
+  }
+
+  const showSwalNotification = (status: any) => {
+    if (status === 200) {
+      Swal.fire({
+        title: "Media Added Successfully",
+        icon: "success",
+        toast: true,
+        timer: 6000,
+        position: 'top-right',
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    } else {
+      Swal.fire({
+        title: "Error Adding Media",
+        icon: "error",
+        toast: true,
+        timer: 6000,
+        position: 'top-right',
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    }
+  };
+
 
   const addSongToElysium = async () => {
     if (post.song_post) {
@@ -42,32 +89,26 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
         };
         const result = await axiosInstance.post('http://localhost:8000/music/spotify/songs', postData);
         console.log('Post created successfully:', result.data);
-        if (result.status === 200) {
-          Swal.fire({
-            title: "Song Added Successfully",
-            icon: "success",
-            toast: true,
-            timer: 6000,
-            position: 'top-right',
-            timerProgressBar: true,
-            showConfirmButton: false,
-          });
-        }
-  
-        // Optionally, you can update your state or perform other actions
-        // setPostData(result.data);
-  
+        showSwalNotification(result.status);
       } catch (error) {
         console.error('Error creating post:', error);
-        Swal.fire({
-          title: "Song Failed to Add :(",
-          icon: "error",
-          toast: true,
-          timer: 6000,
-          position: 'top-right',
-          timerProgressBar: true,
-          showConfirmButton: false,
-      });
+      }
+    }
+  };
+
+  const addPlaylistToElysium = async () => {
+    if (post.playlist_post) {
+      console.log('Adding playlist to Elysium:', post.playlist_post.uri)
+      try {
+        const postData = {
+          uri: post.playlist_post.uri,
+        };
+        const result = await axiosInstance.post('http://localhost:8000/music/spotify/playlists', postData);
+        console.log('Post created successfully:', result.data);
+        showSwalNotification(result.status);
+      } catch (error) {
+        showSwalNotification(0);
+        console.error('Error creating post:', error);
       }
     }
   };
@@ -82,6 +123,17 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
           <PlusSong addSong={addSongToElysium}/>
         </View>
         ) : null}
+        {post.playlist_post ? (
+        <View style={styles.header}>
+          <Text style={styles.addSongText}>Add Playlist</Text>
+          <PlusSong addSong={addPlaylistToElysium}/>
+        </View>
+        ) : null}
+        {post.album_post ? (
+        <View style={styles.header}>
+          <Text style={styles.addSongText}>Album Post</Text>
+        </View>
+        ) : null}
       </View>
       <Text style={styles.title}>{post.title}</Text>
       <Text style={styles.caption}>{post.caption}</Text>
@@ -94,40 +146,35 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
         </View>
       ) : null}
       {post.album_post ? (
+        <ScrollView style={styles.mediaContainer}>
         <View style={styles.mediaPostContainer}>
           <View style={styles.rowContainer}>
             <Image style={styles.image} source={{uri: post.album_post.album_thumbnail_location}}/>
             <Text style={styles.caption}>{post.album_post.name}</Text>
           </View>
-          <DropDownPicker
-          open={open}
-          value={value}
-          items={items}
-          containerStyle={styles.dropdownContainer}
-          style={styles.dropdown}
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          />
+          <Paragraph>Song List:</Paragraph>
+          {songs ? (
+            songs.map((song: any) => (
+            <Text key={song.pk} style={styles.songText}>{song.name}</Text>
+          )))
+          : null}
         </View>
+        </ScrollView>
       ) : null}
       {post.playlist_post ? (
+        <ScrollView style={styles.mediaContainer}>
         <View style={styles.mediaPostContainer}>
           <View style={styles.rowContainer}>
             <Image style={styles.image} source={{uri: post.playlist_post.playlist_thumbnail_location}}/>
             <Text style={styles.caption}>{post.playlist_post.name}</Text>
           </View>
-          <DropDownPicker
-          open={open}
-          value={value}
-          items={items}
-          containerStyle={styles.dropdownContainer}
-          style={styles.dropdown}
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          />
+          {songs ? (
+            songs.map((song: any) => (
+            <Text key={song.pk} style={styles.songText}>{song.name}</Text>
+          )))
+          : null}
         </View>
+        </ScrollView>
       ) : null}
       <Text style={styles.footer}>{post.creation_time}</Text>
     </View>
@@ -156,6 +203,9 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     fontSize: 12,
     color: theme.colors.secondary,
+  },
+  mediaContainer: {
+    height: 200, // Adjust the height according to your requirement
   },
   mediaPostContainer: {
     backgroundColor: theme.colors.songBackground,
@@ -204,6 +254,11 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: 'gray',
       borderRadius: 4,
+  },
+  songText: {
+    fontSize: 12,
+    marginBottom: 5,
+    color: theme.colors.primary,
   },
 });
 

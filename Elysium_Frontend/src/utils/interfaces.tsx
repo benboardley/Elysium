@@ -29,12 +29,26 @@ export interface StripSong {
     song_thumbnail_location: string;
 }
 
+export interface StripAlbum {
+    name: string;
+    artist: string;
+    uri: string;
+    album_thumbnail_location: string;
+}
+
 export interface StripPost {
     title: string;
     caption: string;
     song_uri?: string;
     album_uri?: string;
     playlist_uri?: string;
+}
+
+export interface StripPlaylist {
+    name: string;
+    id: string;
+    uri: string;
+    thumbnail: string;
 }
 
 export interface Post {
