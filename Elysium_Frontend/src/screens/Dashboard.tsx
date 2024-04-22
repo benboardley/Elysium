@@ -105,11 +105,10 @@ const Dashboard = ({ navigation }: Props) => {
       title: post.title,
       caption: post.caption,
       parent_post: post.parent_post,
-      song: post.song,
-      playlist: post.playlist,
-      album: post.album,
       likes: post.likes,
       song_post: post.song_post,
+      playlist_post: post.playlist_post,
+      album_post: post.album_post,
     }));
   }
 
