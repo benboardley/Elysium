@@ -19,11 +19,11 @@ npm cache clean --force
 sudo scp ../environment-files/keys.env Elysium_Backend/keys.env
 cd Elysium_Backend
 pip install -r requirements.txt
-python3 manage.py makemigrations >> makemigrations.log 2>&1
-python3 manage.py migrate >> migrate.log 2>&1
+sudo python3 manage.py makemigrations >> makemigrations.log 2>&1
+sudo python3 manage.py migrate >> migrate.log 2>&1
 cd ..
 cd Elysium_Frontend
-npm install >> npm-install.log 2>&1
+sudo npm install >> npm-install.log 2>&1
 #npm install
 #rm -rf /home/ubuntu/apps/src/frontend
 #scp -r build/* /var/www/build
