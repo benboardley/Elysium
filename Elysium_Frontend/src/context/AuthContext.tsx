@@ -5,6 +5,7 @@ import SensitiveInfo from 'react-native-sensitive-info';
 import Swal from 'sweetalert2';
 import { Navigation, Route } from '../utils/types';
 import { useCookies } from 'react-cookie';
+import {url} from '../utils/url';
 
 interface AuthContextProps {
     user: any;
@@ -55,7 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
     };
 
     const loginUser = async (username: string, password: string) => {
-        const response = await fetch("http://127.0.0.1:8000/user/login/", {
+        const response = await fetch(url + "user/login/", {
             method: "POST",
             headers:{
                 "Content-Type":"application/json"
@@ -103,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigation
     };
 
     const registerUser = async (email: string, username: string, first_name: string, last_name: string, password: string) => {
-        const response = await fetch("http://127.0.0.1:8000/user/register/", {
+        const response = await fetch(url + "user/register/", {
             method: "POST",
             headers: {
                 "Content-Type":"application/json"

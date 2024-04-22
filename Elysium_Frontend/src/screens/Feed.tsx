@@ -114,7 +114,7 @@ import { Post } from '../utils/interfaces';
 import UserPost from '../components/Post';
 import { theme } from '../core/theme';
 import PlusSong from '../components/AddSong';
-
+import {url} from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
@@ -128,11 +128,11 @@ const Feed = ({ navigation }: Props) => {
   const getPostsEndpoint = () => {
     if (selectedFeed === 'follower') {
       return Platform.OS === 'web' || Platform.OS === 'ios'
-        ? 'http://localhost:8000/social/posts/follow'
-        : 'http://10.0.0.2:8000/social/posts/follow';
+        ? url + 'social/posts/follow'
+        : url + 'social/posts/follow';
     } else {
       return Platform.OS === 'web' || Platform.OS === 'ios'
-        ? 'http://localhost:8000/social/posts'
+        ? url + 'social/posts'
         : 'http://10.0.0.2:8000/social/posts';
     }
   };

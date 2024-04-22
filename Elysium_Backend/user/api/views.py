@@ -38,6 +38,7 @@ class UserRegistrationView(generics.CreateAPIView):
             return Response(response_data, status=status.HTTP_201_CREATED)
         else:
             # If the data is not valid, return a response with errors
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MyTokenObtainPairView(TokenObtainPairView):
