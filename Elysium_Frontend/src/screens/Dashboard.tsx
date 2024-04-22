@@ -18,7 +18,7 @@ type Props = {
   navigation: Navigation;
 };
 
-const Dashboard = (navigation: Navigation) => {
+const Dashboard = ({ navigation }: Props) => {
   const [userData, setUserData] = useState<any | null>(null);
   const [userPostsData, setUserPostsData] = useState<any | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -106,11 +106,10 @@ const Dashboard = (navigation: Navigation) => {
       title: post.title,
       caption: post.caption,
       parent_post: post.parent_post,
-      song: post.song,
-      playlist: post.playlist,
-      album: post.album,
       likes: post.likes,
       song_post: post.song_post,
+      playlist_post: post.playlist_post,
+      album_post: post.album_post,
     }));
   }
 

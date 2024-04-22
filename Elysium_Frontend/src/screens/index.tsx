@@ -6,3 +6,4 @@ export { default as Dashboard } from './Dashboard';
 export { default as Feed } from './Feed';
 export { default as Search } from './Search';
 export { default as ViewUser } from './ViewUser';
+export { default as CreatePost } from './CreatePost';

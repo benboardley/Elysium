@@ -108,7 +108,7 @@ class AlbumSearch(APIView):
                     'name': album['name'],
                     'artist': album['artists'][0]['name'] if album['artists'] else 'Various Artists',
                     'uri': album['uri'],
-                    'thumbnail': album['images'][0]['url'] if album['images'] else None
+                    'album_thumbnail_location': album['images'][0]['url'] if album['images'] else None
                 }
                 albums.append(album_details)
 
