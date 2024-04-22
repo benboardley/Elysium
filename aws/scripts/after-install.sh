@@ -34,4 +34,3 @@ npm install >> npm-install.log 2>&1
 #sudo npm install -g pm2
 #tsc
 #sudo rm -rf /home/ubuntu/.npm
-#sudo rm -rf /home/ubuntu/apps/tests
