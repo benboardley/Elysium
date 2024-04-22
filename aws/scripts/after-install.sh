@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe
+#set -xe
 
 # Set your S3 bucket and folder path
 S3_BUCKET="ece461project2-webappdeploymentbucket-1kv8j892axxhq"
