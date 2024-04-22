@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Create a virtual environment (optional but recommended)
-python3 -m venv venv
-. venv/bin/activate
+#python3 -m venv venv
+#. venv/bin/activate
 
 # Install pre-commit
 pip install pre-commit
@@ -24,20 +24,12 @@ repos:
     hooks:
       - id: prettier
         types_or: [css, javascript]
-        args: ['--write']
-
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v2.0.4
-    hooks:
-      - id: autopep8
-        files: \.py$
 
   - repo: https://github.com/PyCQA/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
         files: \.py$
-
 EOF
 
 # Install pre-commit hooks

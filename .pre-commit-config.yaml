@@ -1,3 +1,5 @@
+default_language_version:
+    python: python3.10
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -9,17 +11,9 @@ repos:
     hooks:
       - id: prettier
         types_or: [css, javascript]
-        args: ['--write']
-
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v2.0.4
-    hooks:
-      - id: autopep8
-        files: \.py$
 
   - repo: https://github.com/PyCQA/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
         files: \.py$
-
