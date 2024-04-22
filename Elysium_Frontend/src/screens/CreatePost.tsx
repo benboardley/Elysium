@@ -11,7 +11,8 @@ import  useAxios  from "../utils/useAxios";
 import jwtDecode from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext';
 import { theme } from '../core/theme';
-import { StripSong, StripPost } from '../utils/interfaces';
+import { StripSong, StripAlbum, StripPost, StripPlaylist } from '../utils/interfaces';
+import { playlistType } from '../utils/types';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import { SearchSource } from 'jest';
@@ -39,6 +40,11 @@ const CreatePost = ({ navigation }: Props) => {
 
   const [songSearchQuery, setSongSearchQuery] = useState('');
   const [songSearchResult, setSongSearchResult] = useState<any | null>(null);
+
+  const [albumSearchQuery, setAlbumSearchQuery] = useState('');
+  const [albumSearchResult, setAlbumSearchResult] = useState<any | null>(null);
+
+  const [playlistSearchResult, setPlaylistSearchResult] = useState<any | null>(null);
   
   const handleNavAway = () => {
       setModalVisible(true);
@@ -53,17 +59,7 @@ const CreatePost = ({ navigation }: Props) => {
       setModalVisible(false);
   };
 
-  /*
-  useEffect(() => {
-      const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-          e.preventDefault();
-          handleNavAway();
-      });
-  
-      return unsubscribe;
-  }, [navigation]);
-  */
-
+  /***** SEARCH FOR SONGS *****/
   const handleSongSearch = async () => {
     if (!songSearchQuery) return;
     console.log('Searching for:', songSearchQuery);
@@ -91,7 +87,59 @@ const CreatePost = ({ navigation }: Props) => {
     console.log('Song search result:', JSON.stringify(songSearchResult));
   }, [selectedSong]);
 
-  /***** RETRIEVES ALL USERS MATCHING THE SEARCH *****/
+
+  /***** SEARCH FOR ALBUMS *****/
+  const handleAlbumSearch = async () => {
+    if (!albumSearchQuery) return;
+    console.log('Searching for:', albumSearchQuery);
+    if (Platform.OS === 'web' || Platform.OS === 'ios') {
+        // Logic for web platform
+        searchEndpoint = 'http://localhost:8000/music/album/'+albumSearchQuery.toString();
+        } else {
+        // // Logic for Android platform and ther platforms
+        searchEndpoint = 'http://10.0.0.2:8000/music/album/'+albumSearchQuery.toString();
+        }
+    try {
+        const result = await axiosInstance.get(searchEndpoint);
+        setAlbumSearchResult(result.data);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
+  };
+
+  useEffect(() => {
+    handleAlbumSearch();
+    console.log('Album search result:', JSON.stringify(albumSearchResult));
+  }, [albumSearchQuery]);
+
+  useEffect(() => {
+    console.log('Album search result:', JSON.stringify(albumSearchResult));
+  }, [selectedAlbum]);
+
+
+  /***** SEARCH FOR Playlists *****/
+  const handleLoadPlaylists = async () => {
+    if (Platform.OS === 'web' || Platform.OS === 'ios') {
+        // Logic for web platform
+        searchEndpoint = 'http://localhost:8000/music/spotify/playlists';
+        } else {
+        // // Logic for Android platform and ther platforms
+        searchEndpoint = 'http://10.0.0.2:8000/music/spotify/playlists';
+    }
+    try {
+        const result = await axiosInstance.get(searchEndpoint);
+        console.log('Playlist search result:', result.data);
+        setPlaylistSearchResult(result.data);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('Playlist search results:', JSON.stringify(playlistSearchResult));
+  }, [selectedPlaylist]);
+
+  /***** RETRIEVES ALL MEDIA MATCHING THE SEARCH *****/
   let songs: StripSong[] = [];
   if (songSearchResult) {
     const searchInfo = songSearchResult.map((song: any) => JSON.parse(JSON.stringify(song)));
@@ -103,6 +151,27 @@ const CreatePost = ({ navigation }: Props) => {
     }));
   }
 
+  let albums: StripAlbum[] = [];
+  if (albumSearchResult) {
+    const searchInfo = albumSearchResult.map((album: any) => JSON.parse(JSON.stringify(album)));
+    albums = searchInfo.map((album: any) => ({
+        name: album.name,
+        artist: album.artist,
+        uri: album.uri,
+        album_thumbnail_location: album.album_thumbnail_location,
+    }));
+  }
+
+  let playlists: StripPlaylist[] = [];
+  if (playlistSearchResult && playlistSearchResult.playlists) {
+    playlists = playlistSearchResult.playlists.map((playlist: any) => ({
+      name: playlist[0],
+      id: playlist[1],
+      uri: playlist[2],
+      thumbnail: playlist[3],
+    }));
+  }
+
   const handlePost = async () => {
     let data: StripPost = {
         "title": title,
@@ -111,9 +180,9 @@ const CreatePost = ({ navigation }: Props) => {
     if (value === 'song' && selectedSong) {
       data["song_uri"] = selectedSong.uri;
     } else if (value === 'album' && selectedAlbum) {
-        data["album_uri"] = selectedAlbum.uri;
+      data["album_uri"] = selectedAlbum.uri;
     } else if (value === 'playlist' && selectedPlaylist) {
-        data["playlist_uri"] = selectedPlaylist.uri;
+      data["playlist_uri"] = selectedPlaylist.uri;
     }
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
@@ -252,14 +321,124 @@ const CreatePost = ({ navigation }: Props) => {
             </View>
         </View>
         )}
+
+        {value === 'album' && selectedAlbum && (
+            <View>
+                <View style={styles.container}>
+                    <Text style={styles.title}>Selected Album</Text>
+                </View>
+                <View style={styles.idvContainer}>
+                    <View style={styles.searchContainer}>
+                        <Image style={styles.image} source={{uri: selectedAlbum.album_thumbnail_location}}/>
+                        <View>
+                        <Text style={styles.title} numberOfLines={2}>{selectedAlbum.name}</Text>
+                        <Text style={styles.artist} numberOfLines={1}>By: {selectedAlbum.artist}</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        )}
         {value === 'album' && (
-        <View>
-            <Paragraph>Search for a album!</Paragraph>
+        <View style={styles.conditionalContainer}>
+            <Header>Search for an album!</Header>
+            <View style={styles.searchContainer}>
+                <TextInput
+                style={styles.input}
+                placeholder="search"
+                placeholderTextColor={theme.colors.black}
+                value={albumSearchQuery}
+                onChangeText={text => setAlbumSearchQuery(text)}
+                />
+                <View>
+                <Button 
+                    mode="outlined" 
+                    onPress={handleAlbumSearch} 
+                    style={styles.buttonImageContainer}>
+                        <Image
+                        source={require('../assets/search-icon.png')}
+                        style={{ tintColor: theme.colors.black, width: 25, height: 25 }}
+                        />
+                </Button>
+                </View>
+            </View>
+            <View>
+                {(albumSearchResult && albumSearchQuery) ? (
+                <React.Fragment>
+                    {albums.map(album => (
+                    <React.Fragment>
+                        <View>
+                            <Button
+                            mode="outlined"
+                            style={styles.idvContainer}
+                            onPress={() => setSelectedAlbum(
+                                { uri: album.uri,
+                                  name: album.name,
+                                  artist: album.artist,
+                                  album_thumbnail_location: album.album_thumbnail_location
+                                })}>
+                                <View style={styles.searchContainer}>
+                                    <Image style={styles.image} source={{uri: album.album_thumbnail_location}}/>
+                                    <View>
+                                    <Text style={styles.title} numberOfLines={2}>{album.name}</Text>
+                                    <Text style={styles.artist} numberOfLines={1}>By: {album.artist}</Text>
+                                    </View>
+                                </View>
+                            </Button>
+                        </View>
+                    </React.Fragment>
+                    ))}
+                </React.Fragment>
+                ) : null}
+            </View>
         </View>
+        )}
+
+        {value === 'playlist' && selectedPlaylist && (
+            <View>
+                <View style={styles.container}>
+                    <Text style={styles.title}>Selected Playlist</Text>
+                </View>
+                <View style={styles.idvContainer}>
+                    <View style={styles.searchContainer}>
+                        <Image style={styles.image} source={{uri: selectedPlaylist.thumbnail}}/>
+                        <View>
+                        <Text style={styles.title} numberOfLines={2}>{selectedPlaylist.name}</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
         )}
         {value === 'playlist' && (
         <View>
-            <Paragraph>Take a look through your playlists!</Paragraph>
+            <View style={styles.searchContainer}>
+                <Button 
+                    mode="outlined" 
+                    onPress={handleLoadPlaylists}>
+                    Load Playlists!
+                </Button>
+            </View>
+            {playlists.map(playlist => (
+                <React.Fragment>
+                    <View>
+                        <Button
+                        mode="outlined"
+                        style={styles.idvContainer}
+                        onPress={() => setSelectedPlaylist(
+                            { name: playlist.name,
+                                uri: playlist.uri,
+                                id: playlist.id,
+                                thumbnail: playlist.thumbnail
+                            })}>
+                            <View style={styles.searchContainer}>
+                                <Image style={styles.image} source={{uri: playlist.thumbnail}}/>
+                                <View>
+                                <Text style={styles.title} numberOfLines={2}>{playlist.name}</Text>
+                                </View>
+                            </View>
+                        </Button>
+                    </View>
+                </React.Fragment>
+            ))}
         </View>
         )}
     </ScrollView>
