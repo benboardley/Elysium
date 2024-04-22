@@ -7,6 +7,6 @@
 #service nginx restart
 #echo "complete"
 cd /home/ubuntu/apps/Elysium_Backend
-nohup python3 manage.py runserver >> logger.log 2>&1 &
+nohup python3 manage.py runserver >> backend.log 2>&1 &
 cd /home/ubuntu/apps/Elysium_Frontend
-nohup npm run web >> logger.log 2>&1 &
+nohup npm run web >> frontend.log 2>&1 &
