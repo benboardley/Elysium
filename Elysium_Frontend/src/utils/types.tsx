@@ -25,6 +25,7 @@ export type stripSongType = {
   pk: number;
   name: string;
   artist: string;
+  uri?: string;
   song_thumbnail_location: string;
 };
 
