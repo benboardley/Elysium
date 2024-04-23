@@ -26,10 +26,7 @@ const HomeScreen = ({ navigation }: Props) => {
   return (
     <Background>
       <Logo />
-      <Header>Elysium</Header>
-      <Paragraph>
-        <Text>A new generation music-sharing application</Text>
-      </Paragraph>
+      <Paragraph>A new generation music-sharing application</Paragraph>
 
       <Button mode="outlined" onPress={() => navigation.navigate('LoginScreen')}>
         Login
