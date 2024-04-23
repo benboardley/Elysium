@@ -59,8 +59,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://localhost:8081",   # Replace with your client's origin
+    "http://0.0.0.0",
+    "http://localhost",   # Replace with your client's origin
     "http://ec2-18-219-133-202.us-east-2.compute.amazonaws.com"
 ]
 
