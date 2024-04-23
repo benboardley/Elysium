@@ -128,11 +128,11 @@ const Feed = ({ navigation }: Props) => {
   const getPostsEndpoint = () => {
     if (selectedFeed === 'follower') {
       return Platform.OS === 'web' || Platform.OS === 'ios'
-        ? url + 'social/posts/follow'
-        : url + 'social/posts/follow';
+        ? url + 'social/posts/follow/'
+        : url + 'social/posts/follow/';
     } else {
       return Platform.OS === 'web' || Platform.OS === 'ios'
-        ? url + 'social/posts'
+        ? url + 'social/posts/'
         : 'http://10.0.0.2:8000/social/posts';
     }
   };
