@@ -1,7 +1,6 @@
-from ..user.credentials import OPENAI_KEY
-from ..user.credentials import CLIENT_ID
-from ..user.credentials import CLIENT_SECRET
-# Set your OpenAI API key here
+from user.credentials import OPENAI_KEY
+from user.credentials import CLIENT_ID
+from user.credentials import CLIENT_SECRET
 from openai import OpenAI
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -25,9 +24,9 @@ def generate_playlist(query):
 
     openai_output = response.choices[0].message.content.strip()
     playlist_title = openai_output.split(". ")[1].split(": ")[1]
-    print("Playlist Title: " + playlist_title)
+    #print("Playlist Title: " + playlist_title)
     spotify_query = openai_output.split(". ")[0].split(": ")[1]
-    print("Spotify Query: " + spotify_query)
+    #print("Spotify Query: " + spotify_query)
 
     auth_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
     sp = spotipy.Spotify(auth_manager=auth_manager)
@@ -35,9 +34,9 @@ def generate_playlist(query):
 
 
     for track in results['tracks']['items']:
-        print(track['name'])
+        pass#print(track['name'])
 
-    return results['tracks']['items']
+    return results
 
 
 if __name__ == "__main__":
