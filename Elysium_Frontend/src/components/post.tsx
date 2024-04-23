@@ -11,7 +11,7 @@ import Button from '../components/Button';
 import Swal from 'sweetalert2';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Paragraph from './Paragraph';
-
+import {url} from '../utils/url';
 interface UserPostProps {
   post: Post;
 }
@@ -87,7 +87,7 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
           uri: [post.song_post.uri],
           location: 'Elysium',
         };
-        const result = await axiosInstance.post('http://localhost:8000/music/spotify/songs', postData);
+        const result = await axiosInstance.post(url + 'music/spotify/songs', postData);
         console.log('Post created successfully:', result.data);
         showSwalNotification(result.status);
       } catch (error) {
@@ -103,7 +103,7 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
         const postData = {
           uri: post.playlist_post.uri,
         };
-        const result = await axiosInstance.post('http://localhost:8000/music/spotify/playlists', postData);
+        const result = await axiosInstance.post(url + 'music/spotify/playlists', postData);
         console.log('Post created successfully:', result.data);
         showSwalNotification(result.status);
       } catch (error) {

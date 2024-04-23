@@ -7,7 +7,7 @@ import PlusSong from './AddSong';
 import  useAxios  from "../utils/useAxios";
 import { Platform } from 'react-native';
 import { Navigation, Route } from '../utils/types';
-
+import {url} from '../utils/url';
 interface UserPopProps {
   user: StripUser;
 }
@@ -24,10 +24,10 @@ const UserPost: React.FC<UserPopProps & Props> = ({ user, navigation }) => {
   useEffect(() => {
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
-      userEndpoint = 'http://localhost:8000/user/profile/'+user.id.toString();
+      userEndpoint = url + 'user/profile/'+user.id.toString();
     } else {
       // Logic for Android platform and other platforms
-      userEndpoint = 'http://localhost:8000/user/profile/'+user.id.toString();
+      userEndpoint = url + 'user/profile/'+user.id.toString();
     }
 
     const fetchUserData = async () => {
