@@ -234,7 +234,7 @@ def spotify_callback(request, format=None):
     create_user_tokens(
         state_value, access_token, token_type, expires_in, refresh_token)
 
-    return redirect('http://localhost:8080/')
+    return redirect(os.environ.get('web_url'))
 
 
 class SpotifyAuthenticated(APIView):
