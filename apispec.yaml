@@ -896,3 +896,38 @@ paths:
             application/json:
               example: |
                 {"message": "No Profiles Found"}
+  /playlist/generate/:
+    post:
+      summary: Generate a playlist based on a query
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: The query to generate the playlist
+      responses:
+        '200':
+          description: A list of songs matching the query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: The name of the song
+                    artist:
+                      type: string
+                      description: The artist of the song
+                    uri:
+                      type: string
+                      description: The URI of the song on Spotify
+                    song_thumbnail_location:
+                      type: string
+                      description: The URL of the song thumbnail

@@ -6,7 +6,7 @@ from rest_framework import status
 from .utils import generate_playlist  # Assuming your function is in utils.py
 
 class PlaylistGeneratorView(APIView):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # Extract the query from the request data
         query = request.data.get('query', '')  # Default to empty string if not provided
 

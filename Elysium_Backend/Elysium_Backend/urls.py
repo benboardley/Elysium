@@ -23,6 +23,6 @@ urlpatterns = [
     path('user/', include('user.urls')),
     path('social/', include('social.urls')),
     path('music/', include('music.urls')),
-    path('openai_integration/', include('openai_integration.urls')),
+    path('playlist/', include('openai_integration.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
