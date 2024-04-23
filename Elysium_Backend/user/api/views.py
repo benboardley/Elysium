@@ -12,10 +12,12 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.views import TokenObtainPairView
 from requests import Request, post
 from ..credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
-from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer
+from .serializers import UserSerializer, ProfileSerializer, MyTokenObtainPairSerializer, ProfileSearchSerializer
 from .utils import create_user_tokens, is_spotify_authenticated, get_user_tokens
 from ..models import *
 from datetime import datetime
+from social.api.serializers import PostSerializer
+from social.models import Post, SongPost, PlaylistPost, AlbumPost
 import secrets
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -92,12 +94,12 @@ class UserLoginView(APIView):
 class ProfileView(APIView):
     #authentication_classes = [TokenAuthentication]
     #permission_classes = [IsAuthenticated]
-
-    def get(self, request,id):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request, id):
         profile = get_object_or_404(Profile,id=id)
-        print(profile.post_set.first())
+        #print(profile.post_set.first())
         serializer = ProfileSerializer(profile, context={'request': request})
-        print(serializer.data)
+        #print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def put(self, request, id):
         profile = get_object_or_404(Profile, id=id)
@@ -111,7 +113,44 @@ class ProfileView(APIView):
         profile = get_object_or_404(Profile, id=id)
         profile.delete()
         return Response({"message":"delete successful"}, status=status.HTTP_202_ACCEPTED)
+    
+class UserSearch(APIView):
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
+    
+    def get(self, request, substring, *args, **kwargs):
+        # Your endpoint logic
+        profiles = Profile.objects.filter(user__username__icontains=substring)
+        response_data = ProfileSearchSerializer(profiles, many=True)
+        if not profiles:
+            return Response({"message":"No profiles found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(response_data.data, status=status.HTTP_200_OK)
+class PersonalView(APIView):
+    #authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)   
+
+class ProfilePosts(APIView):
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
+
+    def get(self, request,id):
+        profile = get_object_or_404(Profile, id=id)
+        posts = Post.objects.filter(songpost__isnull=True, playlistpost__isnull=True, albumpost__isnull=True, profile=profile)
+        song_posts = SongPost.objects.filter(profile=profile)
+        playlist_posts = PlaylistPost.objects.filter(profile=profile)
+        album_posts = AlbumPost.objects.filter(profile=profile)
+        combined_posts = list(posts) + list(song_posts) + list(playlist_posts) + list(album_posts)
+        sorted_posts = sorted(combined_posts, key=lambda post: post.creation_time, reverse=True)
+        serializer = PostSerializer(sorted_posts, many=True)
+        sorted_posts = sorted(combined_posts, key=lambda post: post.creation_time, reverse=True)
+        serializer = PostSerializer(sorted_posts, many=True)
+        #serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
 class Followers(APIView):
    # authentication_classes = [TokenAuthentication]
@@ -122,7 +161,7 @@ class Followers(APIView):
         user = self.request.user
         profile = user.profile
         followers = profile.followers.all()
-        response_data = ProfileSerializer(followers, many=True)
+        response_data = ProfileSearchSerializer(followers, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
     
 class Follow(APIView):
@@ -134,12 +173,13 @@ class Follow(APIView):
         user = request.user
         profile = user.profile
         following = profile.follow.all()
-        response_data = ProfileSerializer(following, many=True)
+        response_data = ProfileSearchSerializer(following, many=True)
         return Response(response_data.data, status=status.HTTP_200_OK)
     
     def post(self, request, id = None, *args, **kwargs):
         user = request.user
         profile = user.profile
+        print(request.data)
         profile_to_follow = get_object_or_404(Profile, id=request.data['id'])
         profile.follow.add(profile_to_follow)
         return Response({"message":"followed"}, status=status.HTTP_202_ACCEPTED)

@@ -1,4 +1,55 @@
-import { songType } from '../utils/types'
+import { albumType, playlistType, songType } from '../utils/types'
+
+export interface RouteParams {
+    userInfo: User;
+  }
+
+export interface User {
+    id: number;
+    user: number;
+    username: string;
+    followers: number[];
+    following: number[];
+    posts: number[];
+    creation_time: string;
+    bio?: string;
+    location?: string;
+    update_time?: string;
+}
+
+export interface StripUser {
+    id: number;
+    username: string;
+}
+
+export interface StripSong {
+    name: string;
+    artist: string;
+    uri: string;
+    song_thumbnail_location: string;
+}
+
+export interface StripAlbum {
+    name: string;
+    artist: string;
+    uri: string;
+    album_thumbnail_location: string;
+}
+
+export interface StripPost {
+    title: string;
+    caption: string;
+    song_uri?: string;
+    album_uri?: string;
+    playlist_uri?: string;
+}
+
+export interface StripPlaylist {
+    name: string;
+    id: string;
+    uri: string;
+    thumbnail: string;
+}
 
 export interface Post {
     id: string;
@@ -6,14 +57,13 @@ export interface Post {
     profile_username: string;
     creation_time: string;
     update_time: string;
-    title?: string;
-    caption?: string;
-    parent_post: string;
-    song?: object;
-    playlist?: object;
-    album?: object;
-    likes: number;
+    title: string;
+    caption: string;
+    parent_post?: string;
+    likes: Array<number>;
     song_post?: songType;
+    playlist_post?: playlistType;
+    album_post?: albumType;
 }
 
 export interface Follower {

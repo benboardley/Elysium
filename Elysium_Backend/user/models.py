@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from datetime import timedelta
+import os
 class CustomUser(AbstractUser):
     # Your custom fields here
     # Should already contain:
@@ -25,7 +26,7 @@ class Profile(models.Model):
     #id_user = models.IntegerField()
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)
-    #profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+    profile_image = models.ImageField(upload_to='profile_images', default="profile_images/default.png")
     creation_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     follow = models.ManyToManyField(
@@ -40,8 +41,8 @@ class Profile(models.Model):
 class SpotifyToken(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="spotifytoken")
     created_at = models.DateTimeField(auto_now_add=True)
-    refresh_token = models.CharField(max_length=150)
-    access_token = models.CharField(max_length=150)
+    refresh_token = models.CharField(max_length=1024)
+    access_token = models.CharField(max_length=1024)
     expires_in = models.DateTimeField()
     token_type = models.CharField(max_length=50)
 
