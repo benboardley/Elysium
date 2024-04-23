@@ -2,5 +2,6 @@
 #set -x
 
 
-pkill -f 'webpack'
-pkill -f 'runserver'
+pm2 stop frontend
+pm2 delete frontend
+sudo systemctl stop gunicorn.service
