@@ -19,14 +19,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
+USE_X_FORWARDED_HOST = True
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', 'ec2-18-219-133-202.us-east-2.compute.amazonaws.com', '0.0.0.0:8000']
 
 # Application definition
 SESSION_COOKIE_SAMESITE = 'Lax'
@@ -59,8 +59,9 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://localhost:8081",   # Replace with your client's origin
+    "http://0.0.0.0",
+    "http://localhost",   # Replace with your client's origin
+    "http://ec2-18-219-133-202.us-east-2.compute.amazonaws.com"
 ]
 
 CORS_ALLOW_METHODS = [
@@ -156,6 +157,7 @@ if os.environ.get("db_host") == None:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    print("Using SQLite database")
 else:
     DATABASES = {
         'default': {
@@ -167,7 +169,6 @@ else:
             'PORT': os.environ["db_port"],
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

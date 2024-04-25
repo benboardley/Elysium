@@ -102,6 +102,7 @@ module.exports = {
         new webpack.DefinePlugin({ process: { env: {} } }),
     ],
     devServer: {
+        allowedHosts: "all",
         historyApiFallback: true,
     },
 }
