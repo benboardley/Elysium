@@ -12,6 +12,7 @@ export interface User {
     following: number[];
     posts: number[];
     creation_time: string;
+    profile_image?: string;
     bio?: string;
     location?: string;
     update_time?: string;
@@ -53,7 +54,7 @@ export interface StripPlaylist {
 
 export interface Post {
     id: string;
-    profile: string;
+    profile: number;
     profile_username: string;
     creation_time: string;
     update_time: string;

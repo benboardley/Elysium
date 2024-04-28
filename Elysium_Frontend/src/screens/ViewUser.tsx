@@ -103,6 +103,7 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
       following: uInfo.follow,
       posts: uInfo.posts,
       creation_time: uInfo.creation_time,
+      profile_image: uInfo.profile_image,
       bio: uInfo.bio,
       location: uInfo.location,
       update_time: uInfo.update_time,
@@ -179,6 +180,14 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
     }
     unfollowUserHelper();
   };
+
+/*
+        {userInfo?.profile_image && (
+          <View style={styles.container}>
+            <Image style={styles.image} source={{uri: userInfo?.profile_image}}/>
+          </View>
+        )}
+*/
 
   return (
     <Background>
@@ -279,6 +288,10 @@ const styles = StyleSheet.create({
   },
   notConnectedText: {
     color: 'red',
+  },
+  image: {
+    width: 60,
+    height: 60,
   },
 });
 

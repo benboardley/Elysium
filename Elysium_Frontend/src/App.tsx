@@ -33,6 +33,14 @@ type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
+const SearchStack = createNativeStackNavigator();
+
+/*
+<Stack.Screen
+name="ViewUser"
+component={AuthProviderWrapper(ViewUser)}
+/>
+*/
 
 const App = () => {
   const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
@@ -49,7 +57,10 @@ const App = () => {
       <Stack.Navigator
         initialRouteName="HomeScreen"
         screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="HomeScreen" component={AuthProviderWrapper(HomeScreen)} />
+        <Stack.Screen
+          name="HomeScreen"
+          component={AuthProviderWrapper(HomeScreen)}
+        />
         <Stack.Screen
           name="LoginScreen"
           component={AuthProviderWrapper(LoginScreen)}
