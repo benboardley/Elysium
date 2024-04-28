@@ -16,6 +16,7 @@ import { playlistType } from '../utils/types';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import { SearchSource } from 'jest';
+import {url} from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
@@ -65,7 +66,7 @@ const CreatePost = ({ navigation }: Props) => {
     console.log('Searching for:', songSearchQuery);
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
         // Logic for web platform
-        searchEndpoint = 'http://localhost:8000/music/song/'+songSearchQuery.toString();
+        searchEndpoint = url + 'music/song/'+songSearchQuery.toString();
         } else {
         // // Logic for Android platform and ther platforms
         searchEndpoint = 'http://10.0.0.2:8000/music/song/'+songSearchQuery.toString();
@@ -94,7 +95,7 @@ const CreatePost = ({ navigation }: Props) => {
     console.log('Searching for:', albumSearchQuery);
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
         // Logic for web platform
-        searchEndpoint = 'http://localhost:8000/music/album/'+albumSearchQuery.toString();
+        searchEndpoint = url + 'music/album/'+albumSearchQuery.toString();
         } else {
         // // Logic for Android platform and ther platforms
         searchEndpoint = 'http://10.0.0.2:8000/music/album/'+albumSearchQuery.toString();
@@ -121,7 +122,7 @@ const CreatePost = ({ navigation }: Props) => {
   const handleLoadPlaylists = async () => {
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
         // Logic for web platform
-        searchEndpoint = 'http://localhost:8000/music/spotify/playlists';
+        searchEndpoint = url + 'music/spotify/playlists';
         } else {
         // // Logic for Android platform and ther platforms
         searchEndpoint = 'http://10.0.0.2:8000/music/spotify/playlists';
@@ -186,10 +187,10 @@ const CreatePost = ({ navigation }: Props) => {
     }
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
-      searchEndpoint = 'http://localhost:8000/social/posts/';
+      searchEndpoint = url + 'social/posts/';
     } else {
       // Logic for Android platform and ther platforms
-      searchEndpoint = 'http://localhost:8000/social/posts/';
+      searchEndpoint = url + 'social/posts/';
     }
     try {
         const result = await axiosInstance.post(searchEndpoint, data);

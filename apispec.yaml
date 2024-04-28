@@ -3,6 +3,45 @@ info:
   title: Your API Title
   version: 1.0.0
 paths:
+  /music/spotify/playlists:
+    get:
+      summary: Get User Playlists
+      operationId: getPlaylists
+      responses:
+        '200':
+            description: list of playlists
+            content:
+              application/json:
+                example: |
+                  {
+                    "playlists": [
+                        [
+                            "Discz",
+                            "1dOD6O6vHsnH535qsK9IzJ",
+                            "spotify:playlist:1dOD6O6vHsnH535qsK9IzJ",
+                            "https://i.scdn.co/image/ab67616d00001e02fae944bd93dd1e47591a0df9"
+                        ],
+                        [
+                            "Mac",
+                            "0DOtshEjN4Lf1jSGOX4XM8",
+                            "spotify:playlist:0DOtshEjN4Lf1jSGOX4XM8",
+                            "https://mosaic.scdn.co/640/ab67616d00001e02175c577a61aa13d4fb4b6534ab67616d00001e02353c3e83eafd0cf06847af52ab67616d00001e02ee0f38410382a255e4fb15f4ab67616d00001e02fef67ba7527cc0aa2ec6edf8"
+                        ]
+                    ]
+                  }
+    post:
+      summary: add playlist to library
+      operationId: addPlylist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: |
+              { 'uri': 'spotify:playlist:uri'}
+      responses:
+        '201':
+          description: Successfully added
+
   /music/song/<str:query>:
     get:
       summary: Search for songs
