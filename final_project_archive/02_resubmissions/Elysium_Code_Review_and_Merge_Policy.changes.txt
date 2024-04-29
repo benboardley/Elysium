@@ -1,0 +1,6 @@
+Elysium Code Review and Merge Policy Changes
+---------------------------------------------
+- Updated the repository tree to fit our working
+  repository.
+- Referenced npm and Django init programs which
+  we used to initlaize our project

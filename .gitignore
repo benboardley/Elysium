@@ -44,6 +44,9 @@ yarn-error.*
 #Elysium venv
 Elysium
 
+#Elysium archive
+elysium-0.1.0.tar.gz
+
 
 #package lock
 package-lock.json

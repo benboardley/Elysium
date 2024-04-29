@@ -1,0 +1,7 @@
+Elysium Project Proposal Changes
+---------------------------------------------
+- Added Use Cases to tie requirements to
+  - In section "System Overview & Use Cases"
+- Adjusted up the component diagram
+
+Was confused about the feedback refering to requirements
