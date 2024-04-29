@@ -220,15 +220,21 @@ class FollowFeed(APIView):
         feed = []
 
         for prof in following:
-            feed.extend(prof.post_set.all())
+            # Retrieve all types of posts using Django's model inheritance
+            feed.extend(Post.objects.filter(profile=prof, songpost__isnull=True, playlistpost__isnull=True, albumpost__isnull=True))
+            feed.extend(SongPost.objects.filter(profile=prof))
+            feed.extend(PlaylistPost.objects.filter(profile=prof))
+            feed.extend(AlbumPost.objects.filter(profile=prof))
 
         # Sort the feed based on timestamp
+        '''
         posts = Post.objects.filter(songpost__isnull=True, playlistpost__isnull=True, albumpost__isnull=True)
         song_posts = SongPost.objects.all()
         playlist_posts = PlaylistPost.objects.all()
         album_posts = AlbumPost.objects.all()
         combined_posts = list(posts) + list(song_posts) + list(playlist_posts) + list(album_posts)
-        sorted_posts = sorted(combined_posts, key=lambda post: post.creation_time, reverse=True)
+        '''
+        sorted_posts = sorted(feed, key=lambda post: post.creation_time, reverse=True)
         post_serializers = PostSerializer(sorted_posts, many=True)
         # Now you can proceed with the serialized_feed using sorted_feed
         # ...
