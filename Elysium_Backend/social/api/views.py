@@ -223,17 +223,13 @@ class FollowFeed(APIView):
             feed.extend(prof.post_set.all())
 
         # Sort the feed based on timestamp
-        posts = Post.objects.filter(songpost__isnull=True, playlistpost__isnull=True, albumpost__isnull=True)
-        song_posts = SongPost.objects.all()
-        playlist_posts = PlaylistPost.objects.all()
-        album_posts = AlbumPost.objects.all()
-        combined_posts = list(posts) + list(song_posts) + list(playlist_posts) + list(album_posts)
-        sorted_posts = sorted(combined_posts, key=lambda post: post.creation_time, reverse=True)
-        post_serializers = PostSerializer(sorted_posts, many=True)
+        sorted_feed = sorted(feed, key=lambda post: post.creation_time, reverse=True)
+
+        serialized_feed = PostSerializer(sorted_feed, many=True)
         # Now you can proceed with the serialized_feed using sorted_feed
         # ...
 
-        return Response(post_serializers.data, status=status.HTTP_200_OK)
+        return Response(serialized_feed.data, status=status.HTTP_200_OK)
     
 class PublicFeed(APIView):
 

@@ -15,6 +15,7 @@ import  useAxios  from "../utils/useAxios";
 import { json, useParams } from 'react-router-dom';
 import { Route } from '@react-navigation/native';
 import Swal from 'sweetalert2';
+import { url } from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
@@ -53,11 +54,11 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
           userId = userInfo.id;
           if (Platform.OS === 'web' || Platform.OS === 'ios') {
             // Logic for web platform
-            userPostEndpoint = 'http://localhost:8000/user/profile/posts/'+userId.toString();
+            userPostEndpoint = url + 'user/profile/posts/'+userId.toString();
             
           } else {
             // Logic for Android platform and ther platforms
-            userPostEndpoint = 'http://localhost:8000/user/profile/posts/'+userId.toString();
+            userPostEndpoint = url + 'user/profile/posts/'+userId.toString();
           }
           const result = await axiosInstance.get(userPostEndpoint);
           setUserPostsData(result.data);
@@ -74,7 +75,7 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
   useEffect(() => {
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
-      selfEndpoint = 'http://localhost:8000/user/self/';
+      selfEndpoint = url + 'user/self/';
     } else {
       // Logic for Android platform and ther platforms
       selfEndpoint = 'http://10.0.0.2:8000/user/self/';
@@ -102,6 +103,7 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
       following: uInfo.follow,
       posts: uInfo.posts,
       creation_time: uInfo.creation_time,
+      profile_image: uInfo.profile_image,
       bio: uInfo.bio,
       location: uInfo.location,
       update_time: uInfo.update_time,
@@ -146,7 +148,7 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
         console.error('Error following user: User data not found');
         return;
       }
-      const followEndpoint = 'http://localhost:8000/user/follow/';
+      const followEndpoint = url + 'user/follow/';
       const jsonId = {
         "id": userInfo.id
       };
@@ -167,7 +169,7 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
         console.error('Error following user: User data not found');
         return;
       }
-      const unfollowEndpoint = 'http://localhost:8000/user/follow/'+userInfo.id.toString();
+      const unfollowEndpoint = url + 'user/follow/'+userInfo.id.toString();
       try {
         const result = await axiosInstance.delete(unfollowEndpoint);
         setIsFollowing(false);
@@ -178,6 +180,14 @@ const ViewUser: React.FC<Props & ViewUserProps> = ({ navigation, route}) => {
     }
     unfollowUserHelper();
   };
+
+/*
+        {userInfo?.profile_image && (
+          <View style={styles.container}>
+            <Image style={styles.image} source={{uri: userInfo?.profile_image}}/>
+          </View>
+        )}
+*/
 
   return (
     <Background>
@@ -278,6 +288,10 @@ const styles = StyleSheet.create({
   },
   notConnectedText: {
     color: 'red',
+  },
+  image: {
+    width: 60,
+    height: 60,
   },
 });
 

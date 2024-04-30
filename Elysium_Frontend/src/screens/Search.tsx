@@ -14,6 +14,7 @@ import { AuthContext } from '../context/AuthContext';
 import { StripUser } from '../utils/interfaces';
 import { theme } from '../core/theme';
 import PlusSong from '../components/AddSong';
+import {url} from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
@@ -29,7 +30,7 @@ const Search = ({ navigation }: Props) => {
     console.log('Searching for:', searchQuery);
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
         // Logic for web platform
-        searchEndpoint = 'http://localhost:8000/user/search/'+searchQuery.toString();
+        searchEndpoint = url + 'user/search/'+searchQuery.toString();
         } else {
         // // Logic for Android platform and ther platforms
         searchEndpoint = 'http://10.0.0.2:8000/user/search/'+searchQuery.toString();

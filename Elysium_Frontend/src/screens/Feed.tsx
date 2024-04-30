@@ -14,6 +14,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Post } from '../utils/interfaces';
 import UserPost from '../components/Post';
 import { theme } from '../core/theme';
+import {url} from '../utils/url';
 import PlusSong from '../components/AddSong';
 type Props = {
   navigation: Navigation;
@@ -27,7 +28,7 @@ const Feed = ({ navigation }: Props) => {
   let topSongEndpoint: string = '';
   if (Platform.OS === 'web' || Platform.OS === 'ios') {
     // Logic for web platform
-    postsEndpoint = 'http://localhost:8000/social/posts/';
+    postsEndpoint = url + 'social/posts/';
   } else {
     // // Logic for Android platform and ther platforms
     postsEndpoint = 'http://10.0.0.2:8000/social/posts/';
@@ -113,7 +114,7 @@ import { Post } from '../utils/interfaces';
 import UserPost from '../components/Post';
 import { theme } from '../core/theme';
 import PlusSong from '../components/AddSong';
-
+import {url} from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
@@ -127,11 +128,11 @@ const Feed = ({ navigation }: Props) => {
   const getPostsEndpoint = () => {
     if (selectedFeed === 'follower') {
       return Platform.OS === 'web' || Platform.OS === 'ios'
-        ? 'http://localhost:8000/social/posts/follow'
-        : 'http://10.0.0.2:8000/social/posts/follow';
+        ? url + 'social/posts/follow/'
+        : url + 'social/posts/follow/';
     } else {
       return Platform.OS === 'web' || Platform.OS === 'ios'
-        ? 'http://localhost:8000/social/posts'
+        ? url + 'social/posts/'
         : 'http://10.0.0.2:8000/social/posts';
     }
   };

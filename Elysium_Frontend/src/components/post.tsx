@@ -1,17 +1,19 @@
 import React, { memo, useEffect, useRef, useState, useContext } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { theme } from '../core/theme';
 import { Post } from '../utils/interfaces';
 import PlusSong from './AddSong';
+import Nav2User from './Nav2User';
 import  useAxios  from "../utils/useAxios";
 import { Navigation, Route } from '../utils/types';
+import { User, StripUser } from '../utils/interfaces';
 //import { StripSong, StripAlbum, StripPost } from '../utils/interfaces';
 import { stripSongType } from '../utils/types';
-import Button from '../components/Button';
+import Button from './Button';
 import Swal from 'sweetalert2';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Paragraph from './Paragraph';
-
+import {url} from '../utils/url';
 interface UserPostProps {
   post: Post;
 }
@@ -20,19 +22,26 @@ type Props = {
   navigation: Navigation;
 };
 
-/***********************************************************************
- * Depending on whether an album or playlist is embedded within the post,
- * need to update the setItems variable to include the songs within
- * the album or playlist. Display the first 3-5 songs in the media
- * container, then add a veiw more feature which will open a modal
- * to view the rest of the songs in the album or playlist (or populate
- * the next 5/10).
-***********************************************************************/
-
 const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
   const axiosInstance = useAxios(navigation);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
+
+/*   const addSongToElysium = async () => {
+    if (post.song_post) {
+      try {
+        const postData = {
+          uri: [post.song_post.uri],
+          location: 'Elysium',
+        };
+        const result = await axiosInstance.post('http://localhost:8000/music/spotify/songs', postData);
+        console.log('Post created successfully:', result.data);
+        showSwalNotification(result.status);
+      } catch (error) {
+        console.error('Error creating post:', error);
+      }
+    }
+  };*/
 
   let songs: stripSongType[] = [];
   if (post.album_post) {
@@ -79,6 +88,40 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
     }
   };
 
+  const go2User = async () => {
+    let userData = null;
+    let searchEndpoint = '';
+    if (Platform.OS === 'web' || Platform.OS === 'ios') {
+      // Logic for web platform
+      searchEndpoint = 'http://localhost:8000/user/profile/' + post.profile.toString();
+    } else {
+      // Logic for Android platform and other platforms
+      searchEndpoint = 'http://10.0.0.2:8000/user/profile/' + post.profile.toString();
+    }
+    try {
+      const result = await axiosInstance.get(searchEndpoint);
+      userData = result.data;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+    let userInfo = null;
+    if (userData) {
+      const uInfo = JSON.parse(JSON.stringify(userData));
+      userInfo = {
+        id: uInfo.id,
+        user: uInfo.user,
+        username: uInfo.username,
+        followers: uInfo.followers,
+        following: uInfo.follow,
+        posts: uInfo.posts,
+        creation_time: uInfo.creation_time,
+        bio: uInfo.bio,
+        location: uInfo.location,
+        update_time: uInfo.update_time,
+      };
+    }
+    navigation.navigate('ViewUser', { userInfo: userInfo });
+  }
 
   const addSongToElysium = async () => {
     if (post.song_post) {
@@ -87,8 +130,8 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
           uri: [post.song_post.uri],
           location: 'Elysium',
         };
-        const result = await axiosInstance.post('http://localhost:8000/music/spotify/songs', postData);
-        console.log('Post created successfully:', result.data);
+        const result = await axiosInstance.post(url + 'music/spotify/songs', postData);
+        console.log('Song added successfully:', result.data);
         showSwalNotification(result.status);
       } catch (error) {
         console.error('Error creating post:', error);
@@ -103,8 +146,8 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
         const postData = {
           uri: post.playlist_post.uri,
         };
-        const result = await axiosInstance.post('http://localhost:8000/music/spotify/playlists', postData);
-        console.log('Post created successfully:', result.data);
+        const result = await axiosInstance.post(url + 'music/spotify/playlists', postData);
+        console.log('Playlist added successfully:', result.data);
         showSwalNotification(result.status);
       } catch (error) {
         showSwalNotification(0);
@@ -112,11 +155,17 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
       }
     }
   };
-
+/*
+        <View style={styles.header}>
+          <Nav2User nav2User={go2User} username={post.profile_username}/>
+        </View>
+*/
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.header}>
-        <Text style={styles.profile}>{post.profile_username}</Text>
+        <TouchableOpacity onPress={go2User}>
+          <Text style={styles.addSongText}>{post.profile_username}</Text>
+        </TouchableOpacity>
         {post.song_post ? (
         <View style={styles.header}>
           <Text style={styles.addSongText}>Add Song</Text>
@@ -225,6 +274,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: theme.colors.primary,
+    padding: 8,
   },
   creation_time: {
     fontSize: 12,
