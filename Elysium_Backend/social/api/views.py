@@ -239,7 +239,7 @@ class FollowFeed(APIView):
         # Now you can proceed with the serialized_feed using sorted_feed
         # ...
 
-        return Response(serialized_feed.data, status=status.HTTP_200_OK)
+        return Response(post_serializers.data, status=status.HTTP_200_OK)
     
 class PublicFeed(APIView):
 

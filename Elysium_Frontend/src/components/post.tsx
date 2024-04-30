@@ -93,7 +93,7 @@ const UserPost: React.FC<UserPostProps & Props> = ({ post, navigation }) => {
     let searchEndpoint = '';
     if (Platform.OS === 'web' || Platform.OS === 'ios') {
       // Logic for web platform
-      searchEndpoint = 'http://localhost:8000/user/profile/' + post.profile.toString();
+      searchEndpoint = url + 'user/profile/' + post.profile.toString();
     } else {
       // Logic for Android platform and other platforms
       searchEndpoint = 'http://10.0.0.2:8000/user/profile/' + post.profile.toString();
