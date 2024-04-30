@@ -7,17 +7,18 @@ import Header from '../components/Header';
 import Button from '../components/Button';
 import Paragraph from '../components/Paragraph';
 import { AuthContext } from '../context/AuthContext'; // Import your AuthContext
-
+import {url} from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
 
 const HomeScreen = ({ navigation }: Props) => {
   const authContext = useContext(AuthContext);
-
+  console.log(url)
   useEffect(() => {
     // Check if authTokens exist and navigate to Dashboard if they do
     if (authContext?.authTokens) {
+      console.log(authContext.authTokens)
       navigation.navigate('MainScreen', { screen: 'Dashboard' });
     }
   }, [authContext]);
@@ -25,10 +26,7 @@ const HomeScreen = ({ navigation }: Props) => {
   return (
     <Background>
       <Logo />
-      <Header>Elysium</Header>
-      <Paragraph>
-        <Text>A new generation music-sharing application</Text>
-      </Paragraph>
+      <Paragraph>A new generation music-sharing application</Paragraph>
 
       <Button mode="outlined" onPress={() => navigation.navigate('LoginScreen')}>
         Login

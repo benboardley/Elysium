@@ -8,7 +8,7 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { Navigation } from '../utils/types';
-
+import {url} from '../utils/url';
 import {
   emailValidator,
   passwordValidator,
@@ -44,10 +44,10 @@ const RegisterScreen = ({ navigation }: Props) => {
     let endpoint = '';
     if (Platform.OS === 'web') {
       // Logic for web platform
-      endpoint = 'http://localhost:8000/user/register/';
+      endpoint = url + 'user/register/';
     } else if (Platform.OS === 'ios') {
       // Logic for iOS platform
-      endpoint = 'http://localhost:8000/user/register/';
+      endpoint = url + 'user/register/';
     } else if (Platform.OS === 'android') {
       // Logic for Android platform
       endpoint = 'http://10.0.0.2:8000/user/register/';

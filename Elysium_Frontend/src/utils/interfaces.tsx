@@ -12,6 +12,7 @@ export interface User {
     following: number[];
     posts: number[];
     creation_time: string;
+    profile_image?: string;
     bio?: string;
     location?: string;
     update_time?: string;
@@ -29,6 +30,13 @@ export interface StripSong {
     song_thumbnail_location: string;
 }
 
+export interface StripAlbum {
+    name: string;
+    artist: string;
+    uri: string;
+    album_thumbnail_location: string;
+}
+
 export interface StripPost {
     title: string;
     caption: string;
@@ -37,9 +45,16 @@ export interface StripPost {
     playlist_uri?: string;
 }
 
+export interface StripPlaylist {
+    name: string;
+    id: string;
+    uri: string;
+    thumbnail: string;
+}
+
 export interface Post {
     id: string;
-    profile: string;
+    profile: number;
     profile_username: string;
     creation_time: string;
     update_time: string;

@@ -209,12 +209,12 @@ class PlaylistPosts(APIView):
 
 class FollowFeed(APIView):
 
-    authentication_classes = [TokenAuthentication]
+    #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        profile = user.profile.first()
+        profile = user.profile
 
         following = profile.follow.all()
         feed = []

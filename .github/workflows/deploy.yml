@@ -1,0 +1,34 @@
+name: TypeScript Compile
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:com
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Global Dependencies
+        run: |
+          npm install -g typescript
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Compile TypeScript
+        run: |
+          tsc
+          npm run build

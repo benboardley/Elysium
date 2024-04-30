@@ -13,6 +13,7 @@ import { Platform } from 'react-native';
 import  useAxios  from "../utils/useAxios";
 import jwtDecode from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext';
+import { url } from '../utils/url';
 type Props = {
   navigation: Navigation;
 };
@@ -27,7 +28,7 @@ const Dashboard = ({ navigation }: Props) => {
   let userEndpoint: string = '';
   if (Platform.OS === 'web' || Platform.OS === 'ios') {
     // Logic for web platform
-    userEndpoint = 'http://localhost:8000/user/self/';
+    userEndpoint = url + 'user/self/';
   } else {
     // Logic for Android platform and ther platforms
     userEndpoint = 'http://10.0.0.2:8000/user/self/';
@@ -53,11 +54,11 @@ const Dashboard = ({ navigation }: Props) => {
           userId = userData.id;
           if (Platform.OS === 'web' || Platform.OS === 'ios') {
             // Logic for web platform
-            userPostEndpoint = 'http://localhost:8000/user/profile/posts/'+userId.toString();
+            userPostEndpoint = url + 'user/profile/posts/'+userId.toString();
             
           } else {
             // Logic for Android platform and ther platforms
-            userPostEndpoint = 'http://localhost:8000/user/profile/posts/'+userId.toString();
+            userPostEndpoint = url + 'user/profile/posts/'+userId.toString();
           }
           const result = await axiosInstance.get(userPostEndpoint);
           setUserPostsData(result.data);
@@ -75,7 +76,6 @@ const Dashboard = ({ navigation }: Props) => {
 
   /***** RETRIEVES ALL DATA OF LOGGED IN USER *****/ 
   let userInfo: User | null = null;
-  //console.log(JSON.stringify(userData))
   if (userData) {
     const uInfo = JSON.parse(JSON.stringify(userData));
     userInfo = {
@@ -86,6 +86,7 @@ const Dashboard = ({ navigation }: Props) => {
       following: uInfo.follow,
       posts: uInfo.posts,
       creation_time: uInfo.creation_time,
+      profile_image: uInfo.profile_image,
       bio: uInfo.bio,
       location: uInfo.location,
       update_time: uInfo.update_time,
@@ -121,7 +122,7 @@ const Dashboard = ({ navigation }: Props) => {
   /***** SETS CONNECTION STATUS OF SPOTIFY *****/ 
   useEffect(() => {
     const setConnected = async () => {
-      axiosInstance.get("http://localhost:8000/user/spotify/is-authenticated")
+      axiosInstance.get(url + "user/spotify/is-authenticated")
       .then((response) => response.data)
       .then((data) => {
         //this.setState({ spotifyAuthenticated: data.status });
@@ -137,13 +138,13 @@ const Dashboard = ({ navigation }: Props) => {
 
   /***** HANDELS CONNECTIVITY TO SPOTIFY *****/ 
   const authenticateSpotify = () => {
-    axiosInstance.get("http://localhost:8000/user/spotify/is-authenticated")
+    axiosInstance.get(url + "user/spotify/is-authenticated")
     .then((response) => response.data)
     .then((data) => {
       //this.setState({ spotifyAuthenticated: data.status });
       console.log(data.status);
       if (!data.status) {
-        axiosInstance.get("http://localhost:8000/user/spotify/get-auth-url")
+        axiosInstance.get(url + "user/spotify/get-auth-url")
           .then((response) => response.data)
           .then((data) => {
             window.location.replace(data.url);
@@ -162,6 +163,13 @@ const Dashboard = ({ navigation }: Props) => {
     });
   }
 
+/*        
+        {userInfo?.profile_image && (
+          <View style={styles.container}>
+            <Image style={styles.image} source={{uri: userInfo?.profile_image}}/>
+          </View>
+        )}
+ */
 
   return (
     <Background>
@@ -169,6 +177,7 @@ const Dashboard = ({ navigation }: Props) => {
         <View style={styles.container}>
           <Header>{userInfo?.username}'s Dashboard</Header>
         </View>
+
 
         <View style={styles.container}>
           <View style={styles.row}>
@@ -258,6 +267,10 @@ const styles = StyleSheet.create({
   },
   notConnectedText: {
     color: 'red',
+  },
+  image: {
+    width: 60,
+    height: 60,
   },
 });
 

@@ -1,6 +1,7 @@
 import {createContext, useState, useEffect} from "react";
 import jwt_decode from "jwt-decode";
 import {useHistory} from "react-router-dom";
+import {url} from "../utils/constants";
 const swal = require('sweetalert2')
 
 const AuthContext = createContext();
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     const history = useHistory();
 
     const loginUser = async (email, password) => {
-        const response = await fetch("http://127.0.0.1:8000/user/login/", {
+        const response = await fetch(url + "user/login/", {
             method: "POST",
             headers:{
                 "Content-Type":"application/json"
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const registerUser = async (email, username, password, password2) => {
-        const response = await fetch("http://127.0.0.1:8000/user/register/", {
+        const response = await fetch(url + "user/register/", {
             method: "POST",
             headers: {
                 "Content-Type":"application/json"
