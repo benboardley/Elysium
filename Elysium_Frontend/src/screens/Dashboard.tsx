@@ -76,7 +76,6 @@ const Dashboard = ({ navigation }: Props) => {
 
   /***** RETRIEVES ALL DATA OF LOGGED IN USER *****/ 
   let userInfo: User | null = null;
-  //console.log(JSON.stringify(userData))
   if (userData) {
     const uInfo = JSON.parse(JSON.stringify(userData));
     userInfo = {
@@ -87,6 +86,7 @@ const Dashboard = ({ navigation }: Props) => {
       following: uInfo.follow,
       posts: uInfo.posts,
       creation_time: uInfo.creation_time,
+      profile_image: uInfo.profile_image,
       bio: uInfo.bio,
       location: uInfo.location,
       update_time: uInfo.update_time,
@@ -163,6 +163,13 @@ const Dashboard = ({ navigation }: Props) => {
     });
   }
 
+/*        
+        {userInfo?.profile_image && (
+          <View style={styles.container}>
+            <Image style={styles.image} source={{uri: userInfo?.profile_image}}/>
+          </View>
+        )}
+ */
 
   return (
     <Background>
@@ -170,6 +177,7 @@ const Dashboard = ({ navigation }: Props) => {
         <View style={styles.container}>
           <Header>{userInfo?.username}'s Dashboard</Header>
         </View>
+
 
         <View style={styles.container}>
           <View style={styles.row}>
@@ -259,6 +267,10 @@ const styles = StyleSheet.create({
   },
   notConnectedText: {
     color: 'red',
+  },
+  image: {
+    width: 60,
+    height: 60,
   },
 });
 
